@@ -1,0 +1,326 @@
+
+# Frontend
+# Beam envelope simulation.
+
+sim_type = "MomentMatrix"; 
+HdipoleFitMode = "1.0"; 
+MpoleLevel = "2"; 
+
+Soffset = 70.206895; 
+# Global parameters.
+
+AMU = 931494320.0; # Atomic mass unit [eV/c^2].
+
+#IonZ  = 9.0/40.0;          # Charge state for U_238.
+IonEs = 931494320.0; # Nucleon mass [eV/u].
+IonEk = 12000.0; # Kinetic energy at LS1 entrance [eV/u].
+IonW = 931506320.0; # Total energy [eV/u].
+
+# Define Initial Conditions for the Charge States.
+# Units are: [mm, rad, mm, rad, rad, MeV/u]
+
+IonChargeStates = [0.20856]; 
+NCharge = [10111.0]; 
+
+
+BaryCenter0 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]; 
+
+# Define beam envelope parameters.
+
+S0 = [
+    375.0862983306569, -0.028392012415760996, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    -0.028392012415760996, 2.88097e-05, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    0.0, 0.0, 375.0862983306569, -0.028392012415760996, 0.0, 0.0, 0.0, 
+    0.0, 0.0, -0.028392012415760996, 2.88097e-05, 0.0, 0.0, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 1e-08, 0.0, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 0.0, 1e-12, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]; 
+
+S: source, matrix_variable = "S", vector_variable = "BaryCenter"; 
+SCS2_drift_0: drift, L = 0.112104, aper = 0.075; 
+#FE_SCS2:DCH_D0680: orbtrim, realpara = 1, tm_xkick = 0.0;
+#FE_SCS2:DCV_D0680: orbtrim, realpara = 1, tm_ykick = 0.0;
+SCS2_drift_1: drift, L = 0.02065, aper = 0.075; 
+FE_SCS2:SOLR_D0683: solenoid, CurveFile = "S4_curve.lat", L = 0.6, aper = 0.075, ncurve = 1.0, scl_fac0 = 0.0, use_range = [0.0, 101.0]; 
+SCS2_drift_2: drift, L = 0.24, aper = 0.075; 
+FE_SCS2:DCH_D0688: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_SCS2:DCV_D0688: orbtrim, realpara = 1.0, tm_ykick = 0.00041855730800000003; 
+SCS2_drift_3: drift, L = 0.235, aper = 0.075; 
+
+FE_SCS2:DH_D0696_0: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = 18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_SCS2:DH_D0696_1: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = 18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_SCS2:DH_D0696_2: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = 18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_SCS2:DH_D0696_3: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = 18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_SCS2:DH_D0696_4: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = 18.0, phi1 = 0.0, phi2 = 0.0; 
+
+SCS2_drift_4: drift, L = 0.1623, aper = 0.075; 
+FE_SCS2:DCH_D0702: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_SCS2:DCV_D0702: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+
+SCS2_drift_5: drift, L = 0.1377, aper = 0.075; 
+FE_SCS2:QHE_D0705: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.07466, scl_fac0 = 3669.50732421875, use_range = [0.0, 101.0]; 
+SCS2_drift_6: drift, L = 0.035, aper = 0.075; 
+FE_SCS2:QVE_D0709: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.07466, scl_fac0 = -7060.2138671875, use_range = [0.0, 101.0]; 
+SCS2_drift_7: drift, L = 0.035, aper = 0.075; 
+FE_SCS2:QHE_D0712: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.07466, scl_fac0 = 2754.739013671875, use_range = [0.0, 101.0]; 
+SCS2_drift_8: drift, L = 0.1767523, aper = 0.075; 
+FE_SCS2:SLT_D0716: marker; 
+SCS2_drift_9a: drift, L = 0.09829, aper = 0.075; 
+FE_SCS2:EMS_D0718: marker; 
+SCS2_drift_9b: drift, L = 0.135402, aper = 0.075; 
+FE_SCS2:VD_D0718: marker; 
+SCS2_drift_10: drift, L = 0.073718, aper = 0.075; 
+FE_SCS2:FC_D0717: marker; 
+SCS2_drift_11: drift, L = 0.1758377, aper = 0.075; 
+FE_SCS2:QHE_D0722: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.07466, scl_fac0 = 2754.87646484375, use_range = [0.0, 101.0]; 
+SCS2_drift_12: drift, L = 0.035, aper = 0.075; 
+FE_SCS2:QVE_D0725: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.07466, scl_fac0 = -7060.2197265625, use_range = [0.0, 101.0]; 
+SCS2_drift_13: drift, L = 0.035, aper = 0.075; 
+FE_SCS2:QHE_D0728: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.07466, scl_fac0 = 3669.618896484375, use_range = [0.0, 101.0]; 
+SCS2_drift_14: drift, L = 0.1377, aper = 0.075; 
+FE_SCS2:DCH_D0731: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_SCS2:DCV_D0731: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+SCS2_drift_15: drift, L = 0.1623, aper = 0.075; 
+
+FE_SCS2:DH_D0738_0: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = 18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_SCS2:DH_D0738_1: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = 18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_SCS2:DH_D0738_2: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = 18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_SCS2:DH_D0738_3: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = 18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_SCS2:DH_D0738_4: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = 18.0, phi1 = 0.0, phi2 = 0.0; 
+
+SCS2_drift_16: drift, L = 0.175, aper = 0.075; 
+FE_SCS2:QVE_D0746: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.07466, scl_fac0 = -365.8245544433594, use_range = [0.0, 101.0]; 
+SCS2_drift_17: drift, L = 0.035, aper = 0.075; 
+FE_SCS2:QHE_D0749: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.07466, scl_fac0 = 7.039344787597656, use_range = [0.0, 101.0]; 
+SCS2_drift_18: drift, L = 0.141585, aper = 0.075; 
+FE_SCS2:PM_D0752: marker; 
+FE_SCS2:TMP_D0752: marker; 
+SCS2_drift_19: drift, L = 0.123268, aper = 0.075; 
+SCS2_drift_20: drift, L = 0.09525, aper = 0.075; 
+FE_SCS2:DCH_D0755: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_SCS2:DCV_D0755: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+SCS2_drift_21: drift, L = 0.09525, aper = 0.075; 
+SCS2_drift_22: drift, L = 0.080264, aper = 0.075; 
+SCS2_drift_23: drift, L = 0.754383, aper = 0.075; 
+
+#= LEBT
+
+trg_drift_17: drift, L = 0.175, aper = 0.075; 
+FE_LEBT:QVE_D0767: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = -2098.505859375, use_range = [0.0, 101.0]; 
+trg_drift_18: drift, L = 0.035, aper = 0.075; 
+FE_LEBT:QHE_D0770: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = 1759.6497802734375, use_range = [0.0, 101.0]; 
+trg_drift_19: drift, L = 0.1475, aper = 0.075; 
+FE_LEBT:DCH_D0773: orbtrim, realpara = 1.0, tm_xkick = 0.001048008104; 
+FE_LEBT:DCV_D0773: orbtrim, realpara = 1.0, tm_ykick = -3.8884924e-05; 
+trg_drift_20: drift, L = 0.1475, aper = 0.075; 
+FE_LEBT:QHE_D0776: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = -2904.467041015625, use_range = [0.0, 101.0]; 
+trg_drift_21: drift, L = 0.035, aper = 0.075; 
+FE_LEBT:QVE_D0780: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = 1752.2000732421875, use_range = [0.0, 101.0]; 
+trg_drift_22: drift, L = 0.141585, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0783: marker; 
+trg_drift_23: drift, L = 0.118415, aper = 0.075; 
+FE_LEBT:SOLR_D0787: solenoid, CurveFile = "S4_curve.lat", L = 0.6, aper = 0.075, ncurve = 1.0, scl_fac0 = -0.142543646, use_range = [0.0, 101.0]; 
+trg_drift_24: drift, L = 0.02065, aper = 0.075; 
+FE_LEBT:DCH_D0790: orbtrim, realpara = 1.0, tm_xkick = -0.00046737240600000003; 
+FE_LEBT:DCV_D0790: orbtrim, realpara = 1.0, tm_ykick = -0.00023486699400000004; 
+trg_drift_25: drift, L = 0.6017, aper = 0.075; 
+## Faraday cup1
+FE_LEBT:FC_D0796: marker; 
+trg_drift_26: drift, L = 0.2528, aper = 0.075; 
+FE_LEBT:SOLR_D0802: solenoid, CurveFile = "S4_curve.lat", L = 0.6, aper = 0.075, ncurve = 1.0, scl_fac0 = -0.173355924, use_range = [0.0, 101.0]; 
+trg_drift_27: drift, L = 0.02065, aper = 0.075; 
+FE_LEBT:DCH_D0805: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0805: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_28: drift, L = 0.298889, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0808: marker; 
+trg_drift_29: drift, L = 0.395399, aper = 0.075; 
+## pepper_pot
+FE_LEBT:EMS_D0812: marker; 
+## viewer 1
+FE_LEBT:VD_D0812: marker; 
+trg_drift_30: drift, L = 0.20828, aper = 0.15; 
+## Faraday cup1
+FE_LEBT:FC_D0814: marker; 
+trg_drift_31: drift, L = 0.116933, aper = 0.075; 
+FE_LEBT:SOLR_D0818: solenoid, CurveFile = "S4_curve.lat", L = 0.6, aper = 0.075, ncurve = 1.0, scl_fac0 = -0.230048434, use_range = [0.0, 101.0]; 
+trg_drift_32: drift, L = 0.02065, aper = 0.075; 
+FE_LEBT:DCH_D0821: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0821: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_33: drift, L = 0.273783, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0824: marker; 
+trg_drift_34: drift, L = 0.405568, aper = 0.075; 
+FE_LEBT:DVE_D0833: edipole, L = 1.0, aper = 0.15, asym_fac = 0.0, beta = 0.0050758796841, fringe_x = 0.0, fringe_y = 0.0, phi = 90.0, spher = 1.0, ver = 1.0; 
+trg_drift_35: drift, L = 0.215, aper = 0.075; 
+FE_LEBT:DCH_D0840: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0840: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_36: drift, L = 0.285, aper = 0.075; 
+FE_LEBT:QHE_D0844: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = -1204.6165771484375, use_range = [0.0, 101.0]; 
+trg_drift_37: drift, L = 0.035, aper = 0.075; 
+FE_LEBT:QVE_D0848: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = 3098.178955078125, use_range = [0.0, 101.0]; 
+trg_drift_38: drift, L = 0.035, aper = 0.075; 
+FE_LEBT:QHE_D0851: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = -2594.02978515625, use_range = [0.0, 101.0]; 
+trg_drift_39: drift, L = 0.293016, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0856: marker; 
+trg_drift_40: drift, L = 1.255734, aper = 0.075; 
+FE_LEBT:DCH_D0868: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0868: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_41: drift, L = 0.13, aper = 0.075; 
+FE_LEBT:QVE_D0871: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = 2005.7513427734375, use_range = [0.0, 101.0]; 
+trg_drift_42: drift, L = 0.035, aper = 0.075; 
+FE_LEBT:QHE_D0874: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = -2479.5185546875, use_range = [0.0, 101.0]; 
+trg_drift_43: drift, L = 0.035, aper = 0.075; 
+FE_LEBT:QVE_D0878: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = 450.1318359375, use_range = [0.0, 101.0]; 
+trg_drift_44: drift, L = 0.13, aper = 0.075; 
+FE_LEBT:DCH_D0880: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0880: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_45: drift, L = 0.47473, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0885: marker; 
+trg_drift_46: drift, L = 0.45527, aper = 0.075; 
+FE_LEBT:QVE_D0891: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = 449.99029541015625, use_range = [0.0, 101.0]; 
+trg_drift_47: drift, L = 0.035, aper = 0.075; 
+FE_LEBT:QHE_D0895: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = -2479.630859375, use_range = [0.0, 101.0]; 
+trg_drift_48: drift, L = 0.035, aper = 0.075; 
+FE_LEBT:QVE_D0898: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = 2005.7947998046875, use_range = [0.0, 101.0]; 
+trg_drift_49: drift, L = 0.13, aper = 0.075; 
+FE_LEBT:DCH_D0901: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0901: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_50: drift, L = 1.09348, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0912: marker; 
+trg_drift_51: drift, L = 0.45527, aper = 0.075; 
+FE_LEBT:QHE_D0918: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = -2594.014892578125, use_range = [0.0, 101.0]; 
+trg_drift_52: drift, L = 0.035, aper = 0.075; 
+FE_LEBT:QVE_D0921: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = 3098.339111328125, use_range = [0.0, 101.0]; 
+trg_drift_53: drift, L = 0.035, aper = 0.075; 
+FE_LEBT:QHE_D0924: equad, CurveFile = "EQ7_curve.lat", L = 0.3, aper = 0.075, ncurve = 1.0, radius = 0.0746, scl_fac0 = -1204.6812744140625, use_range = [0.0, 101.0]; 
+trg_drift_54: drift, L = 0.285, aper = 0.075; 
+FE_LEBT:DCH_D0929: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0929: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_55: drift, L = 0.215, aper = 0.075; 
+FE_LEBT:DVE_D0936: edipole, L = 1.0, aper = 0.15, asym_fac = 0.0, beta = 0.0050758796841, fringe_x = 0.0, fringe_y = 0.0, phi = 90.0, spher = 1.0, ver = 1.0; 
+FE_LEBT:NEGP_D0936: orbtrim, realpara = 1.0, xyrotate = 180.0; 
+trg_drift_56: drift, L = 0.405568, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0945: marker; 
+trg_drift_57: drift, L = 0.273783, aper = 0.075; 
+FE_LEBT:DCH_D0948: orbtrim, realpara = 1.0, tm_xkick = -0.000394776492; 
+FE_LEBT:DCV_D0948: orbtrim, realpara = 1.0, tm_ykick = -0.000167573598; 
+trg_drift_58: drift, L = 0.02065, aper = 0.075; 
+FE_LEBT:SOLR_D0951: solenoid, CurveFile = "S4_curve.lat", L = 0.6, aper = 0.075, ncurve = 1.0, scl_fac0 = -0.19178315799999998, use_range = [0.0, 101.0]; 
+trg_drift_59: drift, L = 0.720683, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0961: marker; 
+trg_drift_60: drift, L = 0.298817, aper = 0.075; 
+FE_LEBT:DCH_D0964: orbtrim, realpara = 1.0, tm_xkick = -3.1204578e-05; 
+FE_LEBT:DCV_D0964: orbtrim, realpara = 1.0, tm_ykick = -0.000651209484; 
+trg_drift_61: drift, L = 0.02065, aper = 0.075; 
+FE_LEBT:SOLR_D0967: solenoid, CurveFile = "S4_curve.lat", L = 0.6, aper = 0.075, ncurve = 1.0, scl_fac0 = -0.279854582, use_range = [0.0, 101.0]; 
+trg_drift_62: drift, L = 0.118551, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0972: marker; 
+trg_drift_63: drift, L = 0.515929, aper = 0.075; 
+## viewer 2
+FE_LEBT:VD_D0977: marker; 
+## Faraday cup1
+FE_LEBT:FC_D0977: marker; 
+trg_drift_64: drift, L = 0.22002, aper = 0.075; 
+FE_LEBT:DCH_D0979: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0979: orbtrim, realpara = 1.0, tm_ykick = -0.00015874819200000002; 
+trg_drift_65: drift, L = 0.02065, aper = 0.075; 
+FE_LEBT:SOLR_D0982: solenoid, CurveFile = "S4_curve.lat", L = 0.6, aper = 0.075, ncurve = 1.0, scl_fac0 = -0.327076176, use_range = [0.0, 101.0]; 
+trg_drift_66: drift, L = 0.119999, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0986: marker; 
+trg_drift_67: drift, L = 0.105001, aper = 0.075; 
+## Multi harmonic buncher
+FE_LEBT:CAV_D0987: marker; 
+trg_drift_68: drift, L = 0.146492, aper = 0.075; 
+## beam current monitor 1
+FE_LEBT:BCM_D0989: marker; 
+trg_drift_69: drift, L = 0.317858, aper = 0.075; 
+FE_LEBT:DCH_D0992: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0992: orbtrim, realpara = 1.0, tm_ykick = -0.000131882274; 
+trg_drift_70: drift, L = 0.02065, aper = 0.075; 
+FE_LEBT:SOLR_D0995: solenoid, CurveFile = "S4_curve.lat", L = 0.6, aper = 0.075, ncurve = 1.0, scl_fac0 = -0.354951198, use_range = [0.0, 101.0]; 
+trg_drift_71: drift, L = 0.0, aper = 0.02; 
+## Faraday cup1
+FE_LEBT:FC_D0998: marker; 
+## fast Faraday cup
+FE_LEBT:FFC_D0998: marker; 
+trg_drift_72: drift, L = 0.0, aper = 0.02; 
+## profile monitor 1
+FE_LEBT:PM_D0998: marker; 
+trg_drift_73: drift, L = 0.14825, aper = 0.15; 
+########################################### LEBT end
+ #RFQ section
+
+trg_drift_74: drift, L = 0.03175, aper = 0.15; 
+RFQ_entrance: marker; 
+
+#RFQ inn-wall_match point
+
+
+#########
+SCS2: LINE = (
+SCS2_drift_0,
+#FE_SCS2:DCH_D0680, FE_SCS2:DCV_D0680,
+SCS2_drift_1,
+FE_SCS2:SOLR_D0683, SCS2_drift_2,
+FE_SCS2:DCH_D0688, FE_SCS2:DCV_D0688, SCS2_drift_3,
+FE_SCS2:DH_D0696_0, FE_SCS2:DH_D0696_1, FE_SCS2:DH_D0696_2, FE_SCS2:DH_D0696_3, FE_SCS2:DH_D0696_4, SCS2_drift_4,
+FE_SCS2:DCH_D0702, FE_SCS2:DCV_D0702, SCS2_drift_5,
+FE_SCS2:QHE_D0705, SCS2_drift_6,
+FE_SCS2:QVE_D0709, SCS2_drift_7,
+FE_SCS2:QHE_D0712, SCS2_drift_8,
+FE_SCS2:SLT_D0716, SCS2_drift_9a,
+FE_SCS2:EMS_D0718, SCS2_drift_9b,
+FE_SCS2:VD_D0718, SCS2_drift_10,
+FE_SCS2:FC_D0717, SCS2_drift_11,
+FE_SCS2:QHE_D0722, SCS2_drift_12,
+FE_SCS2:QVE_D0725, SCS2_drift_13,
+FE_SCS2:QHE_D0728, SCS2_drift_14,
+FE_SCS2:DCH_D0731, FE_SCS2:DCV_D0731, SCS2_drift_15,
+FE_SCS2:DH_D0738_0, FE_SCS2:DH_D0738_1, FE_SCS2:DH_D0738_2, FE_SCS2:DH_D0738_3, FE_SCS2:DH_D0738_4, SCS2_drift_16,
+FE_SCS2:QVE_D0746, SCS2_drift_17,
+FE_SCS2:QHE_D0749, SCS2_drift_18,
+FE_SCS2:PM_D0752, FE_SCS2:TMP_D0752, SCS2_drift_19, SCS2_drift_20,
+FE_SCS2:DCH_D0755, FE_SCS2:DCV_D0755, SCS2_drift_21, SCS2_drift_22,SCS2_drift_23
+);
+
+LEBT: LINE = (
+trg_drift_17,
+FE_LEBT:QVE_D0767, trg_drift_18, FE_LEBT:QHE_D0770, trg_drift_19, FE_LEBT:DCH_D0773,
+FE_LEBT:DCV_D0773, trg_drift_20, FE_LEBT:QHE_D0776, trg_drift_21, FE_LEBT:QVE_D0780,
+trg_drift_22, FE_LEBT:PM_D0783, trg_drift_23, FE_LEBT:SOLR_D0787, trg_drift_24,
+FE_LEBT:DCH_D0790, FE_LEBT:DCV_D0790, trg_drift_25, FE_LEBT:FC_D0796, trg_drift_26,
+FE_LEBT:SOLR_D0802, trg_drift_27, FE_LEBT:DCH_D0805, FE_LEBT:DCV_D0805, trg_drift_28,
+FE_LEBT:PM_D0808, trg_drift_29, FE_LEBT:EMS_D0812, FE_LEBT:VD_D0812, trg_drift_30,
+FE_LEBT:FC_D0814, trg_drift_31, FE_LEBT:SOLR_D0818, trg_drift_32, FE_LEBT:DCH_D0821,
+FE_LEBT:DCV_D0821, trg_drift_33, FE_LEBT:PM_D0824, trg_drift_34, FE_LEBT:DVE_D0833,
+trg_drift_35, FE_LEBT:DCH_D0840, FE_LEBT:DCV_D0840, trg_drift_36, FE_LEBT:QHE_D0844,
+trg_drift_37, FE_LEBT:QVE_D0848, trg_drift_38, FE_LEBT:QHE_D0851, trg_drift_39,
+FE_LEBT:PM_D0856, trg_drift_40, FE_LEBT:DCH_D0868, FE_LEBT:DCV_D0868, trg_drift_41,
+FE_LEBT:QVE_D0871, trg_drift_42, FE_LEBT:QHE_D0874, trg_drift_43, FE_LEBT:QVE_D0878,
+trg_drift_44, FE_LEBT:DCH_D0880, FE_LEBT:DCV_D0880, trg_drift_45, FE_LEBT:PM_D0885,
+trg_drift_46, FE_LEBT:QVE_D0891, trg_drift_47, FE_LEBT:QHE_D0895, trg_drift_48,
+FE_LEBT:QVE_D0898, trg_drift_49, FE_LEBT:DCH_D0901, FE_LEBT:DCV_D0901, trg_drift_50,
+FE_LEBT:PM_D0912, trg_drift_51, FE_LEBT:QHE_D0918, trg_drift_52, FE_LEBT:QVE_D0921,
+trg_drift_53, FE_LEBT:QHE_D0924, trg_drift_54, FE_LEBT:DCH_D0929, FE_LEBT:DCV_D0929,
+trg_drift_55, FE_LEBT:DVE_D0936, FE_LEBT:NEGP_D0936, trg_drift_56, FE_LEBT:PM_D0945,
+trg_drift_57, FE_LEBT:DCH_D0948, FE_LEBT:DCV_D0948, trg_drift_58, FE_LEBT:SOLR_D0951,
+trg_drift_59, FE_LEBT:PM_D0961, trg_drift_60, FE_LEBT:DCH_D0964, FE_LEBT:DCV_D0964,
+trg_drift_61, FE_LEBT:SOLR_D0967, trg_drift_62, FE_LEBT:PM_D0972, trg_drift_63,
+FE_LEBT:VD_D0977, FE_LEBT:FC_D0977, trg_drift_64, FE_LEBT:DCH_D0979, FE_LEBT:DCV_D0979,
+trg_drift_65, FE_LEBT:SOLR_D0982, trg_drift_66, FE_LEBT:PM_D0986, trg_drift_67,
+FE_LEBT:CAV_D0987, trg_drift_68, FE_LEBT:BCM_D0989, trg_drift_69, FE_LEBT:DCH_D0992,
+FE_LEBT:DCV_D0992, trg_drift_70, FE_LEBT:SOLR_D0995, trg_drift_71, FE_LEBT:FC_D0998,
+FE_LEBT:FFC_D0998, trg_drift_72, FE_LEBT:PM_D0998, trg_drift_73,
+trg_drift_74, RFQ_entrance);
+
+cell: LINE = (S, SCS2, LEBT);
+USE: cell;

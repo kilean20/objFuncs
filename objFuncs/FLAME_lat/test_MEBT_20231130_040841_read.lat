@@ -1,0 +1,398 @@
+
+#Eng_Data_Dir = dir("data");
+Eng_Data_Dir = dir("/etc/flame/cavity_data/"); 
+
+HdipoleFitMode = "1.0"; 
+MpoleLevel = "2"; 
+Soffset = 105.040775; 
+IonChargeStates = [0.2777777777777778]; 
+IonEk = 504000.0; 
+IonEs = 931494000.0; 
+
+AMU = 931494320.0; # Atomic mass unit [eV/c^2].
+
+Stripper_IonChargeStates = [0.3277310924369748]; 
+Stripper_NCharge = [2660.0]; 
+
+NCharge = [10111.0]; 
+BaryCenter0 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]; 
+S0 = [
+    1.86610377456, 0.000497244730137, 0.00395964899479, 1.71897326056e-05, 0.000265435296201, 1.67553092564e-05, 0.0, 
+    0.000497244730137, 5.74443499846e-06, -5.75154451204e-06, 2.14267978725e-08, -1.69210365517e-07, 2.68534237418e-09, 0.0, 
+    0.00395964899479, -5.75154451204e-06, 1.56269208621, 0.000228157750726, 0.000450122274879, -1.48076671347e-05, 0.0, 
+    1.71897326056e-05, 2.14267978725e-08, 0.000228157750726, 7.12609556294e-06, -3.55879253548e-07, -5.50737593664e-08, 0.0, 
+    0.000265435296201, -1.69210365517e-07, 0.000450122274879, -3.55879253548e-07, 0.0010637772647, 1.84036521703e-06, 0.0, 
+    1.67553092564e-05, 2.68534237418e-09, -1.48076671347e-05, -5.50737593664e-08, 1.84036521703e-06, 1.12264126076e-06, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]; 
+
+sim_type = "MomentMatrix"; 
+S: source, matrix_variable = "S", vector_variable = "BaryCenter"; 
+#RFQ inn-wall
+trg_drift_60: drift, L = 0.03175, aper = 0.15; 
+#
+#RFQ end wall
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! MEBT start
+
+trg_drift_61: drift, L = 0.249796, aper = 0.15; 
+## profile monitor 1
+FE_MEBT:PM_D1053: marker; 
+trg_drift_62: drift, L = 0.142911, aper = 0.015; 
+## beam current monitor 1
+FE_MEBT:BCM_D1055: marker; 
+trg_drift_63: drift, L = 0.123499, aper = 0.015; 
+FE_MEBT:BPM_D1056: bpm; 
+trg_drift_64: drift, L = 0.091279, aper = 0.015; 
+FE_MEBT:Q_D1057: quadrupole, B2 = 10.369071902271381, L = 0.1307, aper = 0.02375, radius = 0.02333; 
+trg_drift_65: drift, L = 0.0694, aper = 0.02375; 
+FE_MEBT:Q_D1060: quadrupole, B2 = -11.55737909279369, L = 0.1805, aper = 0.02375, radius = 0.02333; 
+trg_drift_66: drift, L = 0.0694, aper = 0.02375; 
+##quad with correctors
+#FE_MEBT:Q_D1062_1: quadrupole, L = 0.06535, aper = 0.02375, B2 = 15.0162778574, radius = 0.02375;
+FE_MEBT:Q_D1062: quadrupole, B2 = 11.1355549083382, L = 0.06535, aper = 0.02375, radius = 0.02375; 
+FE_MEBT:DCH_D1062: orbtrim, realpara = 1.0, tm_xkick = 0.00036683775000000005; 
+FE_MEBT:DCV_D1062: orbtrim, realpara = 1.0, tm_ykick = 0.00056296145; 
+#FE_MEBT:Q_D1062_2: quadrupole, L = 0.06535, aper = 0.02375, B2 = 15.0162778574, radius = 0.02375;
+trg_drift_67: drift, L = 0.235566, aper = 0.15; 
+FE_MEBT:CAV_D1066: rfcavity, L = 0.3, aper = 0.015, cavtype = "Generic", datafile = "rebuncher_38_p.lat", f = 80500000.0, phi = -90.0, scl_fac = 0.43773804473876954; 
+trg_drift_68: drift, L = 0.446662, aper = 0.15; 
+FE_MEBT:BPM_D1072: bpm; 
+trg_drift_69: drift, L = 0.091279, aper = 0.015; 
+FE_MEBT:Q_D1074: quadrupole, B2 = 8.62646889361495, L = 0.1307, aper = 0.02375, radius = 0.02333; 
+trg_drift_70: drift, L = 0.0694, aper = 0.02375; 
+FE_MEBT:Q_D1076: quadrupole, B2 = -10.762442247270203, L = 0.1805, aper = 0.02375, radius = 0.02333; 
+trg_drift_71: drift, L = 0.0694, aper = 0.02375; 
+##quad with correctors
+#FE_MEBT:Q_D1078_1: quadrupole, L = 0.06535, aper = 0.02375, B2 = 13.3467590567, radius = 0.02375;
+FE_MEBT:Q_D1078: quadrupole, B2 = 8.9649544818528, L = 0.06535, aper = 0.02375, radius = 0.02375; 
+FE_MEBT:DCH_D1078: orbtrim, realpara = 1.0, tm_xkick = -0.0009032961000000001; 
+FE_MEBT:DCV_D1078: orbtrim, realpara = 1.0, tm_ykick = -0.00099191495; 
+#FE_MEBT:Q_D1078_2: quadrupole, L = 0.06535, aper = 0.02375, B2 = 13.3467590567, radius = 0.02375;
+trg_drift_72: drift, L = 0.681884, aper = 0.15; 
+#
+
+#FE_MEBT:DH_D1086: sbend, L = L, phi = 45.0, phi1 = 0.0, phi2 = 0.0, bg = 0.00507595, aper = 0.02, K = -2.220661;
+
+# This data is based on the excel file. not Morgan's data.
+
+# trg_drift_MEBT1: drift, L = ???, aper = 0.075;
+# jaw collimator
+# FE_BTS:SLT_D1101: marker;
+# trg_drift_MEBT2: drift, L = 0.0, aper = 0.075;
+# viewer 2
+#FE_BTS:VD_D1101: marker;
+
+
+trg_drift_73: drift, L = 0.562001, aper = 0.15; 
+## profile monitor 1
+FE_MEBT:PM_D1092: marker; 
+trg_drift_74: drift, L = 0.226409, aper = 0.15; 
+FE_MEBT:BPM_D1094: bpm; 
+trg_drift_75: drift, L = 0.091279, aper = 0.15; 
+FE_MEBT:Q_D1095: quadrupole, B2 = 3.7246327921669504, L = 0.1307, aper = 0.02375, radius = 0.02333; 
+trg_drift_76: drift, L = 0.0694, aper = 0.02375; 
+FE_MEBT:Q_D1098: quadrupole, B2 = -8.94381605851639, L = 0.1805, aper = 0.02375, radius = 0.02333; 
+trg_drift_77: drift, L = 0.0694, aper = 0.02375; 
+##quad with correctors
+#FE_MEBT:Q_D1100_1: quadrupole, L = 0.06535, aper = 0.02375, B2 = 13.188371263, radius = 0.02375;
+FE_MEBT:Q_D1100: quadrupole, B2 = 9.742699407484768, L = 0.06535, aper = 0.02375, radius = 0.02375; 
+FE_MEBT:DCH_D1100: orbtrim, realpara = 1.0, tm_xkick = -0.0006500451000000001; 
+FE_MEBT:DCV_D1100: orbtrim, realpara = 1.0, tm_ykick = 0.00038106875000000007; 
+#FE_MEBT:Q_D1100_2: quadrupole, L = 0.06535, aper = 0.02375, B2 = 13.188371263, radius = 0.02375;
+trg_drift_78: drift, L = 0.155293, aper = 0.02; 
+## fast Faraday cup
+FE_MEBT:FFC_D1102: marker; 
+trg_drift_79: drift, L = 0.367044, aper = 0.15; 
+FE_MEBT:CAV_D1107: rfcavity, L = 0.3, aper = 0.015, cavtype = "Generic", datafile = "rebuncher_38_p.lat", f = 80500000.0, phi = -90.0, scl_fac = 0.5057907485961914; 
+trg_drift_80: drift, L = 0.220621, aper = 0.02; 
+FE_MEBT:BPM_D1111: bpm; 
+trg_drift_81: drift, L = 0.091279, aper = 0.15; 
+FE_MEBT:Q_D1113: quadrupole, B2 = 4.578480643848263, L = 0.1307, aper = 0.02375, radius = 0.02333; 
+trg_drift_82: drift, L = 0.0694, aper = 0.02375; 
+FE_MEBT:Q_D1115: quadrupole, B2 = -9.353079407661022, L = 0.1805, aper = 0.02375, radius = 0.02333; 
+trg_drift_83: drift, L = 0.0694, aper = 0.02375; 
+##quad with correctors
+#FE_MEBT:Q_D1117_1: quadrupole, L = 0.06535, aper = 0.02375, B2 = 14.3995506086, radius = 0.02375;
+FE_MEBT:Q_D1117: quadrupole, B2 = 9.690650376644609, L = 0.06535, aper = 0.02375, radius = 0.02375; 
+FE_MEBT:DCH_D1117: orbtrim, realpara = 1.0, tm_xkick = 0.0002373005; 
+FE_MEBT:DCV_D1117: orbtrim, realpara = 1.0, tm_ykick = 3.9305300000000005e-05; 
+#FE_MEBT:Q_D1117_2: quadrupole, L = 0.06535, aper = 0.02375, B2 = 14.3995506086, radius = 0.02375;
+trg_drift_84: drift, L = 0.23634, aper = 0.15; 
+## beam current monitor 1
+FE_MEBT:BCM_D1120: marker; 
+trg_drift_85: drift, L = 0.363533, aper = 0.02; 
+#
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! MEBT end
+trg_drift_86: drift, L = 0.028702, aper = 0.15;
+#
+#LS1_CA01:GV_D1124: gate_valve
+trg_drift_87: drift, L = 0.189385, aper = 0.02;
+LS1_CA01:CAV1_D1127: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 0.64, aper = 0.018;
+trg_drift_88: drift, L = 0.068192, aper = 0.02;
+LS1_CA01:BPM_D1129: bpm;
+trg_drift_89: drift, L = 0.102586, aper = 0.02;
+LS1_CA01:SOL1_D1132_1: solenoid, L = 0.0521666666667, B = -4.39998692691, aper = 0.02;
+LS1_CA01:DCH1_D1132_0: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV1_D1132_0: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL1_D1132_2: solenoid, L = 0.0521666666667, B = -4.39998692691, aper = 0.02;
+LS1_CA01:DCH1_D1132_1: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV1_D1132_1: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL1_D1132_3: solenoid, L = 0.0521666666667, B = -4.39998692691, aper = 0.02;
+LS1_CA01:DCH1_D1132_2: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV1_D1132_2: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL1_D1132_4: solenoid, L = 0.0521666666667, B = -4.39998692691, aper = 0.02;
+LS1_CA01:DCH1_D1132_3: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV1_D1132_3: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL1_D1132_5: solenoid, L = 0.0521666666667, B = -4.39998692691, aper = 0.02;
+LS1_CA01:DCH1_D1132_4: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV1_D1132_4: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL1_D1132_6: solenoid, L = 0.0521666666667, B = -4.39998692691, aper = 0.02;
+trg_drift_90: drift, L = 0.117905, aper = 0.02;
+LS1_CA01:CAV2_D1136: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 0.7, aper = 0.018;
+trg_drift_91: drift, L = 0.393556, aper = 0.15;
+LS1_CA01:CAV3_D1142: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 0.76, aper = 0.018;
+trg_drift_92: drift, L = 0.068192, aper = 0.15;
+LS1_CA01:BPM_D1144: bpm;
+trg_drift_93: drift, L = 0.102586, aper = 0.15;
+LS1_CA01:SOL2_D1146_1: solenoid, L = 0.0521666666667, B = -4.71026738098, aper = 0.02;
+LS1_CA01:DCH2_D1146_0: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV2_D1146_0: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL2_D1146_2: solenoid, L = 0.0521666666667, B = -4.71026738098, aper = 0.02;
+LS1_CA01:DCH2_D1146_1: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV2_D1146_1: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL2_D1146_3: solenoid, L = 0.0521666666667, B = -4.71026738098, aper = 0.02;
+LS1_CA01:DCH2_D1146_2: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV2_D1146_2: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL2_D1146_4: solenoid, L = 0.0521666666667, B = -4.71026738098, aper = 0.02;
+LS1_CA01:DCH2_D1146_3: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV2_D1146_3: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL2_D1146_5: solenoid, L = 0.0521666666667, B = -4.71026738098, aper = 0.02;
+LS1_CA01:DCH2_D1146_4: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV2_D1146_4: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL2_D1146_6: solenoid, L = 0.0521666666667, B = -4.71026738098, aper = 0.02;
+trg_drift_94: drift, L = 0.117905, aper = 0.15;
+LS1_CA01:CAV4_D1150: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 0.82, aper = 0.018;
+trg_drift_95: drift, L = 0.189385, aper = 0.15;
+#
+#LS1_CA01:GV_D1153: gate_valve
+trg_drift_96: drift, L = 0.132204, aper = 0.02;
+LS1_WA01:BPM_D1155: bpm;
+trg_drift_97: drift, L = 0.3052, aper = 0.02;
+#
+#LS1_CA02:GV_D1158: gate_valve
+trg_drift_98: drift, L = 0.189384, aper = 0.02;
+LS1_CA02:CAV1_D1161: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 0.88, aper = 0.018;
+trg_drift_99: drift, L = 0.068192, aper = 0.02;
+LS1_CA02:BPM_D1163: bpm;
+trg_drift_100: drift, L = 0.102586, aper = 0.02;
+LS1_CA02:SOL1_D1165_1: solenoid, L = 0.0521666666667, B = -5.16587858225, aper = 0.02;
+LS1_CA02:DCH1_D1165_0: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV1_D1165_0: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL1_D1165_2: solenoid, L = 0.0521666666667, B = -5.16587858225, aper = 0.02;
+LS1_CA02:DCH1_D1165_1: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV1_D1165_1: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL1_D1165_3: solenoid, L = 0.0521666666667, B = -5.16587858225, aper = 0.02;
+LS1_CA02:DCH1_D1165_2: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV1_D1165_2: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL1_D1165_4: solenoid, L = 0.0521666666667, B = -5.16587858225, aper = 0.02;
+LS1_CA02:DCH1_D1165_3: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV1_D1165_3: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL1_D1165_5: solenoid, L = 0.0521666666667, B = -5.16587858225, aper = 0.02;
+LS1_CA02:DCH1_D1165_4: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV1_D1165_4: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL1_D1165_6: solenoid, L = 0.0521666666667, B = -5.16587858225, aper = 0.02;
+trg_drift_101: drift, L = 0.117905, aper = 0.02;
+LS1_CA02:CAV2_D1169: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 0.94, aper = 0.018;
+trg_drift_102: drift, L = 0.393556, aper = 0.15;
+LS1_CA02:CAV3_D1176: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 1.0, aper = 0.018;
+trg_drift_103: drift, L = 0.068192, aper = 0.15;
+LS1_CA02:BPM_D1177: bpm;
+trg_drift_104: drift, L = 0.102586, aper = 0.15;
+LS1_CA02:SOL2_D1180_1: solenoid, L = 0.0521666666667, B = -5.56368581281, aper = 0.02;
+LS1_CA02:DCH2_D1180_0: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV2_D1180_0: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL2_D1180_2: solenoid, L = 0.0521666666667, B = -5.56368581281, aper = 0.02;
+LS1_CA02:DCH2_D1180_1: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV2_D1180_1: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL2_D1180_3: solenoid, L = 0.0521666666667, B = -5.56368581281, aper = 0.02;
+LS1_CA02:DCH2_D1180_2: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV2_D1180_2: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL2_D1180_4: solenoid, L = 0.0521666666667, B = -5.56368581281, aper = 0.02;
+LS1_CA02:DCH2_D1180_3: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV2_D1180_3: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL2_D1180_5: solenoid, L = 0.0521666666667, B = -5.56368581281, aper = 0.02;
+LS1_CA02:DCH2_D1180_4: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV2_D1180_4: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL2_D1180_6: solenoid, L = 0.0521666666667, B = -5.56368581281, aper = 0.02;
+trg_drift_105: drift, L = 0.117905, aper = 0.15;
+LS1_CA02:CAV4_D1184: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 1.0, aper = 0.018;
+trg_drift_106: drift, L = 0.189385, aper = 0.15;
+#
+#LS1_CA02:GV_D1187: gate_valve
+trg_drift_107: drift, L = 0.132204, aper = 0.02;
+LS1_WA02:BPM_D1188: bpm;
+trg_drift_108: drift, L = 0.3052, aper = 0.02;
+#
+#LS1_CA03:GV_D1191: gate_valve
+trg_drift_109: drift, L = 0.189384, aper = 0.02;
+LS1_CA03:CAV1_D1195: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 1.0, aper = 0.018;
+trg_drift_110: drift, L = 0.068192, aper = 0.02;
+LS1_CA03:BPM_D1196: bpm;
+trg_drift_111: drift, L = 0.102586, aper = 0.02;
+LS1_CA03:SOL1_D1199_1: solenoid, L = 0.0521666666667, B = -5.7890336513, aper = 0.02;
+LS1_CA03:DCH1_D1199_0: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV1_D1199_0: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL1_D1199_2: solenoid, L = 0.0521666666667, B = -5.7890336513, aper = 0.02;
+LS1_CA03:DCH1_D1199_1: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV1_D1199_1: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL1_D1199_3: solenoid, L = 0.0521666666667, B = -5.7890336513, aper = 0.02;
+LS1_CA03:DCH1_D1199_2: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV1_D1199_2: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL1_D1199_4: solenoid, L = 0.0521666666667, B = -5.7890336513, aper = 0.02;
+LS1_CA03:DCH1_D1199_3: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV1_D1199_3: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL1_D1199_5: solenoid, L = 0.0521666666667, B = -5.7890336513, aper = 0.02;
+LS1_CA03:DCH1_D1199_4: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV1_D1199_4: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL1_D1199_6: solenoid, L = 0.0521666666667, B = -5.7890336513, aper = 0.02;
+trg_drift_112: drift, L = 0.117905, aper = 0.02;
+LS1_CA03:CAV2_D1203: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 1.0, aper = 0.018;
+trg_drift_113: drift, L = 0.393556, aper = 0.15;
+LS1_CA03:CAV3_D1209: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 1.0, aper = 0.018;
+trg_drift_114: drift, L = 0.068192, aper = 0.15;
+LS1_CA03:BPM_D1211: bpm;
+trg_drift_115: drift, L = 0.102586, aper = 0.15;
+LS1_CA03:SOL2_D1214_1: solenoid, L = 0.0521666666667, B = -6.35061834488, aper = 0.02;
+LS1_CA03:DCH2_D1214_0: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV2_D1214_0: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL2_D1214_2: solenoid, L = 0.0521666666667, B = -6.35061834488, aper = 0.02;
+LS1_CA03:DCH2_D1214_1: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV2_D1214_1: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL2_D1214_3: solenoid, L = 0.0521666666667, B = -6.35061834488, aper = 0.02;
+LS1_CA03:DCH2_D1214_2: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV2_D1214_2: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL2_D1214_4: solenoid, L = 0.0521666666667, B = -6.35061834488, aper = 0.02;
+LS1_CA03:DCH2_D1214_3: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV2_D1214_3: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL2_D1214_5: solenoid, L = 0.0521666666667, B = -6.35061834488, aper = 0.02;
+LS1_CA03:DCH2_D1214_4: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV2_D1214_4: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL2_D1214_6: solenoid, L = 0.0521666666667, B = -6.35061834488, aper = 0.02;
+trg_drift_116: drift, L = 0.117905, aper = 0.15;
+LS1_CA03:CAV4_D1218: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -45.0, scl_fac = 1.0, aper = 0.018;
+trg_drift_117: drift, L = 0.189385, aper = 0.15;
+#
+#LS1_CA03:GV_D1221: gate_valve
+trg_drift_118: drift, L = 0.132204, aper = 0.02;
+LS1_WA03:BPM_D1222: bpm;
+trg_drift_119: drift, L = 0.145282, aper = 0.15;
+#
+
+# D-station line
+trg_drift_d1: drift, L = 0.036116, aper = 0.02;
+# Halo ring
+LS1_WA03:BLM_D1224: marker;
+trg_drift_d2: drift, L = 0.40128, aper = 0.02;
+# longitudinal profile monitor
+LS1_D:LPM_D1228: marker;
+trg_drift_d3: drift, L = 0.1337564, aper = 0.02;
+# beam current monitor
+LS1_D:BCM_D1229: marker;
+trg_drift_d4: drift, L = 0.1234948, aper = 0.02;
+# beam position monitor
+LS1_D:BPM_D1231: bpm;
+trg_drift_d5: drift, L = 0.145288, aper = 0.02;
+# wire scanner
+LS1_D:PM_D1232: marker;
+trg_drift_d6: drift, L = 0.371856, aper = 0.02;
+# silicon detector
+LS1_D:SiD_D1236: marker;
+trg_drift_d7: drift, L = 0.2361946, aper = 0.02;
+# beam position monitor
+LS1_D:BPM_D1238: bpm;
+trg_drift_d8: drift, L = 0.145288, aper = 0.02;
+# wire scanner
+LS1_D:PM_D1240: marker;
+trg_drift_d9: drift, L = 0.0361442, aper = 0.02;
+# Halo ring
+LS1_D:BLM_D1240: marker;
+trg_drift_d10: drift, L = 0.1150366, aper = 0.02;
+# beam current monitor
+LS1_D:BCM_D1241: marker;
+trg_drift_d11: drift, L = 0.263017, aper = 0.02;
+# Faraday cup
+LS1_D:FC_D1244: marker;
+# D-station end
+# example of LINE
+#trg: LINE = (
+#trg_drift_d1, LS1_WA03:BLM_D1224, trg_drift_d2, LS1_D:LPM_D1228, trg_drift_d3, LS1_D:BCM_D1229, trg_drift_d4, LS1_D:BPM_D1231,
+#trg_drift_d5, LS1_D:PM_D1232, trg_drift_d6, LS1_D:SiD_D1236, trg_drift_d7, LS1_D:BPM_D1238, trg_drift_d8, LS1_D:PM_D1240,
+#trg_drift_d9, LS1_D:BLM_D1240,trg_drift_d10, LS1_D:BCM_D1241,trg_drift_d11, LS1_D:FC_D1244);
+
+
+trg: LINE = (
+trg_drift_60, trg_drift_61, FE_MEBT:PM_D1053, trg_drift_62, FE_MEBT:BCM_D1055,
+trg_drift_63, FE_MEBT:BPM_D1056, trg_drift_64, FE_MEBT:Q_D1057, trg_drift_65,
+FE_MEBT:Q_D1060, trg_drift_66, FE_MEBT:Q_D1062, FE_MEBT:DCH_D1062, FE_MEBT:DCV_D1062,
+FE_MEBT:Q_D1062, trg_drift_67, FE_MEBT:CAV_D1066, trg_drift_68, FE_MEBT:BPM_D1072,
+trg_drift_69, FE_MEBT:Q_D1074, trg_drift_70, FE_MEBT:Q_D1076, trg_drift_71,
+FE_MEBT:Q_D1078, FE_MEBT:DCH_D1078, FE_MEBT:DCV_D1078, FE_MEBT:Q_D1078, trg_drift_72,
+trg_drift_73, FE_MEBT:PM_D1092, trg_drift_74, FE_MEBT:BPM_D1094, trg_drift_75,
+FE_MEBT:Q_D1095, trg_drift_76, FE_MEBT:Q_D1098, trg_drift_77, FE_MEBT:Q_D1100,
+FE_MEBT:DCH_D1100, FE_MEBT:DCV_D1100, FE_MEBT:Q_D1100, trg_drift_78, FE_MEBT:FFC_D1102,
+trg_drift_79, FE_MEBT:CAV_D1107, trg_drift_80, FE_MEBT:BPM_D1111, trg_drift_81,
+FE_MEBT:Q_D1113, trg_drift_82, FE_MEBT:Q_D1115, trg_drift_83, FE_MEBT:Q_D1117,
+FE_MEBT:DCH_D1117, FE_MEBT:DCV_D1117, FE_MEBT:Q_D1117, trg_drift_84, FE_MEBT:BCM_D1120,
+trg_drift_85
+);
+
+trg2: LINE = (
+trg_drift_60, trg_drift_61, FE_MEBT:PM_D1053, trg_drift_62, FE_MEBT:BCM_D1055,
+trg_drift_63, FE_MEBT:BPM_D1056, trg_drift_64, FE_MEBT:Q_D1057, trg_drift_65,
+FE_MEBT:Q_D1060, trg_drift_66, FE_MEBT:Q_D1062, FE_MEBT:DCH_D1062, FE_MEBT:DCV_D1062,
+FE_MEBT:Q_D1062, trg_drift_67, FE_MEBT:CAV_D1066, trg_drift_68, FE_MEBT:BPM_D1072,
+trg_drift_69, FE_MEBT:Q_D1074, trg_drift_70, FE_MEBT:Q_D1076, trg_drift_71,
+FE_MEBT:Q_D1078, FE_MEBT:DCH_D1078, FE_MEBT:DCV_D1078, FE_MEBT:Q_D1078, trg_drift_72,
+trg_drift_73, FE_MEBT:PM_D1092, trg_drift_74, FE_MEBT:BPM_D1094, trg_drift_75,
+FE_MEBT:Q_D1095, trg_drift_76, FE_MEBT:Q_D1098, trg_drift_77, FE_MEBT:Q_D1100,
+FE_MEBT:DCH_D1100, FE_MEBT:DCV_D1100, FE_MEBT:Q_D1100, trg_drift_78, FE_MEBT:FFC_D1102,
+trg_drift_79, FE_MEBT:CAV_D1107, trg_drift_80, FE_MEBT:BPM_D1111, trg_drift_81,
+FE_MEBT:Q_D1113, trg_drift_82, FE_MEBT:Q_D1115, trg_drift_83, FE_MEBT:Q_D1117,
+FE_MEBT:DCH_D1117, FE_MEBT:DCV_D1117, FE_MEBT:Q_D1117, trg_drift_84, FE_MEBT:BCM_D1120,
+trg_drift_85, trg_drift_86, trg_drift_87, LS1_CA01:CAV1_D1127, trg_drift_88,
+LS1_CA01:BPM_D1129, trg_drift_89, LS1_CA01:SOL1_D1132_1, LS1_CA01:DCH1_D1132_0, LS1_CA01:DCV1_D1132_0,
+LS1_CA01:SOL1_D1132_2, LS1_CA01:DCH1_D1132_1, LS1_CA01:DCV1_D1132_1, LS1_CA01:SOL1_D1132_3, LS1_CA01:DCH1_D1132_2,
+LS1_CA01:DCV1_D1132_2, LS1_CA01:SOL1_D1132_4, LS1_CA01:DCH1_D1132_3, LS1_CA01:DCV1_D1132_3, LS1_CA01:SOL1_D1132_5,
+LS1_CA01:DCH1_D1132_4, LS1_CA01:DCV1_D1132_4, LS1_CA01:SOL1_D1132_6, trg_drift_90, LS1_CA01:CAV2_D1136,
+trg_drift_91, LS1_CA01:CAV3_D1142, trg_drift_92, LS1_CA01:BPM_D1144, trg_drift_93,
+LS1_CA01:SOL2_D1146_1, LS1_CA01:DCH2_D1146_0, LS1_CA01:DCV2_D1146_0, LS1_CA01:SOL2_D1146_2, LS1_CA01:DCH2_D1146_1,
+LS1_CA01:DCV2_D1146_1, LS1_CA01:SOL2_D1146_3, LS1_CA01:DCH2_D1146_2, LS1_CA01:DCV2_D1146_2, LS1_CA01:SOL2_D1146_4,
+LS1_CA01:DCH2_D1146_3, LS1_CA01:DCV2_D1146_3, LS1_CA01:SOL2_D1146_5, LS1_CA01:DCH2_D1146_4, LS1_CA01:DCV2_D1146_4,
+LS1_CA01:SOL2_D1146_6, trg_drift_94, LS1_CA01:CAV4_D1150, trg_drift_95, trg_drift_96,
+LS1_WA01:BPM_D1155, trg_drift_97, trg_drift_98, LS1_CA02:CAV1_D1161, trg_drift_99,
+LS1_CA02:BPM_D1163, trg_drift_100, LS1_CA02:SOL1_D1165_1, LS1_CA02:DCH1_D1165_0, LS1_CA02:DCV1_D1165_0,
+LS1_CA02:SOL1_D1165_2, LS1_CA02:DCH1_D1165_1, LS1_CA02:DCV1_D1165_1, LS1_CA02:SOL1_D1165_3, LS1_CA02:DCH1_D1165_2,
+LS1_CA02:DCV1_D1165_2, LS1_CA02:SOL1_D1165_4, LS1_CA02:DCH1_D1165_3, LS1_CA02:DCV1_D1165_3, LS1_CA02:SOL1_D1165_5,
+LS1_CA02:DCH1_D1165_4, LS1_CA02:DCV1_D1165_4, LS1_CA02:SOL1_D1165_6, trg_drift_101, LS1_CA02:CAV2_D1169,
+trg_drift_102, LS1_CA02:CAV3_D1176, trg_drift_103, LS1_CA02:BPM_D1177, trg_drift_104,
+LS1_CA02:SOL2_D1180_1, LS1_CA02:DCH2_D1180_0, LS1_CA02:DCV2_D1180_0, LS1_CA02:SOL2_D1180_2, LS1_CA02:DCH2_D1180_1,
+LS1_CA02:DCV2_D1180_1, LS1_CA02:SOL2_D1180_3, LS1_CA02:DCH2_D1180_2, LS1_CA02:DCV2_D1180_2, LS1_CA02:SOL2_D1180_4,
+LS1_CA02:DCH2_D1180_3, LS1_CA02:DCV2_D1180_3, LS1_CA02:SOL2_D1180_5, LS1_CA02:DCH2_D1180_4, LS1_CA02:DCV2_D1180_4,
+LS1_CA02:SOL2_D1180_6, trg_drift_105, LS1_CA02:CAV4_D1184, trg_drift_106, trg_drift_107,
+LS1_WA02:BPM_D1188, trg_drift_108, trg_drift_109, LS1_CA03:CAV1_D1195, trg_drift_110,
+LS1_CA03:BPM_D1196, trg_drift_111, LS1_CA03:SOL1_D1199_1, LS1_CA03:DCH1_D1199_0, LS1_CA03:DCV1_D1199_0,
+LS1_CA03:SOL1_D1199_2, LS1_CA03:DCH1_D1199_1, LS1_CA03:DCV1_D1199_1, LS1_CA03:SOL1_D1199_3, LS1_CA03:DCH1_D1199_2,
+LS1_CA03:DCV1_D1199_2, LS1_CA03:SOL1_D1199_4, LS1_CA03:DCH1_D1199_3, LS1_CA03:DCV1_D1199_3, LS1_CA03:SOL1_D1199_5,
+LS1_CA03:DCH1_D1199_4, LS1_CA03:DCV1_D1199_4, LS1_CA03:SOL1_D1199_6, trg_drift_112, LS1_CA03:CAV2_D1203,
+trg_drift_113, LS1_CA03:CAV3_D1209, trg_drift_114, LS1_CA03:BPM_D1211, trg_drift_115,
+LS1_CA03:SOL2_D1214_1, LS1_CA03:DCH2_D1214_0, LS1_CA03:DCV2_D1214_0, LS1_CA03:SOL2_D1214_2, LS1_CA03:DCH2_D1214_1,
+LS1_CA03:DCV2_D1214_1, LS1_CA03:SOL2_D1214_3, LS1_CA03:DCH2_D1214_2, LS1_CA03:DCV2_D1214_2, LS1_CA03:SOL2_D1214_4,
+LS1_CA03:DCH2_D1214_3, LS1_CA03:DCV2_D1214_3, LS1_CA03:SOL2_D1214_5, LS1_CA03:DCH2_D1214_4, LS1_CA03:DCV2_D1214_4,
+LS1_CA03:SOL2_D1214_6, trg_drift_116, LS1_CA03:CAV4_D1218, trg_drift_117, trg_drift_118,
+LS1_WA03:BPM_D1222, trg_drift_119,
+trg_drift_d1, LS1_WA03:BLM_D1224, trg_drift_d2, LS1_D:LPM_D1228, trg_drift_d3, LS1_D:BCM_D1229, trg_drift_d4, LS1_D:BPM_D1231,
+trg_drift_d5, LS1_D:PM_D1232, trg_drift_d6, LS1_D:SiD_D1236, trg_drift_d7, LS1_D:BPM_D1238, trg_drift_d8, LS1_D:PM_D1240,
+trg_drift_d9, LS1_D:BLM_D1240,trg_drift_d10, LS1_D:BCM_D1241,trg_drift_d11, LS1_D:FC_D1244
+);
+cell: LINE= (S,trg);
+USE: cell;

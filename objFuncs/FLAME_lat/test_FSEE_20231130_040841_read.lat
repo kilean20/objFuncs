@@ -1,0 +1,129 @@
+
+#Eng_Data_Dir = dir("data");
+#Eng_Data_Dir = dir("/media/sf_share/software/flamedata/data");
+IonEs = 931494000.0; 
+AMU = 931494320.0; # Atomic mass unit [eV/c^2].
+MpoleLevel = "2"; 
+HdipoleFitMode = 1.0; 
+Soffset = 105.040775; 
+IonChargeStates = [0.2777777777777778]; 
+IonEk = 504000.0; 
+
+#Stripper down stream Charge States and amount; the latter modeled by Baron's formula.
+#Stripper_IonChargeStates = [76.0/238.0, 77.0/238.0, 78.0/238.0, 79.0/238.0, 80.0/238.0];
+#Stripper_NCharge         = [2660.0, 4360.0, 5300.0, 5090.0, 3230.0];
+
+#Stripper_IonChargeStates = [78.0/238.0];
+Stripper_IonChargeStates = [0.225]; 
+
+Stripper_NCharge = [2660.0]; 
+
+#NCharge = [10111, 10531];
+NCharge = [10111.0]; 
+BaryCenter0 = [0.000480749968354, 1.35830707504e-05, 0.0113194424045, 1.18500643894e-05, -0.00523682551218, -0.000174849385123, 1.0]; 
+S0 = [
+    1.92827717, -0.00255743805, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    -0.00255743805, 1.08165001e-05, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    0.0, 0.0, 4.41825403, -0.000554674693, 0.0, 0.0, 0.0, 
+    0.0, 0.0, -0.000554674693, 3.05186865e-06, 0.0, 0.0, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 0.0026224008, -6.0671624e-06, 0.0, 
+    0.0, 0.0, 0.0, 0.0, -6.0671624e-06, 3.06462347e-06, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]; 
+
+
+sim_type = "MomentMatrix"; 
+S: source, matrix_variable = "S", vector_variable = "BaryCenter"; 
+
+###############
+# FSEE line
+###############
+#FS1_SEE:DH_D2435_0: sbend, L = 0.330050488198, aper = 0.15, bg = 0.188915, phi = 3.5, phi1 = 0.0, phi2 = 0.0;
+#FS1_SEE:DH_D2435_1: sbend, L = 0.330050488198, aper = 0.15, bg = 0.188915, phi = 3.5, phi1 = 0.0, phi2 = 0.0;
+#FS1_SEE:DH_D2435_2: sbend, L = 0.330050488198, aper = 0.15, bg = 0.188915, phi = 3.5, phi1 = 0.0, phi2 = 0.0;
+#FS1_SEE:DH_D2435_3: sbend, L = 0.330050488198, aper = 0.15, bg = 0.188915, phi = 3.5, phi1 = 0.0, phi2 = 0.0;
+#FS1_SEE:DH_D2435_4: sbend, L = 0.330050488198, aper = 0.15, bg = 0.188915, phi = 3.5, phi1 = 0.0, phi2 = 0.0;
+#FS1_SEE:drift_001: drift, L = 0.181064, aper = 0.025;
+#FS1_SEE:GV_D2445: drift, L = 0.057404, aper = 0.025;
+#FS1_SEE:drift_002: drift, L = 0.108788, aper = 0.025;
+FS1_SEE:FOIL_D2446: marker; 
+FS1_SEE:FOIL_D2447: marker; 
+FS1_SEE:drift_003: drift, L = 0.10416, aper = 0.025; 
+FS1_SEE:drift_004: drift, L = 0.096602, aper = 0.025; 
+FS1_SEE:BPM_D2449: bpm; 
+FS1_SEE:drift_005: drift, L = 0.047797, aper = 0.025; 
+FS1_SEE:drift_006: drift, L = 0.24424, aper = 0.025; 
+FS1_SEE:drift_007: drift, L = 0.2, aper = 0.025; 
+FS1_SEE:drift_008: drift, L = 0.036297, aper = 0.025; 
+FS1_SEE:drift_009: drift, L = 0.278648, aper = 0.025; 
+FS1_SEE:drift_010: drift, L = 0.1, aper = 0.025; 
+FS1_SEE:Q_D2459: quadrupole, B2 = 0.0, L = 0.33, aper = 0.05, radius = 0.05; 
+FS1_SEE:drift_011: drift, L = 0.097567, aper = 0.025; 
+FS1_SEE:CLLM_D2462: drift, L = 0.0, aper = 0.025; 
+FS1_SEE:drift_012: drift, L = 0.422433, aper = 0.025; 
+FS1_SEE:Q_D2468: quadrupole, B2 = -0.003983700000000001, L = 0.33, aper = 0.05, radius = 0.05; 
+FS1_SEE:drift_013: drift, L = 0.4, aper = 0.025; 
+FS1_SEE:DCH_D2473: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FS1_SEE:DCV_D2473: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+FS1_SEE:drift_014: drift, L = 0.61985, aper = 0.025; 
+FS1_SEE:PM_D2480: marker; 
+FS1_SEE:drift_015: drift, L = 0.44205, aper = 0.025; 
+FS1_SEE:DCH_D2484: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FS1_SEE:DCV_D2484: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+FS1_SEE:drift_016: drift, L = 0.2081, aper = 0.025; 
+FS1_SEE:CLLM_D2486: drift, L = 0.0, aper = 0.025; 
+FS1_SEE:drift_017: drift, L = 0.01, aper = 0.025; 
+FS1_SEE:drift_018: drift, L = 0.067625, aper = 0.025; 
+FS1_SEE:BPM_D2487: bpm; 
+FS1_SEE:drift_019: drift, L = 0.152375, aper = 0.05; 
+FS1_SEE:drift_020: drift, L = 0.1, aper = 0.05; 
+FS1_SEE:drift_021: drift, L = 0.2, aper = 0.05; 
+FS1_SEE:FC_D2490: marker; 
+FS1_SEE:drift_022: drift, L = 0.2, aper = 0.05; 
+FS1_SEE:drift_023: drift, L = 1.5, aper = 0.1; 
+FS1_SEE:O_D2512: drift, L = 0.7, aper = 0.1; 
+FS1_SEE:drift_024: drift, L = 0.3, aper = 0.1; 
+FS1_SEE:Q_D2521: quadrupole, B2 = 0.0, L = 0.55, aper = 0.1, radius = 0.1; 
+FS1_SEE:drift_025: drift, L = 0.35, aper = 0.1; 
+FS1_SEE:Q_D2530: quadrupole, B2 = -0.00033999000000000003, L = 0.55, aper = 0.1, radius = 0.1; 
+FS1_SEE:drift_026: drift, L = 0.55, aper = 0.1; 
+FS1_SEE:O_D2542: drift, L = 0.7, aper = 0.1; 
+FS1_SEE:drift_027: drift, L = 0.8095, aper = 0.1; 
+FS1_SEE:drift_028: drift, L = 1.0, aper = 0.1; 
+FS1_SEE:drift_029: drift, L = 0.1905, aper = 0.1; 
+FS1_SEE:FC_D2569: marker; 
+FS1_SEE:VD_D2569: marker; 
+FS1_SEE:drift_030: drift, L = 0.1905, aper = 0.1; 
+FS1_SEE:drift_031: drift, L = 1.0, aper = 0.1; 
+FS1_SEE:drift_032: drift, L = 1.738205, aper = 0.1; 
+FS1_SEE:drift_033: drift, L = 0.084963, aper = 0.1; 
+FS1_SEE:drift_034: drift, L = 0.1905, aper = 0.1; 
+FS1_SEE:drift_035: drift, L = 0.1905, aper = 0.1; 
+FS1_SEE:drift_036: drift, L = 0.274333, aper = 0.1; 
+FS1_SEE:FOIL_D2596: marker; 
+FS1_SEE:drift_037: drift, L = 0.1, aper = 0.1; 
+FS1_SEE:SiD1_D2597: marker; 
+FS1_SEE:VD_D2597: marker; 
+############
+
+
+
+FSEE: LINE = (
+#FS1_SEE:DH_D2435_0, FS1_SEE:DH_D2435_1, FS1_SEE:DH_D2435_2, FS1_SEE:DH_D2435_3, FS1_SEE:DH_D2435_4,
+#FS1_SEE:drift_001, FS1_SEE:GV_D2445, FS1_SEE:drift_002,
+FS1_SEE:FOIL_D2446, FS1_SEE:FOIL_D2447,
+FS1_SEE:drift_003, FS1_SEE:drift_004, FS1_SEE:BPM_D2449, FS1_SEE:drift_005, FS1_SEE:drift_006,
+FS1_SEE:drift_007, FS1_SEE:drift_008, FS1_SEE:drift_009, FS1_SEE:drift_010, FS1_SEE:Q_D2459,
+FS1_SEE:drift_011, FS1_SEE:CLLM_D2462, FS1_SEE:drift_012, FS1_SEE:Q_D2468, FS1_SEE:drift_013,
+FS1_SEE:DCH_D2473, FS1_SEE:DCV_D2473, FS1_SEE:drift_014, FS1_SEE:PM_D2480, FS1_SEE:drift_015,
+FS1_SEE:DCH_D2484, FS1_SEE:DCV_D2484, FS1_SEE:drift_016, FS1_SEE:CLLM_D2486, FS1_SEE:drift_017,
+FS1_SEE:drift_018, FS1_SEE:BPM_D2487, FS1_SEE:drift_019, FS1_SEE:drift_020, FS1_SEE:drift_021,
+FS1_SEE:FC_D2490, FS1_SEE:drift_022, FS1_SEE:drift_023, FS1_SEE:O_D2512, FS1_SEE:drift_024,
+FS1_SEE:Q_D2521, FS1_SEE:drift_025, FS1_SEE:Q_D2530, FS1_SEE:drift_026, FS1_SEE:O_D2542,
+FS1_SEE:drift_027, FS1_SEE:drift_028, FS1_SEE:drift_029, FS1_SEE:FC_D2569, FS1_SEE:VD_D2569,
+FS1_SEE:drift_030, FS1_SEE:drift_031, FS1_SEE:drift_032, FS1_SEE:drift_033, FS1_SEE:drift_034,
+FS1_SEE:drift_035, FS1_SEE:drift_036, FS1_SEE:FOIL_D2596, FS1_SEE:drift_037, FS1_SEE:SiD1_D2597,
+FS1_SEE:VD_D2597
+);
+
+cell: LINE= (S,FSEE);
+USE: cell;

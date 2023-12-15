@@ -1,0 +1,530 @@
+
+#Eng_Data_Dir = dir("data");
+Eng_Data_Dir = dir("/etc/flame/cavity_data/"); 
+
+HdipoleFitMode = 1.0; 
+Soffset = 105.040775; 
+IonChargeStates = [0.2777777777777778]; 
+IonEk = 504000.0; 
+IonEs = 931494000.0; 
+
+AMU = 931494320.0; # Atomic mass unit [eV/c^2].
+MpoleLevel = "2"; 
+
+Stripper_IonChargeStates = [0.3277310924369748]; 
+Stripper_NCharge = [2660.0]; 
+
+NCharge = [10111.0]; 
+BaryCenter0 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]; 
+
+S0 = [
+    1.92827717, -0.00255743805, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    -0.00255743805, 1.08165001e-05, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    0.0, 0.0, 4.41825403, -0.000554674693, 0.0, 0.0, 0.0, 
+    0.0, 0.0, -0.000554674693, 3.05186865e-06, 0.0, 0.0, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 0.0026224008, -6.0671624e-06, 0.0, 
+    0.0, 0.0, 0.0, 0.0, -6.0671624e-06, 3.06462347e-06, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]; 
+
+sim_type = "MomentMatrix"; 
+S: source, matrix_variable = "S", vector_variable = "BaryCenter"; 
+#RFQ inn-wall
+trg_drift_60: drift, L = 0.03175, aper = 0.15;
+#
+#RFQ end wall
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! MEBT start
+
+trg_drift_61: drift, L = 0.249796, aper = 0.15; 
+## profile monitor 1
+FE_MEBT:PM_D1053: marker; 
+trg_drift_62: drift, L = 0.142911, aper = 0.015; 
+## beam current monitor 1
+FE_MEBT:BCM_D1055: marker; 
+trg_drift_63: drift, L = 0.123499, aper = 0.015; 
+FE_MEBT:BPM_D1056: bpm; 
+
+#-------------------------------------------------------------------------------------------------
+# Thick lens model region
+#trg_drift_64: drift, L = 0.091279, aper = 0.015;
+#FE_MEBT:Q_D1057: quadrupole, L = 0.1307, aper = 0.02375, B2 = 17.2972131017, radius = 0.02333;
+#trg_drift_65: drift, L = 0.0694, aper = 0.02375;
+#FE_MEBT:Q_D1060: quadrupole, L = 0.1805, aper = 0.02375, B2 = -18.9252196463, radius = 0.02333;
+#trg_drift_66: drift, L = 0.0694, aper = 0.02375;
+##quad with correctors
+#FE_MEBT:Q_D1062_1: quadrupole, L = 0.06535, aper = 0.02375, B2 = 15.0162778574, radius = 0.02375;
+#FE_MEBT:DCH_D1062: orbtrim, realpara = 1, tm_xkick = 0.0;
+#FE_MEBT:DCV_D1062: orbtrim, realpara = 1, tm_ykick = 0.0;
+#FE_MEBT:Q_D1062_2: quadrupole, L = 0.06535, aper = 0.02375, B2 = 15.0162778574, radius = 0.02375;
+#trg_drift_67: drift, L = 0.235566, aper = 0.15;
+#-------------------------------------------------------------------------------------------------
+# 3d model
+trg_drift_64: drift, L = 0.006624, aper = 0.015; 
+
+
+# ver. 1
+#FE_MEBT:Q_D1057_1060_1062: quadrupole, L = 0.75, aper = 0.02375, ncurve=3, scl_fac0 = 17.2972131017, scl_fac1 = -18.9252196463, scl_fac2 = 15.0162778574, CurveFile="triplet_curve.lat";
+
+# ver. 2
+FE_MEBT:Q_D1057_1060_1062_0: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 10.369071902271381, scl_fac1 = -11.55737909279369, scl_fac2 = 11.1355549083382, use_range = [0.0, 10.0]; 
+FE_MEBT:Q_D1057_1060_1062_1: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 10.369071902271381, scl_fac1 = -11.55737909279369, scl_fac2 = 11.1355549083382, use_range = [10.0, 20.0]; 
+# the center of Q_D1057
+FE_MEBT:Q_D1057_1060_1062_2: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 10.369071902271381, scl_fac1 = -11.55737909279369, scl_fac2 = 11.1355549083382, use_range = [20.0, 30.0]; 
+FE_MEBT:Q_D1057_1060_1062_3: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 10.369071902271381, scl_fac1 = -11.55737909279369, scl_fac2 = 11.1355549083382, use_range = [30.0, 40.0]; 
+FE_MEBT:Q_D1057_1060_1062_4: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 10.369071902271381, scl_fac1 = -11.55737909279369, scl_fac2 = 11.1355549083382, use_range = [40.0, 50.0]; 
+# the center of Q_D1060
+FE_MEBT:Q_D1057_1060_1062_5: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 10.369071902271381, scl_fac1 = -11.55737909279369, scl_fac2 = 11.1355549083382, use_range = [50.0, 60.0]; 
+FE_MEBT:Q_D1057_1060_1062_6: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 10.369071902271381, scl_fac1 = -11.55737909279369, scl_fac2 = 11.1355549083382, use_range = [60.0, 70.0]; 
+FE_MEBT:Q_D1057_1060_1062_7: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 10.369071902271381, scl_fac1 = -11.55737909279369, scl_fac2 = 11.1355549083382, use_range = [70.0, 80.0]; 
+# the center of Q_D1062
+FE_MEBT:DCH_D1062: orbtrim, realpara = 1.0, tm_xkick = 0.00036683775000000005; 
+FE_MEBT:DCV_D1062: orbtrim, realpara = 1.0, tm_ykick = 0.00056296145; 
+FE_MEBT:Q_D1057_1060_1062_8: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 10.369071902271381, scl_fac1 = -11.55737909279369, scl_fac2 = 11.1355549083382, use_range = [80.0, 90.0]; 
+FE_MEBT:Q_D1057_1060_1062_9: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 10.369071902271381, scl_fac1 = -11.55737909279369, scl_fac2 = 11.1355549083382, use_range = [90.0, 100.0]; 
+FE_MEBT:Q_D1057_1060_1062: LINE = (FE_MEBT:Q_D1057_1060_1062_0,FE_MEBT:Q_D1057_1060_1062_1,FE_MEBT:Q_D1057_1060_1062_2,FE_MEBT:Q_D1057_1060_1062_3,FE_MEBT:Q_D1057_1060_1062_4,FE_MEBT:Q_D1057_1060_1062_5,FE_MEBT:Q_D1057_1060_1062_6,FE_MEBT:Q_D1057_1060_1062_7,FE_MEBT:DCH_D1062,FE_MEBT:DCV_D1062,FE_MEBT:Q_D1057_1060_1062_8,FE_MEBT:Q_D1057_1060_1062_9);
+
+
+trg_drift_67: drift, L = 0.150916, aper = 0.15; 
+#-------------------------------------------------------------------------------------------------
+
+FE_MEBT:CAV_D1066: rfcavity, L = 0.3, aper = 0.015, cavtype = "Generic", datafile = "rebuncher_38_p.lat", f = 80500000.0, phi = -90.0, scl_fac = 0.43773804473876954; 
+trg_drift_68: drift, L = 0.446662, aper = 0.15; 
+FE_MEBT:BPM_D1072: bpm; 
+
+#-------------------------------------------------------------------------------------------------
+# Thick lens model
+#trg_drift_69: drift, L = 0.091279, aper = 0.015;
+#FE_MEBT:Q_D1074: quadrupole, L = 0.1307, aper = 0.02375, B2 = 13.2333930609, radius = 0.02333;
+#trg_drift_70: drift, L = 0.0694, aper = 0.02375;
+#FE_MEBT:Q_D1076: quadrupole, L = 0.1805, aper = 0.02375, B2 = -15.7341685739, radius = 0.02333;
+#trg_drift_71: drift, L = 0.0694, aper = 0.02375;
+## quad with correctors
+#FE_MEBT:Q_D1078_1: quadrupole, L = 0.06535, aper = 0.02375, B2 = 13.3467590567, radius = 0.02375;
+#FE_MEBT:DCH_D1078: orbtrim, realpara = 1, tm_xkick = 0.0;
+#FE_MEBT:DCV_D1078: orbtrim, realpara = 1, tm_ykick = 0.0;
+#FE_MEBT:Q_D1078_2: quadrupole, L = 0.06535, aper = 0.02375, B2 = 13.3467590567, radius = 0.02375;
+#trg_drift_72: drift, L = 0.681884, aper = 0.15;
+#-------------------------------------------------------------------------------------------------
+# 3d model
+trg_drift_69: drift, L = 0.006624, aper = 0.15; 
+
+# ver. 1
+#FE_MEBT:Q_D1074_1076_1078: quadrupole, L = 0.75, aper = 0.02375, ncurve=3, scl_fac0 = 13.2333930609, scl_fac1 = -15.7341685739, scl_fac2 = 13.3467590567, CurveFile="triplet_curve.lat";
+
+# ver. 2
+FE_MEBT:Q_D1074_1076_1078_0: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 8.62646889361495, scl_fac1 = -10.762442247270203, scl_fac2 = 8.9649544818528, use_range = [0.0, 10.0]; 
+FE_MEBT:Q_D1074_1076_1078_1: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 8.62646889361495, scl_fac1 = -10.762442247270203, scl_fac2 = 8.9649544818528, use_range = [10.0, 20.0]; 
+# the center of Q_D1057
+FE_MEBT:Q_D1074_1076_1078_2: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 8.62646889361495, scl_fac1 = -10.762442247270203, scl_fac2 = 8.9649544818528, use_range = [20.0, 30.0]; 
+FE_MEBT:Q_D1074_1076_1078_3: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 8.62646889361495, scl_fac1 = -10.762442247270203, scl_fac2 = 8.9649544818528, use_range = [30.0, 40.0]; 
+FE_MEBT:Q_D1074_1076_1078_4: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 8.62646889361495, scl_fac1 = -10.762442247270203, scl_fac2 = 8.9649544818528, use_range = [40.0, 50.0]; 
+# the center of Q_D1060
+FE_MEBT:Q_D1074_1076_1078_5: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 8.62646889361495, scl_fac1 = -10.762442247270203, scl_fac2 = 8.9649544818528, use_range = [50.0, 60.0]; 
+FE_MEBT:Q_D1074_1076_1078_6: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 8.62646889361495, scl_fac1 = -10.762442247270203, scl_fac2 = 8.9649544818528, use_range = [60.0, 70.0]; 
+FE_MEBT:Q_D1074_1076_1078_7: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 8.62646889361495, scl_fac1 = -10.762442247270203, scl_fac2 = 8.9649544818528, use_range = [70.0, 80.0]; 
+# the center of Q_D1062
+FE_MEBT:DCH_D1078: orbtrim, realpara = 1.0, tm_xkick = -0.0009032961000000001; 
+FE_MEBT:DCV_D1078: orbtrim, realpara = 1.0, tm_ykick = -0.00099191495; 
+FE_MEBT:Q_D1074_1076_1078_8: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 8.62646889361495, scl_fac1 = -10.762442247270203, scl_fac2 = 8.9649544818528, use_range = [80.0, 90.0]; 
+FE_MEBT:Q_D1074_1076_1078_9: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 8.62646889361495, scl_fac1 = -10.762442247270203, scl_fac2 = 8.9649544818528, use_range = [90.0, 100.0]; 
+FE_MEBT:Q_D1074_1076_1078: LINE = (FE_MEBT:Q_D1074_1076_1078_0,FE_MEBT:Q_D1074_1076_1078_1,FE_MEBT:Q_D1074_1076_1078_2,FE_MEBT:Q_D1074_1076_1078_3,FE_MEBT:Q_D1074_1076_1078_4,FE_MEBT:Q_D1074_1076_1078_5,FE_MEBT:Q_D1074_1076_1078_6,FE_MEBT:Q_D1074_1076_1078_7,FE_MEBT:DCH_D1078,FE_MEBT:DCV_D1078,FE_MEBT:Q_D1074_1076_1078_8,FE_MEBT:Q_D1074_1076_1078_9);
+
+trg_drift_72: drift, L = 0.597234, aper = 0.15; 
+#-------------------------------------------------------------------------------------------------
+
+#FE_MEBT:DH_D1086: sbend, L = L, phi = 45.0, phi1 = 0.0, phi2 = 0.0, bg = 0.00507595, aper = 0.02, K = -2.220661;
+
+# This data is based on the excel file. not Morgan's data.
+
+# trg_drift_MEBT1: drift, L = ???, aper = 0.075;
+# jaw collimator
+# FE_BTS:SLT_D1101: marker;
+# trg_drift_MEBT2: drift, L = 0.0, aper = 0.075;
+# viewer 2
+#FE_BTS:VD_D1101: marker;
+
+
+trg_drift_73: drift, L = 0.562001, aper = 0.15; 
+## profile monitor 1
+FE_MEBT:PM_D1092: marker; 
+trg_drift_74: drift, L = 0.226409, aper = 0.15; 
+FE_MEBT:BPM_D1094: bpm; 
+
+#-------------------------------------------------------------------------------------------------
+# Thick lens model
+#trg_drift_75: drift, L = 0.091279, aper = 0.15;
+#FE_MEBT:Q_D1095: quadrupole, L = 0.1307, aper = 0.02375, B2 = 12.7268657868, radius = 0.02333;
+#trg_drift_76: drift, L = 0.0694, aper = 0.02375;
+#FE_MEBT:Q_D1098: quadrupole, L = 0.1805, aper = 0.02375, B2 = -15.7931346567, radius = 0.02333;
+#trg_drift_77: drift, L = 0.0694, aper = 0.02375;
+##quad with correctors
+#FE_MEBT:Q_D1100_1: quadrupole, L = 0.06535, aper = 0.02375, B2 = 13.188371263, radius = 0.02375;
+#FE_MEBT:DCH_D1100: orbtrim, realpara = 1, tm_xkick = 0.0;
+#FE_MEBT:DCV_D1100: orbtrim, realpara = 1, tm_ykick = 0.0;
+#FE_MEBT:Q_D1100_2: quadrupole, L = 0.06535, aper = 0.02375, B2 = 13.188371263, radius = 0.02375;
+#trg_drift_78: drift, L = 0.155293, aper = 0.02;
+#------------------------------------------------------------------------------------------------
+# 3d model
+trg_drift_75: drift, L = 0.006624, aper = 0.15; 
+
+# ver. 1
+#FE_MEBT:Q_D1095_1098_1100: quadrupole, L = 0.75, aper = 0.02375, ncurve=3, scl_fac0 = 13.2333930609, scl_fac1 = -15.7341685739, scl_fac2 = 13.3467590567, CurveFile="triplet_curve.lat";
+
+# ver. 2
+FE_MEBT:Q_D1095_1098_1100_0: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 3.7246327921669504, scl_fac1 = -8.94381605851639, scl_fac2 = 9.742699407484768, use_range = [0.0, 10.0]; 
+FE_MEBT:Q_D1095_1098_1100_1: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 3.7246327921669504, scl_fac1 = -8.94381605851639, scl_fac2 = 9.742699407484768, use_range = [10.0, 20.0]; 
+# the center of Q_D1057
+FE_MEBT:Q_D1095_1098_1100_2: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 3.7246327921669504, scl_fac1 = -8.94381605851639, scl_fac2 = 9.742699407484768, use_range = [20.0, 30.0]; 
+FE_MEBT:Q_D1095_1098_1100_3: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 3.7246327921669504, scl_fac1 = -8.94381605851639, scl_fac2 = 9.742699407484768, use_range = [30.0, 40.0]; 
+FE_MEBT:Q_D1095_1098_1100_4: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 3.7246327921669504, scl_fac1 = -8.94381605851639, scl_fac2 = 9.742699407484768, use_range = [40.0, 50.0]; 
+# the center of Q_D1060
+FE_MEBT:Q_D1095_1098_1100_5: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 3.7246327921669504, scl_fac1 = -8.94381605851639, scl_fac2 = 9.742699407484768, use_range = [50.0, 60.0]; 
+FE_MEBT:Q_D1095_1098_1100_6: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 3.7246327921669504, scl_fac1 = -8.94381605851639, scl_fac2 = 9.742699407484768, use_range = [60.0, 70.0]; 
+FE_MEBT:Q_D1095_1098_1100_7: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 3.7246327921669504, scl_fac1 = -8.94381605851639, scl_fac2 = 9.742699407484768, use_range = [70.0, 80.0]; 
+# the center of Q_D1062
+FE_MEBT:DCH_D1100: orbtrim, realpara = 1.0, tm_xkick = -0.0006500451000000001; 
+FE_MEBT:DCV_D1100: orbtrim, realpara = 1.0, tm_ykick = 0.00038106875000000007; 
+FE_MEBT:Q_D1095_1098_1100_8: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 3.7246327921669504, scl_fac1 = -8.94381605851639, scl_fac2 = 9.742699407484768, use_range = [80.0, 90.0]; 
+FE_MEBT:Q_D1095_1098_1100_9: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 3.7246327921669504, scl_fac1 = -8.94381605851639, scl_fac2 = 9.742699407484768, use_range = [90.0, 100.0]; 
+FE_MEBT:Q_D1095_1098_1100: LINE = (FE_MEBT:Q_D1095_1098_1100_0,FE_MEBT:Q_D1095_1098_1100_1,FE_MEBT:Q_D1095_1098_1100_2,FE_MEBT:Q_D1095_1098_1100_3,FE_MEBT:Q_D1095_1098_1100_4,FE_MEBT:Q_D1095_1098_1100_5,FE_MEBT:Q_D1095_1098_1100_6,FE_MEBT:Q_D1095_1098_1100_7,FE_MEBT:DCH_D1100,FE_MEBT:DCV_D1100,FE_MEBT:Q_D1095_1098_1100_8,FE_MEBT:Q_D1095_1098_1100_9);
+
+
+trg_drift_78: drift, L = 0.070643, aper = 0.15; 
+#------------------------------------------------------------------------------------------------
+
+## fast Faraday cup
+FE_MEBT:FFC_D1102: marker; 
+trg_drift_79: drift, L = 0.367044, aper = 0.15; 
+FE_MEBT:CAV_D1107: rfcavity, L = 0.3, aper = 0.015, cavtype = "Generic", datafile = "rebuncher_38_p.lat", f = 80500000.0, phi = -90.0, scl_fac = 0.5057907485961914; 
+trg_drift_80: drift, L = 0.220621, aper = 0.02; 
+FE_MEBT:BPM_D1111: bpm; 
+
+#-------------------------------------------------------------------------------------------------
+# Thick lens model
+#trg_drift_81: drift, L = 0.091279, aper = 0.15;
+#FE_MEBT:Q_D1113: quadrupole, L = 0.1307, aper = 0.02375, B2 = 14.1685802664, radius = 0.02333;
+#trg_drift_82: drift, L = 0.0694, aper = 0.02375;
+#FE_MEBT:Q_D1115: quadrupole, L = 0.1805, aper = 0.02375, B2 = -17.4897105127, radius = 0.02333;
+#trg_drift_83: drift, L = 0.0694, aper = 0.02375;
+##quad with correctors
+#FE_MEBT:Q_D1117_1: quadrupole, L = 0.06535, aper = 0.02375, B2 = 14.3995506086, radius = 0.02375;
+#FE_MEBT:DCH_D1117: orbtrim, realpara = 1, tm_xkick = 0.0;
+#FE_MEBT:DCV_D1117: orbtrim, realpara = 1, tm_ykick = 0.0;
+#FE_MEBT:Q_D1117_2: quadrupole, L = 0.06535, aper = 0.02375, B2 = 14.3995506086, radius = 0.02375;
+#trg_drift_84: drift, L = 0.23634, aper = 0.15;
+#------------------------------------------------------------------------------------------------
+# 3d model
+trg_drift_81: drift, L = 0.006629, aper = 0.15; 
+
+# ver. 1
+#FE_MEBT:Q_D1113_1115_1117: quadrupole, L = 0.75, aper = 0.02375, ncurve=3, scl_fac0 = 13.2333930609, scl_fac1 = -15.7341685739, scl_fac2 = 13.3467590567, CurveFile="triplet_curve.lat";
+
+# ver. 2
+FE_MEBT:Q_D1113_1115_1117_0: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 4.578480643848263, scl_fac1 = -9.353079407661022, scl_fac2 = 9.690650376644609, use_range = [0.0, 10.0]; 
+FE_MEBT:Q_D1113_1115_1117_1: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 4.578480643848263, scl_fac1 = -9.353079407661022, scl_fac2 = 9.690650376644609, use_range = [10.0, 20.0]; 
+# the center of Q_D1057
+FE_MEBT:Q_D1113_1115_1117_2: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 4.578480643848263, scl_fac1 = -9.353079407661022, scl_fac2 = 9.690650376644609, use_range = [20.0, 30.0]; 
+FE_MEBT:Q_D1113_1115_1117_3: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 4.578480643848263, scl_fac1 = -9.353079407661022, scl_fac2 = 9.690650376644609, use_range = [30.0, 40.0]; 
+FE_MEBT:Q_D1113_1115_1117_4: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 4.578480643848263, scl_fac1 = -9.353079407661022, scl_fac2 = 9.690650376644609, use_range = [40.0, 50.0]; 
+# the center of Q_D1060
+FE_MEBT:Q_D1113_1115_1117_5: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 4.578480643848263, scl_fac1 = -9.353079407661022, scl_fac2 = 9.690650376644609, use_range = [50.0, 60.0]; 
+FE_MEBT:Q_D1113_1115_1117_6: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 4.578480643848263, scl_fac1 = -9.353079407661022, scl_fac2 = 9.690650376644609, use_range = [60.0, 70.0]; 
+FE_MEBT:Q_D1113_1115_1117_7: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 4.578480643848263, scl_fac1 = -9.353079407661022, scl_fac2 = 9.690650376644609, use_range = [70.0, 80.0]; 
+# the center of Q_D1062
+FE_MEBT:DCH_D1117: orbtrim, realpara = 1.0, tm_xkick = 0.0002373005; 
+FE_MEBT:DCV_D1117: orbtrim, realpara = 1.0, tm_ykick = 3.9305300000000005e-05; 
+FE_MEBT:Q_D1113_1115_1117_8: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 4.578480643848263, scl_fac1 = -9.353079407661022, scl_fac2 = 9.690650376644609, use_range = [80.0, 90.0]; 
+FE_MEBT:Q_D1113_1115_1117_9: quadrupole, CurveFile = "triplet_curve.lat", L = 0.075, aper = 0.02375, ncurve = 3.0, scl_fac0 = 4.578480643848263, scl_fac1 = -9.353079407661022, scl_fac2 = 9.690650376644609, use_range = [90.0, 100.0]; 
+FE_MEBT:Q_D1113_1115_1117: LINE = (FE_MEBT:Q_D1113_1115_1117_0,FE_MEBT:Q_D1113_1115_1117_1,FE_MEBT:Q_D1113_1115_1117_2,FE_MEBT:Q_D1113_1115_1117_3,FE_MEBT:Q_D1113_1115_1117_4,FE_MEBT:Q_D1113_1115_1117_5,FE_MEBT:Q_D1113_1115_1117_6,FE_MEBT:Q_D1113_1115_1117_7,FE_MEBT:DCH_D1117,FE_MEBT:DCV_D1117,FE_MEBT:Q_D1113_1115_1117_8,FE_MEBT:Q_D1113_1115_1117_9);
+
+
+trg_drift_84: drift, L = 0.15169, aper = 0.15; 
+#------------------------------------------------------------------------------------------------
+
+## beam current monitor 1
+FE_MEBT:BCM_D1120: marker; 
+trg_drift_85: drift, L = 0.363533, aper = 0.02; 
+#
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! MEBT end
+trg_drift_86: drift, L = 0.028702, aper = 0.15;
+#
+#LS1_CA01:GV_D1124: gate_valve
+trg_drift_87: drift, L = 0.189385, aper = 0.02;
+LS1_CA01:CAV1_D1127: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 0.64, aper = 0.018;
+trg_drift_88: drift, L = 0.068192, aper = 0.02;
+LS1_CA01:BPM_D1129: bpm;
+trg_drift_89: drift, L = 0.102586, aper = 0.02;
+LS1_CA01:SOL1_D1132_1: solenoid, L = 0.0521666666667, B = -4.39998692691, aper = 0.02;
+LS1_CA01:DCH1_D1132_0: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV1_D1132_0: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL1_D1132_2: solenoid, L = 0.0521666666667, B = -4.39998692691, aper = 0.02;
+LS1_CA01:DCH1_D1132_1: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV1_D1132_1: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL1_D1132_3: solenoid, L = 0.0521666666667, B = -4.39998692691, aper = 0.02;
+LS1_CA01:DCH1_D1132_2: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV1_D1132_2: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL1_D1132_4: solenoid, L = 0.0521666666667, B = -4.39998692691, aper = 0.02;
+LS1_CA01:DCH1_D1132_3: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV1_D1132_3: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL1_D1132_5: solenoid, L = 0.0521666666667, B = -4.39998692691, aper = 0.02;
+LS1_CA01:DCH1_D1132_4: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV1_D1132_4: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL1_D1132_6: solenoid, L = 0.0521666666667, B = -4.39998692691, aper = 0.02;
+trg_drift_90: drift, L = 0.117905, aper = 0.02;
+LS1_CA01:CAV2_D1136: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 0.7, aper = 0.018;
+trg_drift_91: drift, L = 0.393556, aper = 0.15;
+LS1_CA01:CAV3_D1142: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 0.76, aper = 0.018;
+trg_drift_92: drift, L = 0.068192, aper = 0.15;
+LS1_CA01:BPM_D1144: bpm;
+trg_drift_93: drift, L = 0.102586, aper = 0.15;
+LS1_CA01:SOL2_D1146_1: solenoid, L = 0.0521666666667, B = -4.71026738098, aper = 0.02;
+LS1_CA01:DCH2_D1146_0: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV2_D1146_0: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL2_D1146_2: solenoid, L = 0.0521666666667, B = -4.71026738098, aper = 0.02;
+LS1_CA01:DCH2_D1146_1: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV2_D1146_1: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL2_D1146_3: solenoid, L = 0.0521666666667, B = -4.71026738098, aper = 0.02;
+LS1_CA01:DCH2_D1146_2: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV2_D1146_2: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL2_D1146_4: solenoid, L = 0.0521666666667, B = -4.71026738098, aper = 0.02;
+LS1_CA01:DCH2_D1146_3: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV2_D1146_3: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL2_D1146_5: solenoid, L = 0.0521666666667, B = -4.71026738098, aper = 0.02;
+LS1_CA01:DCH2_D1146_4: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA01:DCV2_D1146_4: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA01:SOL2_D1146_6: solenoid, L = 0.0521666666667, B = -4.71026738098, aper = 0.02;
+trg_drift_94: drift, L = 0.117905, aper = 0.15;
+LS1_CA01:CAV4_D1150: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 0.82, aper = 0.018;
+trg_drift_95: drift, L = 0.189385, aper = 0.15;
+#
+#LS1_CA01:GV_D1153: gate_valve
+trg_drift_96: drift, L = 0.132204, aper = 0.02;
+LS1_WA01:BPM_D1155: bpm;
+trg_drift_97: drift, L = 0.3052, aper = 0.02;
+#
+#LS1_CA02:GV_D1158: gate_valve
+trg_drift_98: drift, L = 0.189384, aper = 0.02;
+LS1_CA02:CAV1_D1161: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 0.88, aper = 0.018;
+trg_drift_99: drift, L = 0.068192, aper = 0.02;
+LS1_CA02:BPM_D1163: bpm;
+trg_drift_100: drift, L = 0.102586, aper = 0.02;
+LS1_CA02:SOL1_D1165_1: solenoid, L = 0.0521666666667, B = -5.16587858225, aper = 0.02;
+LS1_CA02:DCH1_D1165_0: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV1_D1165_0: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL1_D1165_2: solenoid, L = 0.0521666666667, B = -5.16587858225, aper = 0.02;
+LS1_CA02:DCH1_D1165_1: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV1_D1165_1: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL1_D1165_3: solenoid, L = 0.0521666666667, B = -5.16587858225, aper = 0.02;
+LS1_CA02:DCH1_D1165_2: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV1_D1165_2: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL1_D1165_4: solenoid, L = 0.0521666666667, B = -5.16587858225, aper = 0.02;
+LS1_CA02:DCH1_D1165_3: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV1_D1165_3: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL1_D1165_5: solenoid, L = 0.0521666666667, B = -5.16587858225, aper = 0.02;
+LS1_CA02:DCH1_D1165_4: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV1_D1165_4: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL1_D1165_6: solenoid, L = 0.0521666666667, B = -5.16587858225, aper = 0.02;
+trg_drift_101: drift, L = 0.117905, aper = 0.02;
+LS1_CA02:CAV2_D1169: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 0.94, aper = 0.018;
+trg_drift_102: drift, L = 0.393556, aper = 0.15;
+LS1_CA02:CAV3_D1176: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 1.0, aper = 0.018;
+trg_drift_103: drift, L = 0.068192, aper = 0.15;
+LS1_CA02:BPM_D1177: bpm;
+trg_drift_104: drift, L = 0.102586, aper = 0.15;
+LS1_CA02:SOL2_D1180_1: solenoid, L = 0.0521666666667, B = -5.56368581281, aper = 0.02;
+LS1_CA02:DCH2_D1180_0: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV2_D1180_0: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL2_D1180_2: solenoid, L = 0.0521666666667, B = -5.56368581281, aper = 0.02;
+LS1_CA02:DCH2_D1180_1: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV2_D1180_1: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL2_D1180_3: solenoid, L = 0.0521666666667, B = -5.56368581281, aper = 0.02;
+LS1_CA02:DCH2_D1180_2: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV2_D1180_2: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL2_D1180_4: solenoid, L = 0.0521666666667, B = -5.56368581281, aper = 0.02;
+LS1_CA02:DCH2_D1180_3: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV2_D1180_3: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL2_D1180_5: solenoid, L = 0.0521666666667, B = -5.56368581281, aper = 0.02;
+LS1_CA02:DCH2_D1180_4: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA02:DCV2_D1180_4: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA02:SOL2_D1180_6: solenoid, L = 0.0521666666667, B = -5.56368581281, aper = 0.02;
+trg_drift_105: drift, L = 0.117905, aper = 0.15;
+LS1_CA02:CAV4_D1184: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 1.0, aper = 0.018;
+trg_drift_106: drift, L = 0.189385, aper = 0.15;
+#
+#LS1_CA02:GV_D1187: gate_valve
+trg_drift_107: drift, L = 0.132204, aper = 0.02;
+LS1_WA02:BPM_D1188: bpm;
+trg_drift_108: drift, L = 0.3052, aper = 0.02;
+#
+#LS1_CA03:GV_D1191: gate_valve
+trg_drift_109: drift, L = 0.189384, aper = 0.02;
+LS1_CA03:CAV1_D1195: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 1.0, aper = 0.018;
+trg_drift_110: drift, L = 0.068192, aper = 0.02;
+LS1_CA03:BPM_D1196: bpm;
+trg_drift_111: drift, L = 0.102586, aper = 0.02;
+LS1_CA03:SOL1_D1199_1: solenoid, L = 0.0521666666667, B = -5.7890336513, aper = 0.02;
+LS1_CA03:DCH1_D1199_0: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV1_D1199_0: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL1_D1199_2: solenoid, L = 0.0521666666667, B = -5.7890336513, aper = 0.02;
+LS1_CA03:DCH1_D1199_1: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV1_D1199_1: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL1_D1199_3: solenoid, L = 0.0521666666667, B = -5.7890336513, aper = 0.02;
+LS1_CA03:DCH1_D1199_2: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV1_D1199_2: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL1_D1199_4: solenoid, L = 0.0521666666667, B = -5.7890336513, aper = 0.02;
+LS1_CA03:DCH1_D1199_3: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV1_D1199_3: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL1_D1199_5: solenoid, L = 0.0521666666667, B = -5.7890336513, aper = 0.02;
+LS1_CA03:DCH1_D1199_4: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV1_D1199_4: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL1_D1199_6: solenoid, L = 0.0521666666667, B = -5.7890336513, aper = 0.02;
+trg_drift_112: drift, L = 0.117905, aper = 0.02;
+LS1_CA03:CAV2_D1203: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 1.0, aper = 0.018;
+trg_drift_113: drift, L = 0.393556, aper = 0.15;
+LS1_CA03:CAV3_D1209: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -35.0, scl_fac = 1.0, aper = 0.018;
+trg_drift_114: drift, L = 0.068192, aper = 0.15;
+LS1_CA03:BPM_D1211: bpm;
+trg_drift_115: drift, L = 0.102586, aper = 0.15;
+LS1_CA03:SOL2_D1214_1: solenoid, L = 0.0521666666667, B = -6.35061834488, aper = 0.02;
+LS1_CA03:DCH2_D1214_0: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV2_D1214_0: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL2_D1214_2: solenoid, L = 0.0521666666667, B = -6.35061834488, aper = 0.02;
+LS1_CA03:DCH2_D1214_1: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV2_D1214_1: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL2_D1214_3: solenoid, L = 0.0521666666667, B = -6.35061834488, aper = 0.02;
+LS1_CA03:DCH2_D1214_2: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV2_D1214_2: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL2_D1214_4: solenoid, L = 0.0521666666667, B = -6.35061834488, aper = 0.02;
+LS1_CA03:DCH2_D1214_3: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV2_D1214_3: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL2_D1214_5: solenoid, L = 0.0521666666667, B = -6.35061834488, aper = 0.02;
+LS1_CA03:DCH2_D1214_4: orbtrim, realpara = 1, tm_xkick = 0.0;
+LS1_CA03:DCV2_D1214_4: orbtrim, realpara = 1, tm_ykick = 0.0;
+LS1_CA03:SOL2_D1214_6: solenoid, L = 0.0521666666667, B = -6.35061834488, aper = 0.02;
+trg_drift_116: drift, L = 0.117905, aper = 0.15;
+LS1_CA03:CAV4_D1218: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41_p.lat", f = 80500000.0, phi = -45.0, scl_fac = 1.0, aper = 0.018;
+trg_drift_117: drift, L = 0.189385, aper = 0.15;
+#
+#LS1_CA03:GV_D1221: gate_valve
+trg_drift_118: drift, L = 0.132204, aper = 0.02;
+LS1_WA03:BPM_D1222: bpm;
+trg_drift_119: drift, L = 0.145282, aper = 0.15;
+#
+
+# D-station line
+trg_drift_d1: drift, L = 0.036116, aper = 0.02;
+# Halo ring
+LS1_WA03:BLM_D1224: marker;
+trg_drift_d2: drift, L = 0.40128, aper = 0.02;
+# longitudinal profile monitor
+LS1_D:LPM_D1228: marker;
+trg_drift_d3: drift, L = 0.1337564, aper = 0.02;
+# beam current monitor
+LS1_D:BCM_D1229: marker;
+trg_drift_d4: drift, L = 0.1234948, aper = 0.02;
+# beam position monitor
+LS1_D:BPM_D1231: bpm;
+trg_drift_d5: drift, L = 0.145288, aper = 0.02;
+# wire scanner
+LS1_D:PM_D1232: marker;
+trg_drift_d6: drift, L = 0.371856, aper = 0.02;
+# silicon detector
+LS1_D:SiD_D1236: marker;
+trg_drift_d7: drift, L = 0.2361946, aper = 0.02;
+# beam position monitor
+LS1_D:BPM_D1238: bpm;
+trg_drift_d8: drift, L = 0.145288, aper = 0.02;
+# wire scanner
+LS1_D:PM_D1240: marker;
+trg_drift_d9: drift, L = 0.0361442, aper = 0.02;
+# Halo ring
+LS1_D:BLM_D1240: marker;
+trg_drift_d10: drift, L = 0.1150366, aper = 0.02;
+# beam current monitor
+LS1_D:BCM_D1241: marker;
+trg_drift_d11: drift, L = 0.263017, aper = 0.02;
+# Faraday cup
+LS1_D:FC_D1244: marker;
+# D-station end
+# example of LINE
+#trg: LINE = (
+#trg_drift_d1, LS1_WA03:BLM_D1224, trg_drift_d2, LS1_D:LPM_D1228, trg_drift_d3, LS1_D:BCM_D1229, trg_drift_d4, LS1_D:BPM_D1231,
+#trg_drift_d5, LS1_D:PM_D1232, trg_drift_d6, LS1_D:SiD_D1236, trg_drift_d7, LS1_D:BPM_D1238, trg_drift_d8, LS1_D:PM_D1240,
+#trg_drift_d9, LS1_D:BLM_D1240,trg_drift_d10, LS1_D:BCM_D1241,trg_drift_d11, LS1_D:FC_D1244);
+
+
+trg: LINE = (
+#trg_drift_60,
+trg_drift_61, FE_MEBT:PM_D1053, trg_drift_62, FE_MEBT:BCM_D1055,
+trg_drift_63, FE_MEBT:BPM_D1056, trg_drift_64,
+
+#FE_MEBT:Q_D1057, trg_drift_65,
+#FE_MEBT:Q_D1060, trg_drift_66, FE_MEBT:Q_D1062_1, FE_MEBT:DCH_D1062, FE_MEBT:DCV_D1062,
+#FE_MEBT:Q_D1062_2,
+
+FE_MEBT:Q_D1057_1060_1062,
+
+trg_drift_67, FE_MEBT:CAV_D1066, trg_drift_68, FE_MEBT:BPM_D1072,
+trg_drift_69,
+
+#FE_MEBT:Q_D1074, trg_drift_70, FE_MEBT:Q_D1076, trg_drift_71,
+#FE_MEBT:Q_D1078_1, FE_MEBT:DCH_D1078, FE_MEBT:DCV_D1078, FE_MEBT:Q_D1078_2,
+
+FE_MEBT:Q_D1074_1076_1078,
+
+trg_drift_72,
+trg_drift_73, FE_MEBT:PM_D1092, trg_drift_74, FE_MEBT:BPM_D1094, trg_drift_75,
+
+#FE_MEBT:Q_D1095, trg_drift_76, FE_MEBT:Q_D1098, trg_drift_77, FE_MEBT:Q_D1100_1,
+#FE_MEBT:DCH_D1100, FE_MEBT:DCV_D1100, FE_MEBT:Q_D1100_2,
+
+FE_MEBT:Q_D1095_1098_1100,
+
+trg_drift_78, FE_MEBT:FFC_D1102,
+trg_drift_79, FE_MEBT:CAV_D1107, trg_drift_80, FE_MEBT:BPM_D1111, trg_drift_81,
+
+#FE_MEBT:Q_D1113, trg_drift_82, FE_MEBT:Q_D1115, trg_drift_83, FE_MEBT:Q_D1117_1,
+#FE_MEBT:DCH_D1117, FE_MEBT:DCV_D1117, FE_MEBT:Q_D1117_2,
+
+FE_MEBT:Q_D1113_1115_1117,
+
+trg_drift_84, FE_MEBT:BCM_D1120,
+trg_drift_85
+#, trg_drift_86, trg_drift_87, LS1_CA01:CAV1_D1127, trg_drift_88,
+#LS1_CA01:BPM_D1129, trg_drift_89, LS1_CA01:SOL1_D1132_1, LS1_CA01:DCH1_D1132_0, LS1_CA01:DCV1_D1132_0,
+#LS1_CA01:SOL1_D1132_2, LS1_CA01:DCH1_D1132_1, LS1_CA01:DCV1_D1132_1, LS1_CA01:SOL1_D1132_3, LS1_CA01:DCH1_D1132_2,
+#LS1_CA01:DCV1_D1132_2, LS1_CA01:SOL1_D1132_4, LS1_CA01:DCH1_D1132_3, LS1_CA01:DCV1_D1132_3, LS1_CA01:SOL1_D1132_5,
+#LS1_CA01:DCH1_D1132_4, LS1_CA01:DCV1_D1132_4, LS1_CA01:SOL1_D1132_6, trg_drift_90, LS1_CA01:CAV2_D1136,
+#trg_drift_91, LS1_CA01:CAV3_D1142, trg_drift_92, LS1_CA01:BPM_D1144, trg_drift_93,
+#LS1_CA01:SOL2_D1146_1, LS1_CA01:DCH2_D1146_0, LS1_CA01:DCV2_D1146_0, LS1_CA01:SOL2_D1146_2, LS1_CA01:DCH2_D1146_1,
+#LS1_CA01:DCV2_D1146_1, LS1_CA01:SOL2_D1146_3, LS1_CA01:DCH2_D1146_2, LS1_CA01:DCV2_D1146_2, LS1_CA01:SOL2_D1146_4,
+#LS1_CA01:DCH2_D1146_3, LS1_CA01:DCV2_D1146_3, LS1_CA01:SOL2_D1146_5, LS1_CA01:DCH2_D1146_4, LS1_CA01:DCV2_D1146_4,
+#LS1_CA01:SOL2_D1146_6, trg_drift_94, LS1_CA01:CAV4_D1150, trg_drift_95, trg_drift_96,
+#LS1_WA01:BPM_D1155, trg_drift_97, trg_drift_98, LS1_CA02:CAV1_D1161, trg_drift_99,
+#LS1_CA02:BPM_D1163, trg_drift_100, LS1_CA02:SOL1_D1165_1, LS1_CA02:DCH1_D1165_0, LS1_CA02:DCV1_D1165_0,
+#LS1_CA02:SOL1_D1165_2, LS1_CA02:DCH1_D1165_1, LS1_CA02:DCV1_D1165_1, LS1_CA02:SOL1_D1165_3, LS1_CA02:DCH1_D1165_2,
+#LS1_CA02:DCV1_D1165_2, LS1_CA02:SOL1_D1165_4, LS1_CA02:DCH1_D1165_3, LS1_CA02:DCV1_D1165_3, LS1_CA02:SOL1_D1165_5,
+#LS1_CA02:DCH1_D1165_4, LS1_CA02:DCV1_D1165_4, LS1_CA02:SOL1_D1165_6, trg_drift_101, LS1_CA02:CAV2_D1169,
+#trg_drift_102, LS1_CA02:CAV3_D1176, trg_drift_103, LS1_CA02:BPM_D1177, trg_drift_104,
+#LS1_CA02:SOL2_D1180_1, LS1_CA02:DCH2_D1180_0, LS1_CA02:DCV2_D1180_0, LS1_CA02:SOL2_D1180_2, LS1_CA02:DCH2_D1180_1,
+#LS1_CA02:DCV2_D1180_1, LS1_CA02:SOL2_D1180_3, LS1_CA02:DCH2_D1180_2, LS1_CA02:DCV2_D1180_2, LS1_CA02:SOL2_D1180_4,
+#LS1_CA02:DCH2_D1180_3, LS1_CA02:DCV2_D1180_3, LS1_CA02:SOL2_D1180_5, LS1_CA02:DCH2_D1180_4, LS1_CA02:DCV2_D1180_4,
+#LS1_CA02:SOL2_D1180_6, trg_drift_105, LS1_CA02:CAV4_D1184, trg_drift_106, trg_drift_107,
+#LS1_WA02:BPM_D1188, trg_drift_108, trg_drift_109, LS1_CA03:CAV1_D1195, trg_drift_110,
+#LS1_CA03:BPM_D1196, trg_drift_111, LS1_CA03:SOL1_D1199_1, LS1_CA03:DCH1_D1199_0, LS1_CA03:DCV1_D1199_0,
+#LS1_CA03:SOL1_D1199_2, LS1_CA03:DCH1_D1199_1, LS1_CA03:DCV1_D1199_1, LS1_CA03:SOL1_D1199_3, LS1_CA03:DCH1_D1199_2,
+#LS1_CA03:DCV1_D1199_2, LS1_CA03:SOL1_D1199_4, LS1_CA03:DCH1_D1199_3, LS1_CA03:DCV1_D1199_3, LS1_CA03:SOL1_D1199_5,
+#LS1_CA03:DCH1_D1199_4, LS1_CA03:DCV1_D1199_4, LS1_CA03:SOL1_D1199_6, trg_drift_112, LS1_CA03:CAV2_D1203,
+#trg_drift_113, LS1_CA03:CAV3_D1209, trg_drift_114, LS1_CA03:BPM_D1211, trg_drift_115,
+#LS1_CA03:SOL2_D1214_1, LS1_CA03:DCH2_D1214_0, LS1_CA03:DCV2_D1214_0, LS1_CA03:SOL2_D1214_2, LS1_CA03:DCH2_D1214_1,
+#LS1_CA03:DCV2_D1214_1, LS1_CA03:SOL2_D1214_3, LS1_CA03:DCH2_D1214_2, LS1_CA03:DCV2_D1214_2, LS1_CA03:SOL2_D1214_4,
+#LS1_CA03:DCH2_D1214_3, LS1_CA03:DCV2_D1214_3, LS1_CA03:SOL2_D1214_5, LS1_CA03:DCH2_D1214_4, LS1_CA03:DCV2_D1214_4,
+#LS1_CA03:SOL2_D1214_6, trg_drift_116, LS1_CA03:CAV4_D1218, trg_drift_117, trg_drift_118,
+#LS1_WA03:BPM_D1222, trg_drift_119,
+#trg_drift_d1, LS1_WA03:BLM_D1224, trg_drift_d2, LS1_D:LPM_D1228, trg_drift_d3, LS1_D:BCM_D1229, trg_drift_d4, LS1_D:BPM_D1231,
+#trg_drift_d5, LS1_D:PM_D1232, trg_drift_d6, LS1_D:SiD_D1236, trg_drift_d7, LS1_D:BPM_D1238, trg_drift_d8, LS1_D:PM_D1240,
+#trg_drift_d9, LS1_D:BLM_D1240,trg_drift_d10, LS1_D:BCM_D1241,trg_drift_d11, LS1_D:FC_D1244
+);
+
+cell: LINE= (S,trg);
+USE: cell;

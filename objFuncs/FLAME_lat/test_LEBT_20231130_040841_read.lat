@@ -1,0 +1,330 @@
+
+# Frontend
+# Beam envelope simulation.
+
+sim_type = "MomentMatrix"; 
+HdipoleFitMode = "1.0"; 
+MpoleLevel = "2"; 
+
+Soffset = 70.206895; 
+# Global parameters.
+
+AMU = 931494320.0; # Atomic mass unit [eV/c^2].
+
+#IonZ  = 9.0/40.0;          # Charge state for U_238.
+IonEs = 931494320.0; # Nucleon mass [eV/u].
+IonEk = 12000.0; # Kinetic energy at LS1 entrance [eV/u].
+IonW = 931506320.0; # Total energy [eV/u].
+
+# Define Initial Conditions for the Charge States.
+# Units are: [mm, rad, mm, rad, rad, MeV/u]
+
+#IonChargeStates = [33.0/238.0, 34.0/238.0];
+IonChargeStates = [0.27807]; 
+#NCharge         = [10111.0, 10531.0];
+NCharge = [10111.0]; 
+
+#cstate = 0;
+
+BaryCenter0 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]; 
+#BaryCenter1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0];
+
+# Define beam envelope parameters.
+
+# 1.85326513 m before the first dipole( 1 m long)
+#S0 = [
+#  368.8,   0.025,        0.0,   0.0,        0.0, 0.0, 0.0,
+#    0.025, 2.88097e-5,   0.0,   0.0,        0.0, 0.0, 0.0,
+#    0.0,   0.0,        368.8,   0.025,      0.0, 0.0, 0.0,
+#    0.0,   0.0,          0.025, 2.88097e-5, 0.0, 0.0, 0.0,
+#    0.0,   0.0,          0.0,   0.0,        0.0, 0.0, 0.0,
+#    0.0,   0.0,          0.0,   0.0,        0.0, 0.0, 0.0,
+#    0.0,   0.0,          0.0,   0.0,        0.0, 0.0, 0.0
+#];
+
+
+# 2.70326513 m before the first dipole( 1 m long)
+S0 = [
+    375.0862983306569, -0.028392012415760996, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    -0.028392012415760996, 2.88097e-05, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    0.0, 0.0, 375.0862983306569, -0.028392012415760996, 0.0, 0.0, 0.0, 
+    0.0, 0.0, -0.028392012415760996, 2.88097e-05, 0.0, 0.0, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 1e-08, 0.0, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 0.0, 1e-12, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]; 
+
+#S1 = [
+#  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+#  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+#  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+#  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+#  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+#  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+#  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+#];
+
+S: source, matrix_variable = "S", vector_variable = "BaryCenter"; 
+trg_drift_0: drift, L = 0.541156, aper = 0.15;
+trg_drift_1: drift, L = 0.459627, aper = 0.075;
+FE_ISRC1:DCH_D0695: orbtrim, realpara = 1, tm_xkick = 0.0;
+FE_ISRC1:DCV_D0695: orbtrim, realpara = 1, tm_ykick = 0.0;
+trg_drift_2: drift, L = 0.336233, aper = 0.075;
+trg_drift_3: drift, L = 0.39125, aper = 0.075;
+FE_SCS1:SOLR_D0704: solenoid, B = -6.0711e-05, L = 0.4, aper = 0.075; 
+trg_drift_4: drift, L = 0.34, aper = 0.15; 
+FE_SCS1:DCH_D0709: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_SCS1:DCV_D0709: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_5: drift, L = 0.235, aper = 0.075; 
+#
+#Magnetic dipole
+FE_SCS1:DH_D0717_0: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = -18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_SCS1:DH_D0717_1: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = -18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_SCS1:DH_D0717_2: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = -18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_SCS1:DH_D0717_3: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = -18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_SCS1:DH_D0717_4: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = -18.0, phi1 = 0.0, phi2 = 0.0; 
+#
+
+trg_drift_6: drift, L = 0.1623, aper = 0.075; 
+FE_SCS1:DCH_D0723: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_SCS1:DCV_D0723: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_7: drift, L = 0.1854, aper = 0.075; 
+FE_SCS1:QHE_D0726: equad, L = 0.2046, V = 2503.96142578125, aper = 0.075, radius = 0.0746; 
+trg_drift_8: drift, L = 0.1304, aper = 0.075; 
+FE_SCS1:QVE_D0730: equad, L = 0.2046, V = -2707.548095703125, aper = 0.075, radius = 0.0746; 
+trg_drift_9: drift, L = 0.1304, aper = 0.075; 
+FE_SCS1:QHE_D0733: equad, L = 0.2046, V = 1031.018310546875, aper = 0.075, radius = 0.0746; 
+trg_drift_10: drift, L = 0.225912, aper = 0.075; 
+## four jaw collimator
+FE_SCS1:SLT_D0736: marker; 
+trg_drift_11: drift, L = 0.13911, aper = 0.075; 
+## Faraday cup2
+FE_SCS1:FC_D0738: marker; 
+trg_drift_12: drift, L = 0.18034, aper = 0.075; 
+## viewer 1
+FE_SCS1:VD_D0739: marker; 
+## emittance scanner_x_y
+FE_SCS1:EMS_D0739: marker; 
+trg_drift_13: drift, L = 0.210038, aper = 0.075; 
+FE_SCS1:QHE_D0743: equad, L = 0.2046, V = 1031.020263671875, aper = 0.075, radius = 0.0746; 
+trg_drift_14: drift, L = 0.1304, aper = 0.075; 
+FE_SCS1:QVE_D0746: equad, L = 0.2046, V = -2707.492919921875, aper = 0.075, radius = 0.0746; 
+trg_drift_15: drift, L = 0.1304, aper = 0.075; 
+FE_SCS1:QHE_D0749: equad, L = 0.2046, V = 2504.118896484375, aper = 0.075, radius = 0.0746; 
+trg_drift_16: drift, L = 0.3477, aper = 0.075; 
+#
+#Magnetic dipole
+FE_LEBT:DH_D0759_0: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = -18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_LEBT:DH_D0759_1: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = -18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_LEBT:DH_D0759_2: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = -18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_LEBT:DH_D0759_3: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = -18.0, phi1 = 0.0, phi2 = 0.0; 
+FE_LEBT:DH_D0759_4: sbend, K = -2.220661, L = 0.2, aper = 0.15, bg = 0.00507595, phi = -18.0, phi1 = 0.0, phi2 = 0.0; 
+#
+
+trg_drift_17: drift, L = 0.2227, aper = 0.075; 
+FE_LEBT:QVE_D0767: equad, L = 0.2046, V = -2098.505859375, aper = 0.075, radius = 0.0746; 
+trg_drift_18: drift, L = 0.1304, aper = 0.075; 
+FE_LEBT:QHE_D0770: equad, L = 0.2046, V = 1759.6497802734375, aper = 0.075, radius = 0.0746; 
+trg_drift_19: drift, L = 0.1952, aper = 0.075; 
+FE_LEBT:DCH_D0773: orbtrim, realpara = 1.0, tm_xkick = 0.001048008104; 
+FE_LEBT:DCV_D0773: orbtrim, realpara = 1.0, tm_ykick = -3.8884924e-05; 
+trg_drift_20: drift, L = 0.1952, aper = 0.075; 
+FE_LEBT:QHE_D0776: equad, L = 0.2046, V = -2904.467041015625, aper = 0.075, radius = 0.0746; 
+trg_drift_21: drift, L = 0.1304, aper = 0.075; 
+FE_LEBT:QVE_D0780: equad, L = 0.2046, V = 1752.2000732421875, aper = 0.075, radius = 0.0746; 
+trg_drift_22: drift, L = 0.189285, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0783: marker; 
+trg_drift_23: drift, L = 0.218415, aper = 0.075; 
+FE_LEBT:SOLR_D0787: solenoid, B = -0.142543646, L = 0.4, aper = 0.075; 
+trg_drift_24: drift, L = 0.12065, aper = 0.075; 
+FE_LEBT:DCH_D0790: orbtrim, realpara = 1.0, tm_xkick = -0.00046737240600000003; 
+FE_LEBT:DCV_D0790: orbtrim, realpara = 1.0, tm_ykick = -0.00023486699400000004; 
+trg_drift_25: drift, L = 0.6017, aper = 0.075; 
+## Faraday cup1
+FE_LEBT:FC_D0796: marker; 
+trg_drift_26: drift, L = 0.3528, aper = 0.075; 
+FE_LEBT:SOLR_D0802: solenoid, B = -0.173355924, L = 0.4, aper = 0.075; 
+trg_drift_27: drift, L = 0.12065, aper = 0.075; 
+FE_LEBT:DCH_D0805: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0805: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_28: drift, L = 0.298889, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0808: marker; 
+trg_drift_29: drift, L = 0.395399, aper = 0.075; 
+## pepper_pot
+FE_LEBT:EMS_D0812: marker; 
+## viewer 1
+FE_LEBT:VD_D0812: marker; 
+trg_drift_30: drift, L = 0.20828, aper = 0.15; 
+## Faraday cup1
+FE_LEBT:FC_D0814: marker; 
+trg_drift_31: drift, L = 0.216933, aper = 0.075; 
+FE_LEBT:SOLR_D0818: solenoid, B = -0.230048434, L = 0.4, aper = 0.075; 
+trg_drift_32: drift, L = 0.12065, aper = 0.075; 
+FE_LEBT:DCH_D0821: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0821: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_33: drift, L = 0.273783, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0824: marker; 
+trg_drift_34: drift, L = 0.405568, aper = 0.075; 
+FE_LEBT:DVE_D0833: edipole, L = 1.0, aper = 0.15, asym_fac = 0.0, beta = 0.0050758796841, fringe_x = 0.0, fringe_y = 0.0, phi = 90.0, spher = 1.0, ver = 1.0; 
+trg_drift_35: drift, L = 0.215, aper = 0.075; 
+FE_LEBT:DCH_D0840: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0840: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_36: drift, L = 0.3327, aper = 0.075; 
+FE_LEBT:QHE_D0844: equad, L = 0.2046, V = -1204.6165771484375, aper = 0.075, radius = 0.0746; 
+trg_drift_37: drift, L = 0.1304, aper = 0.075; 
+FE_LEBT:QVE_D0848: equad, L = 0.2046, V = 3098.178955078125, aper = 0.075, radius = 0.0746; 
+trg_drift_38: drift, L = 0.1304, aper = 0.075; 
+FE_LEBT:QHE_D0851: equad, L = 0.2046, V = -2594.02978515625, aper = 0.075, radius = 0.0746; 
+trg_drift_39: drift, L = 0.340716, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0856: marker; 
+trg_drift_40: drift, L = 1.255734, aper = 0.075; 
+FE_LEBT:DCH_D0868: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0868: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_41: drift, L = 0.1777, aper = 0.075; 
+FE_LEBT:QVE_D0871: equad, L = 0.2046, V = 2005.7513427734375, aper = 0.075, radius = 0.0746; 
+trg_drift_42: drift, L = 0.1304, aper = 0.075; 
+FE_LEBT:QHE_D0874: equad, L = 0.2046, V = -2479.5185546875, aper = 0.075, radius = 0.0746; 
+trg_drift_43: drift, L = 0.1304, aper = 0.075; 
+FE_LEBT:QVE_D0878: equad, L = 0.2046, V = 450.1318359375, aper = 0.075, radius = 0.0746; 
+trg_drift_44: drift, L = 0.1777, aper = 0.075; 
+FE_LEBT:DCH_D0880: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0880: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_45: drift, L = 0.47473, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0885: marker; 
+trg_drift_46: drift, L = 0.50297, aper = 0.075; 
+FE_LEBT:QVE_D0891: equad, L = 0.2046, V = 449.99029541015625, aper = 0.075, radius = 0.0746; 
+trg_drift_47: drift, L = 0.1304, aper = 0.075; 
+FE_LEBT:QHE_D0895: equad, L = 0.2046, V = -2479.630859375, aper = 0.075, radius = 0.0746; 
+trg_drift_48: drift, L = 0.1304, aper = 0.075; 
+FE_LEBT:QVE_D0898: equad, L = 0.2046, V = 2005.7947998046875, aper = 0.075, radius = 0.0746; 
+trg_drift_49: drift, L = 0.1777, aper = 0.075; 
+FE_LEBT:DCH_D0901: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0901: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_50: drift, L = 1.09348, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0912: marker; 
+trg_drift_51: drift, L = 0.50297, aper = 0.075; 
+FE_LEBT:QHE_D0918: equad, L = 0.2046, V = -2594.014892578125, aper = 0.075, radius = 0.0746; 
+trg_drift_52: drift, L = 0.1304, aper = 0.075; 
+FE_LEBT:QVE_D0921: equad, L = 0.2046, V = 3098.339111328125, aper = 0.075, radius = 0.0746; 
+trg_drift_53: drift, L = 0.1304, aper = 0.075; 
+FE_LEBT:QHE_D0924: equad, L = 0.2046, V = -1204.6812744140625, aper = 0.075, radius = 0.0746; 
+trg_drift_54: drift, L = 0.3327, aper = 0.075; 
+FE_LEBT:DCH_D0929: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0929: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+trg_drift_55: drift, L = 0.215, aper = 0.075; 
+FE_LEBT:DVE_D0936: edipole, L = 1.0, aper = 0.15, asym_fac = 0.0, beta = 0.0050758796841, fringe_x = 0.0, fringe_y = 0.0, phi = 90.0, spher = 1.0, ver = 1.0; 
+FE_LEBT:NEGP_D0936: orbtrim, xyrotate = 180.0; 
+trg_drift_56: drift, L = 0.405568, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0945: marker; 
+trg_drift_57: drift, L = 0.273783, aper = 0.075; 
+FE_LEBT:DCH_D0948: orbtrim, realpara = 1.0, tm_xkick = -0.000394776492; 
+FE_LEBT:DCV_D0948: orbtrim, realpara = 1.0, tm_ykick = -0.000167573598; 
+trg_drift_58: drift, L = 0.12065, aper = 0.075; 
+FE_LEBT:SOLR_D0951: solenoid, B = -0.19178315799999998, L = 0.4, aper = 0.075; 
+trg_drift_59a: drift, L = 0.0804772, aper = 0.075; 
+FE_LEBT:ATT_D0957_1: marker; 
+trg_drift_59b: drift, L = 0.073025, aper = 0.075; 
+FE_LEBT:ATT_D0957_2: marker; 
+trg_drift_59c: drift, L = 0.0690544, aper = 0.075; 
+#trg_drift_59: drift, L = 0.820683, aper = 0.075;
+## profile monitor 1
+FE_LEBT:PM_D0961: marker; 
+trg_drift_60: drift, L = 0.298817, aper = 0.075; 
+FE_LEBT:DCH_D0964: orbtrim, realpara = 1.0, tm_xkick = -3.1204578e-05; 
+FE_LEBT:DCV_D0964: orbtrim, realpara = 1.0, tm_ykick = -0.000651209484; 
+trg_drift_61: drift, L = 0.12065, aper = 0.075; 
+FE_LEBT:SOLR_D0967: solenoid, B = -0.279854582, L = 0.4, aper = 0.075; 
+trg_drift_62: drift, L = 0.218551, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0972: marker; 
+trg_drift_63: drift, L = 0.515929, aper = 0.075; 
+## viewer 2
+FE_LEBT:VD_D0977: marker; 
+## Faraday cup1
+FE_LEBT:FC_D0977: marker; 
+trg_drift_64: drift, L = 0.22002, aper = 0.075; 
+FE_LEBT:DCH_D0979: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0979: orbtrim, realpara = 1.0, tm_ykick = -0.00015874819200000002; 
+trg_drift_65: drift, L = 0.12065, aper = 0.075; 
+FE_LEBT:SOLR_D0982: solenoid, B = -0.327076176, L = 0.4, aper = 0.075; 
+trg_drift_66: drift, L = 0.219999, aper = 0.075; 
+## profile monitor 1
+FE_LEBT:PM_D0986: marker; 
+trg_drift_67: drift, L = 0.105001, aper = 0.075; 
+## Multi harmonic buncher
+FE_LEBT:CAV_D0987: marker; 
+trg_drift_68: drift, L = 0.146492, aper = 0.075; 
+## beam current monitor 1
+FE_LEBT:BCM_D0989: marker; 
+trg_drift_69: drift, L = 0.317858, aper = 0.075; 
+FE_LEBT:DCH_D0992: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FE_LEBT:DCV_D0992: orbtrim, realpara = 1.0, tm_ykick = -0.000131882274; 
+trg_drift_70: drift, L = 0.12065, aper = 0.075; 
+FE_LEBT:SOLR_D0995: solenoid, B = -0.354951198, L = 0.4, aper = 0.075; 
+trg_drift_71: drift, L = 0.075524, aper = 0.02; 
+## Faraday cup1
+FE_LEBT:FC_D0998: marker; 
+## fast Faraday cup
+FE_LEBT:FFC_D0998: marker; 
+trg_drift_72: drift, L = 0.023317, aper = 0.02; 
+## profile monitor 1
+FE_LEBT:PM_D0998: marker; 
+trg_drift_73: drift, L = 0.149409, aper = 0.15; 
+RFQ_entrance: marker; 
+########################################### LEBT end
+ #RFQ section
+
+trg_drift_74: drift, L = 0.03175, aper = 0.15; 
+#RFQ inn-wall_match point
+
+
+
+trg: LINE = (
+#trg_drift_0, trg_drift_1, FE_ISRC1:DCH_D0695, FE_ISRC1:DCV_D0695, trg_drift_2,
+#trg_drift_3,
+FE_SCS1:SOLR_D0704, trg_drift_4, FE_SCS1:DCH_D0709, FE_SCS1:DCV_D0709,
+trg_drift_5, FE_SCS1:DH_D0717_0, FE_SCS1:DH_D0717_1, FE_SCS1:DH_D0717_2, FE_SCS1:DH_D0717_3,
+FE_SCS1:DH_D0717_4, trg_drift_6, FE_SCS1:DCH_D0723, FE_SCS1:DCV_D0723, trg_drift_7,
+FE_SCS1:QHE_D0726, trg_drift_8, FE_SCS1:QVE_D0730, trg_drift_9, FE_SCS1:QHE_D0733,
+trg_drift_10, FE_SCS1:SLT_D0736, trg_drift_11, FE_SCS1:FC_D0738, trg_drift_12,
+FE_SCS1:VD_D0739, FE_SCS1:EMS_D0739, trg_drift_13, FE_SCS1:QHE_D0743, trg_drift_14,
+FE_SCS1:QVE_D0746, trg_drift_15, FE_SCS1:QHE_D0749, trg_drift_16, FE_LEBT:DH_D0759_0,
+FE_LEBT:DH_D0759_1, FE_LEBT:DH_D0759_2, FE_LEBT:DH_D0759_3, FE_LEBT:DH_D0759_4, trg_drift_17,
+FE_LEBT:QVE_D0767, trg_drift_18, FE_LEBT:QHE_D0770, trg_drift_19, FE_LEBT:DCH_D0773,
+FE_LEBT:DCV_D0773, trg_drift_20, FE_LEBT:QHE_D0776, trg_drift_21, FE_LEBT:QVE_D0780,
+trg_drift_22, FE_LEBT:PM_D0783, trg_drift_23, FE_LEBT:SOLR_D0787, trg_drift_24,
+FE_LEBT:DCH_D0790, FE_LEBT:DCV_D0790, trg_drift_25, FE_LEBT:FC_D0796, trg_drift_26,
+FE_LEBT:SOLR_D0802, trg_drift_27, FE_LEBT:DCH_D0805, FE_LEBT:DCV_D0805, trg_drift_28,
+FE_LEBT:PM_D0808, trg_drift_29, FE_LEBT:EMS_D0812, FE_LEBT:VD_D0812, trg_drift_30,
+FE_LEBT:FC_D0814, trg_drift_31, FE_LEBT:SOLR_D0818, trg_drift_32, FE_LEBT:DCH_D0821,
+FE_LEBT:DCV_D0821, trg_drift_33, FE_LEBT:PM_D0824, trg_drift_34, FE_LEBT:DVE_D0833,
+trg_drift_35, FE_LEBT:DCH_D0840, FE_LEBT:DCV_D0840, trg_drift_36, FE_LEBT:QHE_D0844,
+trg_drift_37, FE_LEBT:QVE_D0848, trg_drift_38, FE_LEBT:QHE_D0851, trg_drift_39,
+FE_LEBT:PM_D0856, trg_drift_40, FE_LEBT:DCH_D0868, FE_LEBT:DCV_D0868, trg_drift_41,
+FE_LEBT:QVE_D0871, trg_drift_42, FE_LEBT:QHE_D0874, trg_drift_43, FE_LEBT:QVE_D0878,
+trg_drift_44, FE_LEBT:DCH_D0880, FE_LEBT:DCV_D0880, trg_drift_45, FE_LEBT:PM_D0885,
+trg_drift_46, FE_LEBT:QVE_D0891, trg_drift_47, FE_LEBT:QHE_D0895, trg_drift_48,
+FE_LEBT:QVE_D0898, trg_drift_49, FE_LEBT:DCH_D0901, FE_LEBT:DCV_D0901, trg_drift_50,
+FE_LEBT:PM_D0912, trg_drift_51, FE_LEBT:QHE_D0918, trg_drift_52, FE_LEBT:QVE_D0921,
+trg_drift_53, FE_LEBT:QHE_D0924, trg_drift_54, FE_LEBT:DCH_D0929, FE_LEBT:DCV_D0929,
+trg_drift_55, FE_LEBT:DVE_D0936, FE_LEBT:NEGP_D0936, trg_drift_56, FE_LEBT:PM_D0945,
+trg_drift_57, FE_LEBT:DCH_D0948, FE_LEBT:DCV_D0948, trg_drift_58, FE_LEBT:SOLR_D0951,
+#trg_drift_59,
+trg_drift_59a*5, FE_LEBT:ATT_D0957_1, trg_drift_59b, FE_LEBT:ATT_D0957_2, trg_drift_59c*5,
+FE_LEBT:PM_D0961, trg_drift_60, FE_LEBT:DCH_D0964, FE_LEBT:DCV_D0964,
+trg_drift_61, FE_LEBT:SOLR_D0967, trg_drift_62, FE_LEBT:PM_D0972, trg_drift_63,
+FE_LEBT:VD_D0977, FE_LEBT:FC_D0977, trg_drift_64, FE_LEBT:DCH_D0979, FE_LEBT:DCV_D0979,
+trg_drift_65, FE_LEBT:SOLR_D0982, trg_drift_66, FE_LEBT:PM_D0986, trg_drift_67,
+FE_LEBT:CAV_D0987, trg_drift_68, FE_LEBT:BCM_D0989, trg_drift_69, FE_LEBT:DCH_D0992,
+FE_LEBT:DCV_D0992, trg_drift_70, FE_LEBT:SOLR_D0995, trg_drift_71, FE_LEBT:FC_D0998,
+FE_LEBT:FFC_D0998, trg_drift_72, FE_LEBT:PM_D0998, trg_drift_73, trg_drift_74,
+trg_drift_74, RFQ_entrance);
+
+cell: LINE= (S,trg);
+USE: cell;

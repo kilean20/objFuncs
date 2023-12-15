@@ -1,0 +1,338 @@
+#Eng_Data_Dir = dir("data");
+
+HdipoleFitMode = 1.0; 
+
+IonEk = 19810000.0; 
+IonEs = 931494320.0; 
+MpoleLevel = "2"; 
+Soffset = 223.743568; 
+
+IonChargeStates = [0.5]; 
+NCharge = [1.0]; 
+BaryCenter0 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]; 
+
+# longitudinal parameter just after the stripper is obtained from FLAME_MEBT-FS1b_wCB11_8acc_less_CB11-Sol3_NoCB11-3_wStripper_20190302
+#S0 = [
+#    2.25, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+#    0.0, 1.46714682e-07, 0.0, 0.0, 0.0, 0.0, 0.0,
+#    0.0, 0.0, 2.25, 0.0, 0.0, 0.0, 0.0,
+#    0.0, 0.0, 0.0, 1.46714682e-07, 0.0, 0.0, 0.0,
+#    0.0, 0.0, 0.0, 0.0, 4.39485423e-04, -1.10776695E-04, 0.0,
+#    0.0, 0.0, 0.0, 0.0, -1.10776695E-04, 1.39591654E-03, 0.0,
+#    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+
+### Matrix after 0.8 mg/cm2 the carbon foil. The RMS beam size is 1.5 mm and the effect of the foil scattering is calculated by SRIM
+S0 = [
+    2.26309, -2.64368e-06, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    -2.64368e-06, 3.45123e-07, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    0.0, 0.0, 2.26569, -4.21497e-06, 0.0, 0.0, 0.0, 
+    0.0, 0.0, -4.21497e-06, 3.43651e-07, 0.0, 0.0, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 6.7427e-05, -7.25318e-07, 0.0, 
+    0.0, 0.0, 0.0, 0.0, -7.25318e-07, 0.000138236, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]; 
+
+sim_type = "MomentMatrix"; 
+
+S: source, matrix_variable = "S", vector_variable = "BaryCenter"; 
+FS1_STRL:STRIP_D2237: marker; 
+FS1_drift_1: drift, L = 1.16012; 
+FS1_STRL:CSTRIP: marker; 
+FS1_drift_2: drift, L = 0.26458; 
+FS1_CSS:BPM_D2248: bpm; 
+FS1_drift_3: drift, L = 0.05939; 
+FS1_CSS:QV_D2254: quadrupole, B2 = 4.20603153, L = 0.261, aper = 0.025; 
+FS1_drift_6: drift, L = 0.187006; 
+FS1_CSS:DCH_D2257: orbtrim, realpara = 1.0, tm_xkick = 0.0008898233899999999; 
+FS1_CSS:DCV_D2257: orbtrim, realpara = 1.0, tm_ykick = -0.00018380422399999998; 
+FS1_drift_7: drift, L = 0.201994; 
+FS1_CSS:QH_D2260: quadrupole, B2 = -5.70323028, L = 0.261, aper = 0.025; 
+FS1_drift_8: drift, L = 0.176751; 
+FS1_CSS:LPM_D2263: marker; 
+FS1_drift_9: drift, L = 0.13375; 
+FS1_CSS:BCM_D2264: marker; 
+FS1_drift_10: drift, L = 0.628499; 
+FS1_CSS:QV_D2272: quadrupole, B2 = 4.49147766, L = 0.261, aper = 0.025; 
+FS1_drift_11: drift, L = 0.233156; 
+FS1_CSS:DCH_D2276: orbtrim, realpara = 1.0, tm_xkick = 7.112291e-05; 
+FS1_CSS:DCV_D2276: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+FS1_drift_12: drift, L = 0.239394; 
+FS1_CSS:BPM_D2278: bpm; 
+FS1_drift_13: drift, L = 0.0543; 
+FS1_CSS:QH_D2280: quadrupole, B2 = -2.32175502, L = 0.261, aper = 0.025; 
+FS1_drift_14: drift, L = 0.760094; 
+FS1_CSS:DH_D2290_0: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2290_1: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2290_2: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2290_3: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2290_4: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_drift_15: drift, L = 0.25; 
+FS1_CSS:DH_D2296_0: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2296_1: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2296_2: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2296_3: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2296_4: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_drift_16: drift, L = 0.35; 
+FS1_CSS:DH_D2302_0: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2302_1: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2302_2: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2302_3: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2302_4: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_drift_17: drift, L = 0.25; 
+FS1_CSS:DH_D2308_0: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2308_1: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2308_2: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2308_3: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_CSS:DH_D2308_4: drift, L = 0.06, phi = 0.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_drift_18: drift, L = 0.371042; 
+FS1_CSS:BPM_D2313: bpm; 
+FS1_drift_19: drift, L = 0.145282; 
+FS1_CSS:PM_D2315: marker; 
+FS1_drift_20: drift, L = 0.374104; 
+FS1_MGB01:GV_D2318: marker; 
+
+FS1_MGB01_drift_1: drift, L = 0.095353; 
+FS1_MGB01:CAV_D2325: rfcavity, L = 1.14, aper = 0.018, cavtype = "Generic", datafile = "thinlenlon_7g.lat", f = 161000000.0, phi = -90.0, scl_fac = 0.8332890775341457; 
+FS1_MGB01_drift_2: drift, L = 0.095353; 
+
+FS1_MGB01:GV_D2332: marker; 
+FS1_drift_27: drift, L = 1.940569; 
+FS1_CSS:DCH_D2351: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FS1_CSS:DCV_D2351: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+FS1_drift_28: drift, L = 0.206701; 
+FS1_CSS:BCM_D2353: marker; 
+FS1_drift_29: drift, L = 0.137799; 
+FS1_CSS:QH_D2356: quadrupole, B2 = 0.08846814, L = 0.261, aper = 0.025; 
+FS1_drift_30: drift, L = 0.364; 
+FS1_CSS:QH_D2362: quadrupole, B2 = -3.20525052, L = 0.261, aper = 0.025; 
+FS1_drift_31: drift, L = 0.3945; 
+FS1_CSS:DCH_D2367: orbtrim, realpara = 1.0, tm_xkick = -0.00027901701; 
+FS1_CSS:DCV_D2367: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+FS1_drift_32: drift, L = 0.15635; 
+FS1_CSS:BPM_D2369: bpm; 
+FS1_drift_33: drift, L = 0.18815; 
+FS1_CSS:QV_D2372: quadrupole, B2 = 6.44927997, L = 0.261, aper = 0.025; 
+FS1_drift_34: drift, L = 0.239; 
+FS1_CSS:QH_D2377: quadrupole, B2 = -4.36221456, L = 0.261, aper = 0.025; 
+FS1_drift_35: drift, L = 0.2395; 
+FS1_CSS:DCH_D2381: orbtrim, realpara = 1.0, tm_xkick = 0.00012697634999999998; 
+FS1_CSS:DCV_D2381: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+FS1_drift_36: drift, L = 0.26299; 
+FS1_CSS:BPM_D2383: bpm; 
+FS1_drift_37: drift, L = 0.145282; 
+FS1_CSS:PM_D2385: marker; 
+FS1_drift_38: drift, L = 0.159885; 
+FS1_CSS:GV_D2386: marker; 
+FS1_drift_39: drift, L = 0.2217175; 
+
+FS1_BBS:DH_D2394_0: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = -7.0, phi2 = 0.0; 
+FS1_BBS:DH_D2394_1: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2394_2: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2394_3: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2394_4: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = -7.0; 
+
+FS1_BBS:DH_D2394: sbend, L = 1.0406525665, phi = -45.0, phi1 = -7.0, phi2 = -7.0;
+
+FS1_drift_40: drift, L = 0.63; 
+FS1_BBS:SLH_D2405: marker; 
+FS1_drift_41: drift, L = 0.68; 
+FS1_BBS:DCH_D2412: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FS1_BBS:DCV_D2412: orbtrim, realpara = 1.0, tm_ykick = 0.0021008602200000004; 
+FS1_drift_42: drift, L = 0.25; 
+FS1_BBS:QH_D2416: quadrupole, B2 = 6.4373012, L = 0.25, aper = 0.025; 
+FS1_drift_43: drift, L = 0.14; 
+#FS1_BBS:S_D2419: sextupole, B3 = 0.0, L = 0.15, aper = 0.07, dstkick = 1.0, step = 10.0;
+FS1_BBS:S_D2419: drift, B3 = -0.0, L = 0.15, aper = 0.07, dstkick = 1.0, step = 10.0; 
+FS1_drift_44: drift, L = 0.14825; 
+FS1_BBS:BPM_D2421: bpm; 
+FS1_drift_45: drift, L = 0.16175; 
+FS1_BBS:QV_D2424: quadrupole, B2 = -2.8819320000000004, L = 0.25, aper = 0.025; 
+FS1_drift_46: drift, L = 0.403223; 
+
+FS1_BBS:DH_D2435_0: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = -7.0, phi2 = 0.0; 
+FS1_BBS:DH_D2435_1: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2435_2: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2435_3: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2435_4: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = -7.0; 
+
+FS1_BBS:DH_D2435: sbend, L = 1.0406525665, phi = -45.0, phi1 = -7.0, phi2 = -7.0;
+
+FS1_drift_47: drift, L = 0.3890417444; 
+FS1_BBS:PM_D2444: marker; 
+FS1_drift_48: drift, L = 0.3809582556; 
+
+FS1_BBS:DH_D2453_0: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = -7.0, phi2 = 0.0; 
+FS1_BBS:DH_D2453_1: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2453_2: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2453_3: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2453_4: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = -7.0; 
+
+FS1_BBS:DH_D2453: sbend, L = 1.0406525665, phi = -45.0, phi1 = -7.0, phi2 = -7.0;
+
+FS1_drift_49: drift, L = 0.403223; 
+FS1_BBS:QV_D2463: quadrupole, B2 = -2.8846172, L = 0.25, aper = 0.025; 
+FS1_drift_50: drift, L = 0.16175; 
+FS1_BBS:BPM_D2466: bpm; 
+FS1_drift_51: drift, L = 0.14825; 
+#FS1_BBS:S_D2469: sextupole, B3 = 0.0, L = 0.15, aper = 0.07, dstkick = 1.0, step = 10.0;
+FS1_BBS:S_D2469: drift, B3 = -0.0, L = 0.15, aper = 0.07, dstkick = 1.0, step = 10.0; 
+FS1_drift_52: drift, L = 0.14; 
+FS1_BBS:QH_D2472: quadrupole, B2 = 6.427492000000001, L = 0.25, aper = 0.025; 
+FS1_drift_53: drift, L = 0.25; 
+FS1_BBS:DCH_D2476: orbtrim, realpara = 1.0, tm_xkick = -7.959400000000001e-07; 
+FS1_BBS:DCV_D2476: orbtrim, realpara = 1.0, tm_ykick = 0.0009333567; 
+FS1_drift_54: drift, L = 0.68; 
+FS1_BBS:PM_D2482: marker; 
+FS1_drift_55: drift, L = 0.63; 
+
+FS1_BBS:DH_D2494_0: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = -7.0, phi2 = 0.0; 
+FS1_BBS:DH_D2494_1: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2494_2: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2494_3: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2494_4: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = -7.0; 
+
+FS1_BBS:DH_D2494: sbend, L = 1.0406525665, phi = -45.0, phi1 = -7.0, phi2 = -7.0;
+
+FS1_drift_56: drift, L = 0.196163; 
+FS1_BMS:GV_D2501: marker; 
+FS1_drift_57: drift, L = 0.132201; 
+FS1_BMS:BPM_D2502: bpm; 
+FS1_drift_58: drift, L = 0.145282; 
+FS1_BMS:PM_D2504: marker; 
+FS1_drift_59: drift, L = 0.316354; 
+FS1_BMS:DCH_D2507: orbtrim, realpara = 1.0, tm_xkick = -0.0007471205299999999; 
+FS1_BMS:DCV_D2507: orbtrim, realpara = 1.0, tm_ykick = 0.000230864064; 
+FS1_drift_60: drift, L = 0.2395; 
+FS1_BMS:QV_D2511: quadrupole, B2 = -4.6392846783, L = 0.261, aper = 0.025; 
+FS1_drift_61: drift, L = 0.189; 
+FS1_BMS:QH_D2515: quadrupole, B2 = 5.5960296636, L = 0.261, aper = 0.025; 
+FS1_drift_62: drift, L = 0.276329; 
+FS1_BMS:BCM_D2519: marker; 
+FS1_drift_63: drift, L = 0.1443171; 
+FS1_BMS:DCH_D2534: orbtrim, realpara = 1.0, tm_xkick = -0.00033327671999999997; 
+FS1_BMS:DCV_D2534: orbtrim, realpara = 1.0, tm_ykick = -0.0004299712; 
+FS1_drift_64: drift, L = 0.292421; 
+FS1_BMS:BPM_D2537: bpm; 
+FS1_drift_65: drift, L = 0.052079; 
+FS1_BMS:QV_D2539: quadrupole, B2 = -1.4535860915999999, L = 0.261, aper = 0.025; 
+FS1_drift_66_1: drift, L = 0.23889999999999997; 
+FS1_BMS:PM_D2552: marker; 
+FS1_drift_66_2: drift, L = 0.19890000000000002; 
+FS1_BMS:QV_D2563: quadrupole, B2 = -1.0774613039999998, L = 0.261, aper = 0.025; 
+FS1_drift_67: drift, L = 0.136193; 
+FS1_BMS:GV_D2566: marker; 
+FS1_drift_68: drift, L = 0.18559051; 
+FS1_BMS:DCH_D2584: orbtrim, realpara = 1.0, tm_xkick = -0.00021476151999999998; 
+FS1_BMS:DCV_D2584: orbtrim, realpara = 1.0, tm_ykick = 0.000338378024; 
+FS1_drift_69: drift, L = 0.242305; 
+FS1_BMS:BPM_D2587: bpm; 
+FS1_drift_70: drift, L = 0.153002; 
+FS1_BMS:QH_D2590: quadrupole, B2 = 4.634135500499999, L = 0.261, aper = 0.025; 
+FS1_drift_71: drift, L = 0.489; 
+FS1_BMS:QV_D2597: quadrupole, B2 = -4.6747928961, L = 0.261, aper = 0.025; 
+FS1_drift_72: drift, L = 0.206984; 
+FS1_BMS:BPM_D2600: bpm; 
+FS1_drift_73: drift, L = 0.145282; 
+FS1_BMS:PM_D2602: marker; 
+FS1_drift_74: drift, L = 0.248539; 
+FS1_MGB02:GV_D2604: marker; 
+
+FS1_MGB02_drift_1: drift, L = 0.095353; 
+FS1_MGB02:CAV_D2611: rfcavity, L = 1.14, aper = 0.018, cavtype = "Generic", datafile = "thinlenlon_7g.lat", f = 161000000.0, phi = -90.0, scl_fac = 0.750656591466268; 
+FS1_MGB02_drift_2: drift, L = 0.095353; 
+
+FS1_MGB02:GV_D2618: marker; 
+FS1_drift_80: drift, L = 0.2281632; 
+FS1_BMS:DCH_D2640: orbtrim, realpara = 1.0, tm_xkick = -8.690457999999999e-05; 
+FS1_BMS:DCV_D2640: orbtrim, realpara = 1.0, tm_ykick = -0.001365365928; 
+FS1_drift_81: drift, L = 0.3445; 
+FS1_BMS:QH_D2645: quadrupole, B2 = 2.5939925958, L = 0.261, aper = 0.025; 
+FS1_drift_82: drift, L = 0.448011; 
+FS1_BMS:GV_D2651: marker; 
+FS1_drift_83: drift, L = 0.1633941; 
+FS1_BMS:QV_D2654: quadrupole, B2 = -4.6447943697, L = 0.261, aper = 0.025; 
+FS1_drift_84: drift, L = 0.6445; 
+FS1_BMS:DCH_D2662: orbtrim, realpara = 1.0, tm_xkick = 4.136803e-05; 
+FS1_BMS:DCV_D2662: orbtrim, realpara = 1.0, tm_ykick = 0.0007816080799999999; 
+FS1_drift_85: drift, L = 0.2924212; 
+FS1_BMS:BPM_D2665: bpm; 
+FS1_drift_86: drift, L = 0.0520788; 
+FS1_BMS:QH_D2666: quadrupole, B2 = 4.986282576, L = 0.261, aper = 0.025; 
+FS1_drift_87: drift, L = 0.484774; 
+FS1_BMS:LPM_D2673: marker; 
+FS1_drift_88: drift, L = 0.246186; 
+FS1_BMS:BCM_D2675: marker; 
+FS1_drift_89: drift, L = 0.30804; 
+FS1_BMS:QV_D2679: quadrupole, B2 = -3.8940734196, L = 0.261, aper = 0.025; 
+FS1_drift_90: drift, L = 0.735093; 
+FS1_BMS:DCH_D2688: orbtrim, realpara = 1.0, tm_xkick = 0.00060097411; 
+FS1_BMS:DCV_D2688: orbtrim, realpara = 1.0, tm_ykick = -0.000347781528; 
+FS1_drift_91: drift, L = 0.157347; 
+FS1_BMS:BPM_D2690: bpm; 
+FS1_drift_92: drift, L = 0.24556; 
+FS1_BMS:QH_D2693: quadrupole, B2 = 10.68661926, L = 0.261, aper = 0.025; 
+FS1_drift_93: drift, L = 0.239; 
+FS1_BMS:QV_D2698: quadrupole, B2 = -7.612885049999999, L = 0.261, aper = 0.025; 
+FS1_drift_94: drift, L = 0.218002; 
+FS1_BMS:BPM_D2702: bpm; 
+FS1_drift_95: drift, L = 0.145282; 
+FS1_BMS:PM_D2703: marker; 
+FS1_drift_96: drift, L = 0.1599178; 
+
+
+FS1d: LINE = (
+FS1_STRL:STRIP_D2237,FS1_drift_1,FS1_STRL:CSTRIP,FS1_drift_2, FS1_CSS:BPM_D2248, FS1_drift_3,
+FS1_CSS:QV_D2254, FS1_drift_6, FS1_CSS:DCH_D2257, FS1_CSS:DCV_D2257,
+FS1_drift_7, FS1_CSS:QH_D2260, FS1_drift_8, FS1_CSS:LPM_D2263, FS1_drift_9,
+FS1_CSS:BCM_D2264, FS1_drift_10, FS1_CSS:QV_D2272, FS1_drift_11, FS1_CSS:DCH_D2276, FS1_CSS:DCV_D2276,
+FS1_drift_12, FS1_CSS:BPM_D2278, FS1_drift_13, FS1_CSS:QH_D2280, FS1_drift_14,
+FS1_CSS:DH_D2290_0, FS1_CSS:DH_D2290_1, FS1_CSS:DH_D2290_2, FS1_CSS:DH_D2290_3, FS1_CSS:DH_D2290_4,
+FS1_drift_15, FS1_CSS:DH_D2296_0, FS1_CSS:DH_D2296_1, FS1_CSS:DH_D2296_2, FS1_CSS:DH_D2296_3,
+FS1_CSS:DH_D2296_4, FS1_drift_16, FS1_CSS:DH_D2302_0, FS1_CSS:DH_D2302_1, FS1_CSS:DH_D2302_2,
+FS1_CSS:DH_D2302_3, FS1_CSS:DH_D2302_4, FS1_drift_17, FS1_CSS:DH_D2308_0, FS1_CSS:DH_D2308_1,
+FS1_CSS:DH_D2308_2, FS1_CSS:DH_D2308_3, FS1_CSS:DH_D2308_4, FS1_drift_18, FS1_CSS:BPM_D2313,
+FS1_drift_19, FS1_CSS:PM_D2315, FS1_drift_20, FS1_MGB01:GV_D2318,
+FS1_MGB01_drift_1, FS1_MGB01:CAV_D2325, FS1_MGB01_drift_2,
+FS1_MGB01:GV_D2332, FS1_drift_27, FS1_CSS:DCH_D2351, FS1_CSS:DCV_D2351, FS1_drift_28, FS1_CSS:BCM_D2353,
+FS1_drift_29, FS1_CSS:QH_D2356, FS1_drift_30, FS1_CSS:QH_D2362, FS1_drift_31,
+FS1_CSS:DCH_D2367, FS1_CSS:DCV_D2367, FS1_drift_32, FS1_CSS:BPM_D2369, FS1_drift_33, FS1_CSS:QV_D2372,
+FS1_drift_34, FS1_CSS:QH_D2377, FS1_drift_35, FS1_CSS:DCH_D2381, FS1_CSS:DCV_D2381, FS1_drift_36,
+FS1_CSS:BPM_D2383, FS1_drift_37, FS1_CSS:PM_D2385, FS1_drift_38, FS1_CSS:GV_D2386, FS1_drift_39,
+FS1_BBS:DH_D2394_0, FS1_BBS:DH_D2394_1, FS1_BBS:DH_D2394_2, FS1_BBS:DH_D2394_3, FS1_BBS:DH_D2394_4,
+#FS1_BBS:DH_D2394,
+FS1_drift_40, FS1_BBS:SLH_D2405, FS1_drift_41, FS1_BBS:DCH_D2412, FS1_BBS:DCV_D2412,
+FS1_drift_42, FS1_BBS:QH_D2416, FS1_drift_43, FS1_BBS:S_D2419, FS1_drift_44,
+FS1_BBS:BPM_D2421, FS1_drift_45, FS1_BBS:QV_D2424, FS1_drift_46,
+FS1_BBS:DH_D2435_0, FS1_BBS:DH_D2435_1, FS1_BBS:DH_D2435_2, FS1_BBS:DH_D2435_3, FS1_BBS:DH_D2435_4,
+#FS1_BBS:DH_D2435,
+FS1_drift_47, FS1_BBS:PM_D2444, FS1_drift_48,
+FS1_BBS:DH_D2453_0, FS1_BBS:DH_D2453_1, FS1_BBS:DH_D2453_2, FS1_BBS:DH_D2453_3, FS1_BBS:DH_D2453_4,
+#FS1_BBS:DH_D2453,
+FS1_drift_49, FS1_BBS:QV_D2463, FS1_drift_50,
+FS1_BBS:BPM_D2466, FS1_drift_51, FS1_BBS:S_D2469, FS1_drift_52, FS1_BBS:QH_D2472,
+FS1_drift_53, FS1_BBS:DCH_D2476, FS1_BBS:DCV_D2476, FS1_drift_54, FS1_BBS:PM_D2482, FS1_drift_55,
+FS1_BBS:DH_D2494_0, FS1_BBS:DH_D2494_1, FS1_BBS:DH_D2494_2, FS1_BBS:DH_D2494_3, FS1_BBS:DH_D2494_4,
+#FS1_BBS:DH_D2494,
+FS1_drift_56, FS1_BMS:GV_D2501, FS1_drift_57, FS1_BMS:BPM_D2502, FS1_drift_58,
+FS1_BMS:PM_D2504, FS1_drift_59, FS1_BMS:DCH_D2507, FS1_BMS:DCV_D2507, FS1_drift_60, FS1_BMS:QV_D2511,
+FS1_drift_61, FS1_BMS:QH_D2515, FS1_drift_62, FS1_BMS:BCM_D2519, FS1_drift_63*10,
+FS1_BMS:DCH_D2534, FS1_BMS:DCV_D2534, FS1_drift_64, FS1_BMS:BPM_D2537, FS1_drift_65, FS1_BMS:QV_D2539,
+FS1_drift_66_1*5, FS1_BMS:PM_D2552, FS1_drift_66_2*5,
+FS1_BMS:QV_D2563, FS1_drift_67, FS1_BMS:GV_D2566, FS1_drift_68*10,
+FS1_BMS:DCH_D2584, FS1_BMS:DCV_D2584, FS1_drift_69, FS1_BMS:BPM_D2587, FS1_drift_70, FS1_BMS:QH_D2590,
+FS1_drift_71, FS1_BMS:QV_D2597, FS1_drift_72, FS1_BMS:BPM_D2600, FS1_drift_73,
+FS1_BMS:PM_D2602, FS1_drift_74, FS1_MGB02:GV_D2604,
+#FS1_drift_75, FS1_MGB02:CAV_D2606,
+#FS1_drift_76, FS1_MGB02:CAV_D2609, FS1_drift_77, FS1_MGB02:CAV_D2613, FS1_drift_78,
+#FS1_MGB02:CAV_D2616, FS1_drift_79,
+FS1_MGB02_drift_1, FS1_MGB02:CAV_D2611, FS1_MGB02_drift_2,
+FS1_MGB02:GV_D2618, FS1_drift_80*10, FS1_BMS:DCH_D2640, FS1_BMS:DCV_D2640,
+FS1_drift_81, FS1_BMS:QH_D2645, FS1_drift_82, FS1_BMS:GV_D2651, FS1_drift_83,
+FS1_BMS:QV_D2654, FS1_drift_84, FS1_BMS:DCH_D2662, FS1_BMS:DCV_D2662, FS1_drift_85, FS1_BMS:BPM_D2665,
+FS1_drift_86, FS1_BMS:QH_D2666, FS1_drift_87, FS1_BMS:LPM_D2673, FS1_drift_88,
+FS1_BMS:BCM_D2675, FS1_drift_89, FS1_BMS:QV_D2679, FS1_drift_90, FS1_BMS:DCH_D2688, FS1_BMS:DCV_D2688,
+FS1_drift_91, FS1_BMS:BPM_D2690, FS1_drift_92, FS1_BMS:QH_D2693, FS1_drift_93,
+FS1_BMS:QV_D2698, FS1_drift_94, FS1_BMS:BPM_D2702, FS1_drift_95, FS1_BMS:PM_D2703,
+FS1_drift_96);
+
+cell: LINE= (S, FS1d);
+USE: cell;

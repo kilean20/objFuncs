@@ -1,0 +1,89 @@
+#Eng_Data_Dir = dir("data");
+
+HdipoleFitMode = 1.0; 
+
+IonEk = 224850000.0; 
+IonEs = 931494320.0; 
+MpoleLevel = "2"; 
+Soffset = 392.393755; 
+
+IonChargeStates = [0.5]; 
+NCharge = [1.0]; 
+BaryCenter0 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]; 
+
+# longitudinal parameter just after the stripper is obtained from FLAME_MEBT-FS1b_wCB11_8acc_less_CB11-Sol3_NoCB11-3_wStripper_20190302
+#S0 = [
+#    2.25, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+#    0.0, 1.46714682e-07, 0.0, 0.0, 0.0, 0.0, 0.0,
+#    0.0, 0.0, 2.25, 0.0, 0.0, 0.0, 0.0,
+#    0.0, 0.0, 0.0, 1.46714682e-07, 0.0, 0.0, 0.0,
+#    0.0, 0.0, 0.0, 0.0, 4.39485423e-04, -1.10776695E-04, 0.0,
+#    0.0, 0.0, 0.0, 0.0, -1.10776695E-04, 1.39591654E-03, 0.0,
+#    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+
+### Matrix after 0.8 mg/cm2 the carbon foil. The RMS beam size is 1.5 mm and the effect of the foil scattering is calculated by SRIM
+S0 = [
+    2.26309, -2.64368e-06, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    -2.64368e-06, 3.45123e-07, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    0.0, 0.0, 2.26569, -4.21497e-06, 0.0, 0.0, 0.0, 
+    0.0, 0.0, -4.21497e-06, 3.43651e-07, 0.0, 0.0, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 6.7427e-05, -7.25318e-07, 0.0, 
+    0.0, 0.0, 0.0, 0.0, -7.25318e-07, 0.000138236, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]; 
+
+sim_type = "MomentMatrix"; 
+
+S: source, matrix_variable = "S", vector_variable = "BaryCenter"; 
+
+FS2_drift_708: drift, L = 0.576498, aper = 0.15; 
+FS2_BTS:DCH_D3930: orbtrim, realpara = 1.0, tm_xkick = -0.0031500497; 
+FS2_BTS:DCV_D3930: orbtrim, realpara = 1.0, tm_ykick = 0.002170300792; 
+FS2_drift_709: drift, L = 0.3, aper = 0.15; 
+FS2_BTS:QH_D3934: quadrupole, B2 = 19.90450137, L = 0.25, aper = 0.025, radius = 0.02375; 
+FS2_drift_710: drift, L = 0.325, aper = 0.15; 
+FS2_BTS:QV_D3940: quadrupole, B2 = -16.52539791, L = 0.25, aper = 0.025, radius = 0.02375; 
+FS2_drift_711: drift, L = 0.218706, aper = 0.15; 
+FS2_WD12:BPM_D3943: bpm; 
+FS2_drift_712: drift, L = 0.181294, aper = 0.15; 
+FS2_BTS:DCH_D3945: orbtrim, realpara = 1.0, tm_xkick = 0.0022790161699999998; 
+FS2_BTS:DCV_D3945: orbtrim, realpara = 1.0, tm_ykick = 0.00038420212; 
+FS2_drift_713: drift, L = 0.35, aper = 0.15; 
+FS2_BTS:QV_D3950: quadrupole, B2 = -9.0851799, L = 0.25, aper = 0.025, radius = 0.02375; 
+FS2_drift_714: drift, L = 0.25, aper = 0.15; 
+FS2_BTS:QH_D3955: quadrupole, B2 = 17.34817533, L = 0.25, aper = 0.025, radius = 0.02375; 
+FS2_drift_715: drift, L = 0.165855, aper = 0.15; 
+FS2_BTS:BPM_D3958: bpm; 
+FS2_drift_716: drift, L = 0.171799, aper = 0.15; 
+## profile monitor 3
+FS2_BTS:PM_D3959: marker; 
+FS2_drift_717: drift, L = 0.300989, aper = 0.15; 
+FS2_BTS:DCH_D3962: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FS2_BTS:DCV_D3962: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+FS2_drift_718: drift, L = 0.496357, aper = 0.15; 
+## Branch to bending and FS2 dump
+########## FS2 dumpline elements
+FS2_BTS:DH_D3979: drift, L = 2.241933, aper = 0.04; 
+FS2_BTS_drift_D3990: drift, L = 0.243761, aper = 0.0315; 
+FS2_BTS:Q_D3994: quadrupole, B2 = -0.0, L = 0.4, aper = 0.025, radius = 0.035; 
+FS2_BTS_drift_D3997: drift, L = 0.227306, aper = 0.0315; 
+FS2_BTS:Q_D4000: quadrupole, B2 = 0.0, L = 0.26, aper = 0.025, radius = 0.02; 
+FS2_BTS_drift_D4003: drift, L = 0.491744, aper = 0.0315; 
+FS2_BTS:BPM_D4006: bpm; 
+FS2_BTS_drift_D4007: drift, L = 0.310956, aper = 0.05; 
+FS2_BTS:PM_D4009: marker; 
+FS2_BTS_drift_D4009: drift, L = 0.9235, aper = 0.05; 
+
+
+
+FS2a: LINE = (FS2_drift_708,
+FS2_BTS:DCH_D3930, FS2_BTS:DCV_D3930, FS2_drift_709, FS2_BTS:QH_D3934, FS2_drift_710,
+FS2_BTS:QV_D3940, FS2_drift_711, FS2_WD12:BPM_D3943, FS2_drift_712, FS2_BTS:DCH_D3945,
+FS2_BTS:DCV_D3945, FS2_drift_713, FS2_BTS:QV_D3950, FS2_drift_714, FS2_BTS:QH_D3955,
+FS2_drift_715, FS2_BTS:BPM_D3958, FS2_drift_716, FS2_BTS:PM_D3959, FS2_drift_717,
+FS2_BTS:DCH_D3962, FS2_BTS:DCV_D3962, FS2_drift_718, FS2_BTS:DH_D3979, FS2_BTS_drift_D3990,
+FS2_BTS:Q_D3994, FS2_BTS_drift_D3997, FS2_BTS:Q_D4000, FS2_BTS_drift_D4003, FS2_BTS:BPM_D4006, FS2_BTS_drift_D4007,
+FS2_BTS:PM_D4009, FS2_BTS_drift_D4009,
+);
+
+cell: LINE= (S, FS2a);
+USE: cell;

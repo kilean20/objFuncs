@@ -1,0 +1,238 @@
+# Beam envelope simulation.
+
+sim_type = "MomentMatrix"; 
+
+# Global parameters.
+
+# Mpultipole level: 0 only include focusing and defocusing effects,
+#                   1 include dipole terms,
+#                   2 include quadrupole terms.
+MpoleLevel = "2"; 
+Soffset = 392.393755; 
+
+# Dipole strength adjusted to beam energy.
+HdipoleFitMode = "1"; 
+
+AMU = 931494320.0; # Atomic mass unit [eV/c^2].
+
+#IonZ = 0.3958090803259604; # Charge state for U_238.
+IonEs = 931494320.0; # Nucleon mass [eV/u].
+IonEk = 224850000.0; # Kinetic energy at LS1 entrance [eV/u].
+#IonW = 947904320.0; # Total energy [eV/u].
+
+
+# Define Initial Conditions for the Charge States.
+# Units are: [mm, rad, mm, rad, rad, MeV/u]. Note, units for mis-alignments are: [m] and [rad].
+
+IonChargeStates = [0.5]; 
+NCharge = [10111.0]; 
+
+#cstate = 0;
+BaryCenter0 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]; 
+
+# Define beam envelope parameters.
+
+S0 = [
+    1.3563332905699268, 5.41433321810167e-06, -0.20403026128344925, 4.285549804276762e-05, 2.443659037855741e-07, -3.7013000259132565e-06, 0.0, 
+    5.41433321810228e-06, 6.531887392992352e-08, 4.69194184735465e-05, 7.971013322247704e-09, -1.6256211225278279e-12, 1.9951807305700626e-09, 0.0, 
+    -0.20403026128344842, 4.69194184735474e-05, 1.5290396332754856, -2.797244850336437e-05, -1.6781287535696885e-07, 3.9728101345678314e-06, 0.0, 
+    4.285549804276679e-05, 7.97101332224774e-09, -2.797244850336418e-05, 5.6899497990013097e-08, 1.5574692465677687e-12, -1.0328782053461335e-09, 0.0, 
+    2.443659037858587e-07, -1.6256211224906967e-12, -1.6781287535709288e-07, 1.5574692465451968e-12, 6.615643168409129e-06, -1.3026783229431557e-06, 0.0, 
+    -3.7013000259419883e-06, 1.9951807305663043e-09, 3.9728101345803125e-06, -1.0328782053438656e-09, -1.3026783229436436e-06, 0.0030999441171873296, 0.0, 
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]; 
+
+S: source, matrix_variable = "S", vector_variable = "BaryCenter"; 
+LS2_WD12:BPM_D3924: bpm; 
+drift_363: drift, L = 0.576498; 
+FS2_BTS:DCH_D3930: orbtrim, realpara = 1.0, tm_xkick = -0.0031500497; 
+FS2_BTS:DCV_D3930: orbtrim, realpara = 1.0, tm_ykick = 0.002170300792; 
+drift_364: drift, L = 0.2945; 
+FS2_BTS:QH_D3934: quadrupole, B2 = 19.90450137, L = 0.261, aper = 0.025; 
+drift_365: drift, L = 0.093985; 
+FS2_BTS:BCM_D3936: marker; 
+drift_366: drift, L = 0.220015; 
+FS2_BTS:QV_D3940: quadrupole, B2 = -16.52539791, L = 0.261, aper = 0.025; 
+drift_367: drift, L = 0.213206; 
+FS2_BTS:BPM_D3943: bpm; 
+drift_368: drift, L = 0.181294; 
+FS2_BTS:DCH_D3945: orbtrim, realpara = 1.0, tm_xkick = 0.0022790161699999998; 
+FS2_BTS:DCV_D3945: orbtrim, realpara = 1.0, tm_ykick = 0.00038420212; 
+drift_369: drift, L = 0.3445; 
+FS2_BTS:QV_D3950: quadrupole, B2 = -9.0851799, L = 0.261, aper = 0.025; 
+drift_370: drift, L = 0.239; 
+FS2_BTS:QH_D3955: quadrupole, B2 = 17.34817533, L = 0.261, aper = 0.025; 
+drift_371: drift, L = 0.160355146; 
+FS2_BTS:BPM_D3958: bpm; 
+drift_372: drift, L = 0.171799; 
+FS2_BTS:PM_D3959: marker; 
+drift_373: drift, L = 0.300988854; 
+FS2_BTS:DCH_D3962: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FS2_BTS:DCV_D3962: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+drift_374: drift, L = 0.25059; 
+FS2_BTS:GV_D3965: marker; 
+drift_375: drift, L = 0.245767; 
+FS2_BBS:DH_D3979_0: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = -12.5, phi2 = 0.0; 
+FS2_BBS:DH_D3979_1: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS2_BBS:DH_D3979_2: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS2_BBS:DH_D3979_3: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS2_BBS:DH_D3979_4: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = -12.5; 
+drift_376: drift, L = 0.4; 
+FS2_BBS:QH_D3996: quadrupole, B2 = 17.353647791999997, L = 0.33, aper = 0.05; 
+drift_377: drift, L = 0.12; 
+FS2_BBS:S_D4000: drift, B3 = 0.0, L = 0.1, aper = 0.07, dstkick = 1.0, step = 10.0; 
+drift_378: drift, L = 0.15; 
+FS2_BBS:QV_D4004: quadrupole, B2 = -15.361509999999999, L = 0.4, aper = 0.05; 
+drift_379: drift, L = 0.11323; 
+FS2_BBS:S_D4007: drift, B3 = 0.0, L = 0.1, aper = 0.07, dstkick = 1.0, step = 10.0; 
+drift_380: drift, L = 0.195715; 
+FS2_BBS:DCH_D4010: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FS2_BBS:DCV_D4010: orbtrim, realpara = 1.0, tm_ykick = 3.5040000000000002e-06; 
+drift_381: drift, L = 0.211055; 
+FS2_BBS:QH_D4014: quadrupole, B2 = 16.13713816, L = 0.33, aper = 0.05; 
+drift_382: drift, L = 0.43105775; 
+FS2_BBS:BPM_D4019: bpm; 
+drift_383: drift, L = 0.29687175; 
+FS2_BBS:DH_D4034_0: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = -12.5, phi2 = 0.0; 
+FS2_BBS:DH_D4034_1: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS2_BBS:DH_D4034_2: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS2_BBS:DH_D4034_3: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS2_BBS:DH_D4034_4: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = -12.5; 
+drift_384: drift, L = 0.507588; 
+FS2_BBS:PM_D4051: marker; 
+drift_385: drift, L = 0.26060975; 
+FS2_BBS:BPM_D4054: bpm; 
+drift_386: drift, L = 0.16380175; 
+FS2_BBS:DCH_D4055: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FS2_BBS:DCV_D4055: orbtrim, realpara = 1.0, tm_ykick = 0.0006075936; 
+drift_387: drift, L = 0.468; 
+FS2_BBS:DH_D4072_0: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = -12.5, phi2 = 0.0; 
+FS2_BBS:DH_D4072_1: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS2_BBS:DH_D4072_2: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS2_BBS:DH_D4072_3: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS2_BBS:DH_D4072_4: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = -12.5; 
+drift_388: drift, L = 0.36760475; 
+FS2_BBS:BPM_D4087: bpm; 
+drift_389: drift, L = 0.36032475; 
+FS2_BBS:QH_D4092: quadrupole, B2 = 16.128902972, L = 0.33, aper = 0.05; 
+drift_390: drift, L = 0.211055; 
+FS2_BBS:DCH_D4096: orbtrim, realpara = 1.0, tm_xkick = -7.884e-06; 
+FS2_BBS:DCV_D4096: orbtrim, realpara = 1.0, tm_ykick = 0.0004465848; 
+drift_391: drift, L = 0.195715; 
+FS2_BBS:S_D4098: drift, B3 = 0.0, L = 0.1, aper = 0.07, dstkick = 1.0, step = 10.0; 
+drift_392: drift, L = 0.11323; 
+FS2_BBS:QV_D4102: quadrupole, B2 = -15.343244125, L = 0.4, aper = 0.05; 
+drift_393: drift, L = 0.15; 
+FS2_BBS:S_D4106: drift, B3 = 0.0, L = 0.1, aper = 0.07, dstkick = 1.0, step = 10.0; 
+drift_394: drift, L = 0.12; 
+FS2_BBS:QH_D4109: quadrupole, B2 = 17.366096332, L = 0.33, aper = 0.05; 
+drift_395: drift, L = 0.4; 
+FS2_BBS:DH_D4127_0: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = -12.5, phi2 = 0.0; 
+FS2_BBS:DH_D4127_1: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS2_BBS:DH_D4127_2: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS2_BBS:DH_D4127_3: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS2_BBS:DH_D4127_4: sbend, L = 0.4675, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = -12.5; 
+drift_396: drift, L = 0.245766; 
+FS2_BMS:GV_D4141: marker; 
+drift_397: drift, L = 0.132201; 
+FS2_BMS:BPM_D4142: bpm; 
+drift_398: drift, L = 0.145282; 
+FS2_BMS:PM_D4144: marker; 
+drift_399: drift, L = 0.286751; 
+FS2_BMS:DCH_D4146: orbtrim, realpara = 1.0, tm_xkick = -9.322827999999999e-05; 
+FS2_BMS:DCV_D4146: orbtrim, realpara = 1.0, tm_ykick = 0.000356617944; 
+drift_400: drift, L = 0.3195; 
+FS2_BMS:QH_D4151: quadrupole, B2 = 1.24377192, L = 0.261, aper = 0.025; 
+drift_401: drift, L = 0.239; 
+FS2_BMS:QV_D4156: quadrupole, B2 = -0.4518279, L = 0.261, aper = 0.025; 
+drift_402: drift, L = 0.3945; 
+FS2_BMS:DCH_D4161: orbtrim, realpara = 1.0, tm_xkick = 0.00149855536; 
+FS2_BMS:DCV_D4161: orbtrim, realpara = 1.0, tm_ykick = -0.00065596; 
+drift_403: drift, L = 0.293158; 
+FS2_BMS:BPM_D4164: bpm; 
+drift_404: drift, L = 0.05134199999999999; 
+FS2_BMS:QV_D4166: quadrupole, B2 = -7.603279260000001, L = 0.261, aper = 0.025; 
+drift_405: drift, L = 0.177811; 
+FS2_BBS:BCM_D4169: marker; 
+drift_406: drift, L = 0.136189; 
+FS2_BMS:QH_D4172: quadrupole, B2 = 5.91432048, L = 0.261, aper = 0.025; 
+drift_407: drift, L = 0.374875; 
+FS2_BMS:BPM_D4177: bpm; 
+drift_408: drift, L = 0.145282; 
+FS2_BMS:PM_D4178: marker; 
+drift_409: drift, L = 0.274107; 
+FS2_CG01:GV_D4180: marker; 
+drift_410: drift, L = 0.202425; 
+FS2_CG01:CAV1_D4184: rfcavity, L = 0.5, aper = 0.02, cavtype = "Generic", datafile = "thinlenlon_53_p.lat", f = 322000000.0, phi = -90.0, scl_fac = 0.8107891227103566; 
+drift_411: drift, L = 0.095173; 
+FS2_CG01:CAV2_D4190: rfcavity, L = 0.5, aper = 0.02, cavtype = "Generic", datafile = "thinlenlon_53_p.lat", f = 322000000.0, phi = -90.0, scl_fac = 0.8108258881440032; 
+drift_412: drift, L = 0.395173; 
+FS2_CG01:CAV3_D4199: rfcavity, L = 0.5, aper = 0.02, cavtype = "Generic", datafile = "thinlenlon_53_p.lat", f = 322000000.0, phi = -90.0, scl_fac = 0.8108383756070522; 
+drift_413: drift, L = 0.095173; 
+FS2_CG01:CAV4_D4205: rfcavity, L = 0.5, aper = 0.02, cavtype = "Generic", datafile = "thinlenlon_53_p.lat", f = 322000000.0, phi = -90.0, scl_fac = 0.8108339732402079; 
+drift_414: drift, L = 0.202425; 
+FS2_CG01:GV_D4210: marker; 
+drift_415: drift, L = 0.24804; 
+FS2_BMS:DCH_D4213: orbtrim, realpara = 1.0, tm_xkick = -1.784426e-05; 
+FS2_BMS:DCV_D4213: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+drift_416: drift, L = 0.29472; 
+FS2_BMS:BPM_D4216: bpm; 
+drift_417: drift, L = 0.04978; 
+FS2_BMS:QH_D4218: quadrupole, B2 = 12.889784279999999, L = 0.261, aper = 0.025; 
+drift_418: drift, L = 0.282271; 
+FS2_BMS:PM_D4222: marker; 
+drift_419: drift, L = 0.206729; 
+FS2_BMS:QV_D4226: quadrupole, B2 = -11.865166680000002, L = 0.261, aper = 0.025; 
+drift_420: drift, L = 0.248225; 
+FS2_BMS:LPM_D4277: marker; 
+drift_421: drift, L = 0.421827; 
+FS2_BMS:DCH_D4281: orbtrim, realpara = 1.0, tm_xkick = 0.0; 
+FS2_BMS:DCV_D4281: orbtrim, realpara = 1.0, tm_ykick = 0.0; 
+drift_422: drift, L = 0.22715; 
+FS2_BMS:BPM_D4283: bpm; 
+drift_423: drift, L = 0.11735; 
+FS2_BMS:QH_D4286: quadrupole, B2 = 9.71406267, L = 0.261, aper = 0.025; 
+drift_424: drift, L = 0.7389999999999999; 
+FS2_BMS:QV_D4296: quadrupole, B2 = -6.7385209800000005, L = 0.261, aper = 0.025; 
+drift_425: drift, L = 0.29680019999999996; 
+FS2_BMS:BPM_D4326: bpm; 
+drift_426: drift, L = 0.145282; 
+FS2_BMS:PM_D4328: marker; 
+drift_427: drift, L = 0.159918; 
+##### End BDS beam dump #####
+
+fs2: LINE = (
+LS2_WD12:BPM_D3924,
+drift_363, FS2_BTS:DCH_D3930,FS2_BTS:DCV_D3930,
+drift_364, FS2_BTS:QH_D3934, drift_365, FS2_BTS:BCM_D3936, drift_366,
+FS2_BTS:QV_D3940, drift_367,
+FS2_BTS:BPM_D3943, drift_368, FS2_BTS:DCH_D3945, FS2_BTS:DCV_D3945,
+drift_369, FS2_BTS:QV_D3950, drift_370, FS2_BTS:QH_D3955, drift_371,
+FS2_BTS:BPM_D3958, drift_372, FS2_BTS:PM_D3959, drift_373, FS2_BTS:DCH_D3962, FS2_BTS:DCV_D3962,
+drift_374, FS2_BTS:GV_D3965, drift_375, FS2_BBS:DH_D3979_0, FS2_BBS:DH_D3979_1,
+FS2_BBS:DH_D3979_2, FS2_BBS:DH_D3979_3, FS2_BBS:DH_D3979_4, drift_376, FS2_BBS:QH_D3996,
+drift_377, FS2_BBS:S_D4000, drift_378, FS2_BBS:QV_D4004, drift_379,
+FS2_BBS:S_D4007, drift_380, FS2_BBS:DCH_D4010, FS2_BBS:DCV_D4010, drift_381, FS2_BBS:QH_D4014,
+drift_382, FS2_BBS:BPM_D4019, drift_383, FS2_BBS:DH_D4034_0, FS2_BBS:DH_D4034_1,
+FS2_BBS:DH_D4034_2, FS2_BBS:DH_D4034_3, FS2_BBS:DH_D4034_4, drift_384, FS2_BBS:PM_D4051,
+drift_385, FS2_BBS:BPM_D4054, drift_386, FS2_BBS:DCH_D4055, FS2_BBS:DCV_D4055, drift_387,
+FS2_BBS:DH_D4072_0, FS2_BBS:DH_D4072_1, FS2_BBS:DH_D4072_2, FS2_BBS:DH_D4072_3, FS2_BBS:DH_D4072_4,
+drift_388, FS2_BBS:BPM_D4087, drift_389, FS2_BBS:QH_D4092, drift_390,
+FS2_BBS:DCH_D4096, FS2_BBS:DCV_D4096, drift_391, FS2_BBS:S_D4098, drift_392, FS2_BBS:QV_D4102,
+drift_393, FS2_BBS:S_D4106, drift_394, FS2_BBS:QH_D4109, drift_395,
+FS2_BBS:DH_D4127_0, FS2_BBS:DH_D4127_1, FS2_BBS:DH_D4127_2, FS2_BBS:DH_D4127_3, FS2_BBS:DH_D4127_4,
+drift_396, FS2_BMS:GV_D4141, drift_397, FS2_BMS:BPM_D4142, drift_398,
+FS2_BMS:PM_D4144, drift_399, FS2_BMS:DCH_D4146, FS2_BMS:DCV_D4146, drift_400, FS2_BMS:QH_D4151,
+drift_401, FS2_BMS:QV_D4156, drift_402, FS2_BMS:DCH_D4161, FS2_BMS:DCV_D4161, drift_403,
+FS2_BMS:BPM_D4164, drift_404, FS2_BMS:QV_D4166, drift_405, FS2_BBS:BCM_D4169,
+drift_406, FS2_BMS:QH_D4172, drift_407, FS2_BMS:BPM_D4177, drift_408,
+FS2_BMS:PM_D4178, drift_409, FS2_CG01:GV_D4180, drift_410, FS2_CG01:CAV1_D4184,
+drift_411, FS2_CG01:CAV2_D4190, drift_412, FS2_CG01:CAV3_D4199, drift_413,
+FS2_CG01:CAV4_D4205, drift_414, FS2_CG01:GV_D4210, drift_415, FS2_BMS:DCH_D4213, FS2_BMS:DCV_D4213,
+drift_416, FS2_BMS:BPM_D4216, drift_417, FS2_BMS:QH_D4218, drift_418,
+FS2_BMS:PM_D4222, drift_419, FS2_BMS:QV_D4226, drift_420*20, FS2_BMS:LPM_D4277,
+drift_421, FS2_BMS:DCH_D4281, FS2_BMS:DCV_D4281, drift_422, FS2_BMS:BPM_D4283, drift_423,
+FS2_BMS:QH_D4286, drift_424, FS2_BMS:QV_D4296, drift_425*10, FS2_BMS:BPM_D4326,
+drift_426, FS2_BMS:PM_D4328, drift_427);
+
+cell: LINE = (S, fs2);
+USE: cell;
