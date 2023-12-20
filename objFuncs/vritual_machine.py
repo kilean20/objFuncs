@@ -1,6 +1,7 @@
 import numpy as np
 from typing import List, Union, Optional, Callable
 import pandas as pd
+from IPython.display import display
 
 
 class RandomNeuralNetwork:
@@ -162,7 +163,7 @@ class VM:
                  decision_max: Optional[List[float]] = None,
                  fun: Optional = None,
                  dt: Optional[float] = 0.2,
-                 fetch_data_time_span = 2.0
+                 fetch_data_time_span = 0.2,
                  ):
         # Initialize decision variables and objectives
         self._test = True
@@ -211,11 +212,8 @@ class VM:
         self.t = 0
         
         # Initialize simulation history
-        self.history = pd.DataFrame({})
-        for pv, val in zip(self.decision_CSETs, self.decision_CSET_vals):
-            self.history[pv] = [val]
-        for pv, val in zip(self.objective_RDs, self.objective_RD_vals):
-            self.history[pv] = [val]
+        self.history = pd.DataFrame(np.hstack((self.decision_CSET_vals,self.objective_RD_vals)).reshape(1,-1), 
+                                    columns = np.hstack((self.decision_CSETs,self.objective_RDs)))
 
     def __call__(self):
         """

@@ -58,7 +58,6 @@ def getPVs_from_objective_keys(objective_keys):
             PVs.append(key)
     return PVs
     
-    
 class objFuncBase():#(ABC):
     def __init__(self,
         decision_CSETs: List[Union[str,List[str]]] = None,  

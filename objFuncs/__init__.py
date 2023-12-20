@@ -1,13 +1,16 @@
-__version__ = '1.1.0'
+__version__ = '1.0.2'
 __version_descriptions__ = {
-    '1.1.0':['2023-12-04',
+    '1.0.0':['2023-12-04',
              'Implementation of FLAME based Virtual Machine',  
              'Test lsq_linear MultiConditionalVar on FLAME VMs'],
-    '1.1.1':['2023-12-14',
+    '1.0.1':['2023-12-14',
              'Add REA module', 
              'Detect if machine is REA by checking with caget("REA_EXP:ELMT")',
              'update print_nested_dict',
-             'fix FLAME VM init x0 convert issue',]
+             'fix FLAME VM init x0 convert issue',],
+    '1.0.2':['2023-12-19',
+             'Add plot_multi_obj_history', 
+             ],
 }
 
 print(f'objFuncs version: {__version__}. updated on {__version_descriptions__[__version__][0]}')

@@ -379,9 +379,18 @@ class plot_multi_obj_history(plot_obj_history):
         self.histories = histories
         self.update_histories()
         
+        new_keys = None
+        if keys is not None:
+            new_keys = []
+            for i in range(len(keys)):
+                new_keys.append([])
+                for j in range(len(keys[i])):
+                    for label in history_labels:
+                        new_keys[-1].append(label+' '+keys[i][j])
+                    
         super().__init__( 
             history = self.history,
-            keys = keys,
+            keys = new_keys,
             inline = inline,
             hdisplay = hdisplay,
             fig = fig,
