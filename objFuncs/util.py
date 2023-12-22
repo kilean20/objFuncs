@@ -158,6 +158,38 @@ def _convert_to_sublists(string_list):
     return sublists
 
 
+def get_initial_simplex(x0,
+                bounds = None,
+                dx = None):
+    
+    x0 = np.array(x0).flatten()
+    d = len(x0)
+    if bounds is None:
+        assert dx is not None
+        if isinstance(dx,float):
+            dx = np.ones(d)*dx
+    if dx is None:
+        assert bounds is not None
+        bounds = np.array(bounds)
+        diff = bounds[:,1] - bounds[:,0]
+        dx = 0.05*diff
+    assert d == len(bounds)
+    
+    simplex = np.zeros((d+1,d))
+    simplex[0,:] = x0
+    for i in range(d):
+        simplex[i+1,:] = x0
+        if bounds is not None:
+            if simplex[i+1,i] + dx[i] < bounds[i,1]:
+                simplex[i+1,i] += dx[i]
+            else:
+                simplex[i+1,i] -= dx[i]
+        else:
+            simplex[i+1,i] += dx[i]
+            
+    return simplex
+            
+
 
 def _multicolor_ylabel(ax, list_of_strings, list_of_colors=None, offset=-0.02, anchorpad=0, **kw):
     """This function creates axes labels with multiple colors.
