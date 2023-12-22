@@ -138,7 +138,7 @@ class residualObj(objFuncBase):
     def _normalized_call(self,xn,time_span=None,abs_z=None,callbacks=None):
         return self.__call__(self.unnormalize_decision(xn),time_span=time_span,abs_z=abs_z,callbacks=callbacks)
     
-    def _eval_normalized_jacobian(self,xn,use3points=True,dxn=None):
+    def _eval_normalized_jacobian(self,xn,use3points=True,dxn=None,callbacks=None):
         assert len(xn) == len(self.decision_CSETs)
         jac = np.zeros((len(self.objective_goal),len(xn)))
         dxn = dxn or np.ones(len(xn))*0.1
@@ -147,18 +147,18 @@ class residualObj(objFuncBase):
         if len(self.history['objectives']['values']) >=1:
              ref = np.array(self.history['objectives']['values'][-1])*self._objective_weight_arr
         else:
-            ref = self._normalized_call(xn)
+            ref = self._normalized_call(xn,callbacks=callbacks)
 
         for i in range(len(xn)):
             _ = copy(xn)
             _[i] += dxn[i]
-            jac[:,i] = (self._normalized_call(_) - ref)/dxn[i]
+            jac[:,i] = (self._normalized_call(_,callbacks=callbacks) - ref)/dxn[i]
         if use3points:
             jac2 = np.zeros((len(self.objective_goal),len(xn)))
             for i in range(len(xn)):
                 _ = copy(xn)
                 _[i] -= dxn[i]
-                jac2[:,i] = -(self._normalized_call(_) - ref)/dxn[i]
+                jac2[:,i] = -(self._normalized_call(_,callbacks=callbacks) - ref)/dxn[i]
             jac = 0.5*(jac+jac2)
         
         unnormalized_jac = 2*jac/(self.decision_max[None,:] - self.decision_min[None,:])
@@ -166,8 +166,8 @@ class residualObj(objFuncBase):
         return jac, ref
     
     
-    def eval_jacobian(self,x,use3points=True,dx=None):
-        jac, ref = self._eval_normalized_jacobian(self.normalize_decision(x0).flatten())
+    def eval_jacobian(self,x,use3points=True,dx=None,callbacks=None):
+        jac, ref = self._eval_normalized_jacobian(self.normalize_decision(x0).flatten(),callbacks=callbacks)
 #         unnormalized_jac = jac/(self.decision_max[None,:] - self.decision_min[None,:])
         return copy(history['jacobian']['values'][-1])
     
@@ -226,7 +226,7 @@ class residualObj(objFuncBase):
             jac_dxn = None
         else:
             jac_dxn = 2*jac_dx/(self.decision_max - self.decision_min)
-        jac, ref = self._eval_normalized_jacobian(xn=xn,use3points=jac_use3points,dxn=jac_dxn)
+        jac, ref = self._eval_normalized_jacobian(xn=xn,use3points=jac_use3points,dxn=jac_dxn,callbacks=callbacks)
         bounds = [-np.ones(len(xn))-xn,np.ones(len(xn))-xn]
         result = lsq_linear(jac, -ref,
                             bounds = bounds,
@@ -431,6 +431,7 @@ class residualObjMultiConditional(objFuncBase):
                 self.condition_controller._set_decision(np.array(list(self.conditional_SETs.values()))[:,i])
                 for b in range(batch_size):
                     obj_batches[b,i*nobj:(i+1)*nobj] = self.residualObj[i](decision_vals[b,:],time_span=time_span,abs_z=abs_z)
+                                   
         else:
             for b in range(batch_size):
                 try:
@@ -440,6 +441,7 @@ class residualObjMultiConditional(objFuncBase):
                 for i in proximal_index:
                     self.condition_controller._set_decision(np.array(list(self.conditional_SETs.values()))[:,i])
                     obj_batches[b,i*nobj:(i+1)*nobj] = self.residualObj[i](decision_vals[b,:],time_span=time_span,abs_z=abs_z)
+                        
                     
         for b in range(batch_size):
             obj_each_cond = [np.array(o.history['objectives']['values'][-batch_size+b])*o._objective_weight_arr[None,:] for o in self.residualObj]
@@ -461,10 +463,10 @@ class residualObjMultiConditional(objFuncBase):
         return 2*(np.atleast_2d(x) - self.decision_min[None,:])/(self.decision_max[None,:] - self.decision_min[None,:]) - 1
     def unnormalize_decision(self,xn):
         return 0.5*(np.atleast_2d(xn) + 1)*(self.decision_max[None,:] - self.decision_min[None,:]) + self.decision_min[None,:]
-    def _normalized_call(self,xn, time_span=None ,abs_z=None, callbacks=None, multi_batch=False):
+    def _normalized_call(self,xn, time_span=None ,abs_z=None, multi_batch=False, callbacks=None):
         return self.__call__(self.unnormalize_decision(xn),time_span=time_span,abs_z=abs_z,callbacks=callbacks, multi_batch=multi_batch)
    
-    def _eval_normalized_jacobian(self,xn,use3points=True,dxn=None):
+    def _eval_normalized_jacobian(self,xn,use3points=True,dxn=None,callbacks=None):
         assert len(xn) == len(self.decision_CSETs)
         dxn = dxn or np.ones(len(xn))*0.1
         if type(dxn) is float:
@@ -491,7 +493,7 @@ class residualObjMultiConditional(objFuncBase):
                 xn_simplex[ioff+i,i] -= dxn[i]
                 xn_simplex[ioff+len(self.decision_CSETs)+i,:] = xn
                 xn_simplex[ioff+len(self.decision_CSETs)+i,i] += dxn[i]
-            yn = self._normalized_call(xn_simplex,multi_batch=True)
+            yn = self._normalized_call(xn_simplex,multi_batch=True,callbacks=callbacks)
             for i in range(len(xn)): 
                 jac[:,i] = (yn[ioff+len(self.decision_CSETs)+i,:] - yn[ioff+i,:])/(2*dxn[i])
                 
@@ -508,7 +510,7 @@ class residualObjMultiConditional(objFuncBase):
             for i in range(len(self.decision_CSETs)):
                 xn_simplex[ioff+i,:] = xn
                 xn_simplex[ioff+i,i] += dxn[i]              
-            yn = self._normalized_call(xn_simplex,multi_batch=True)
+            yn = self._normalized_call(xn_simplex,multi_batch=True,callbacks=callbacks)
             if len(ref) == 0:
                 ref = yn[0,:]
             for i in range(len(xn)): 
@@ -520,8 +522,8 @@ class residualObjMultiConditional(objFuncBase):
         return jac, ref
     
     
-    def eval_jacobian(self,x,use3points=True,dx=None):
-        jac, ref = self._eval_normalized_jacobian(self.normalize_decision(x0).flatten())
+    def eval_jacobian(self,x,use3points=True,dx=None,callbacks=None):
+        jac, ref = self._eval_normalized_jacobian(self.normalize_decision(x0).flatten(),callbacks=callbacks)
         unnormalized_jac = 2*jac/(self.decision_max[None,:] - self.decision_min[None,:])
         return unnormalized_jac
     
@@ -580,7 +582,7 @@ class residualObjMultiConditional(objFuncBase):
             jac_dxn = None
         else:
             jac_dxn = 2*jac_dx/(self.decision_max - self.decision_min)
-        jac, ref = self._eval_normalized_jacobian(xn=xn,use3points=jac_use3points,dxn=jac_dxn)
+        jac, ref = self._eval_normalized_jacobian(xn=xn,use3points=jac_use3points,dxn=jac_dxn,callbacks=callbacks)
         bounds = [-np.ones(len(xn))-xn,np.ones(len(xn))-xn]
         result = lsq_linear(jac, -ref,
                             bounds = bounds,
@@ -732,10 +734,10 @@ class residualObjMultiConditionalVar(residualObjMultiConditional):
         return 2*(np.atleast_2d(x) - self.decision_min[None,:])/(self.decision_max[None,:] - self.decision_min[None,:]) - 1
     def unnormalize_decision(self,xn):
         return 0.5*(np.atleast_2d(xn) + 1)*(self.decision_max[None,:] - self.decision_min[None,:]) + self.decision_min[None,:]
-    def _normalized_call(self,xn,time_span=None,abs_z=None,callbacks=None, multi_batch=False):
+    def _normalized_call(self,xn,time_span=None,abs_z=None, callbacks=None, multi_batch=False):
         return self.__call__(self.unnormalize_decision(xn),time_span=time_span,abs_z=abs_z,callbacks=callbacks,multi_batch=multi_batch)
     
-    def _eval_normalized_jacobian(self,xn,use3points=True,dxn=None):
+    def _eval_normalized_jacobian(self,xn,use3points=True,dxn=None,callbacks=None):
         assert len(xn) == len(self.decision_CSETs)
         dxn = dxn or np.ones(len(xn))*0.1
         if type(dxn) is float:
@@ -767,7 +769,7 @@ class residualObjMultiConditionalVar(residualObjMultiConditional):
                 xn_simplex[ioff+i,i] -= dxn[i]
                 xn_simplex[ioff+len(self.decision_CSETs)+i,:] = xn
                 xn_simplex[ioff+len(self.decision_CSETs)+i,i] += dxn[i]
-            yn = self._normalized_call(xn_simplex, multi_batch=True)
+            yn = self._normalized_call(xn_simplex, multi_batch=True,callbacks=callbacks)
             for i in range(len(xn)): 
                 jac[:,i] = (yn[ioff+len(self.decision_CSETs)+i,:] - yn[ioff+i,:])/(2*dxn[i])
                 
@@ -784,7 +786,7 @@ class residualObjMultiConditionalVar(residualObjMultiConditional):
             for i in range(len(self.decision_CSETs)):
                 xn_simplex[ioff+i,:] = xn
                 xn_simplex[ioff+i,i] += dxn[i]              
-            yn = self._normalized_call(xn_simplex, multi_batch=True)
+            yn = self._normalized_call(xn_simplex, multi_batch=True,callbacks=callbacks)
             if len(ref) == 0:
                 ref = yn[0,:]
             for i in range(len(xn)): 
