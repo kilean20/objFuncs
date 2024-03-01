@@ -179,7 +179,7 @@ class construct_machineIO:
             
             
     def fetch_data(self,pvlist,
-                   time_span = _fetch_data_time_span, 
+                   time_span = None, 
                    abs_z = None, 
                    with_data=False,
                    verbose=False,

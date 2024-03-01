@@ -2,6 +2,7 @@ import os
 import time
 import datetime
 
+import re
 import io
 import warnings
 import contextlib
@@ -542,3 +543,23 @@ def get_Dnums_from_FLAME_pv(pv: str) -> list:
                 Dnums.append(int(match.group()[1:]))
                 start_position += match.end()
     return Dnums
+    
+
+def sort_by_Dnum(strings):
+    """
+    Sort a list of PVs by dnum.
+    """
+    # Define a regular expression pattern to extract the 4-digit number at the end of each string
+    pattern = re.compile(r'\D(\d{4})$')
+
+    # Define a custom sorting key function that extracts the 4-digit number using the regex pattern
+    def sorting_key(s):
+        match = pattern.search(s)
+        if match:
+            return int(match.group(1))
+        return 0  # Default value if no match is found
+
+    # Sort the strings based on the custom sorting key
+    sorted_strings = sorted(strings, key=sorting_key)
+
+    return sorted_strings

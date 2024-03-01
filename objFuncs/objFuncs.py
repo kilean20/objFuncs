@@ -157,7 +157,7 @@ class objFuncBase():#(ABC):
             try:
                 self._coupled_decision_info["RDs"] = get_RDs(self._coupled_decision_info["CSETs"])
             except:
-                self._RuntimeError("Automatic decision of 'RDs' for coupling 'PV_CSETs' failed. Contact Kilean Hwang.")
+                self._RuntimeError("Automatic decision of 'RDs' for coupling 'PV_CSETs' failed.")
             try:
                 self._coupled_decision_info["tols"] = get_tolerance(self._coupled_decision_info["CSETs"]) 
             except:
@@ -943,7 +943,7 @@ class objFuncMultiConditionalGoals(objFuncBase):
             _objective_goal = _get_ith_val_from_list_in_dict(i,objective_goal)
             _objective_weight = _get_ith_val_from_list_in_dict(i,objective_weight)
             _objective_norm = _get_ith_val_from_list_in_dict(i,objective_norm)       
-            self.condition_controller._set_decision(np.array(list(self.conditional_SETs.values()))[:,i])
+#             self.condition_controller._set_decision(np.array(list(self.conditional_SETs.values()))[:,i])
             self.objFuncGoals.append(
                 objFuncGoals
                     (
@@ -979,13 +979,19 @@ class objFuncMultiConditionalGoals(objFuncBase):
         self.history['objectives'] = {'names' : list(o.objective_weight.keys()),
                                       'values':[],
                                       'total' :[] }
-                                      
+        
+        
+        self.apply_bilog = apply_bilog
         if init_verbose and not called_by_child:
             self.print_class_info()
+            
+           
         
     def __call__(self,decision_vals,time_span=None,abs_z=None, callbacks=None):
         
-        decision_vals = np.atleast_2d(decision_vals)
+        decision_vals = np.array(decision_vals)
+        if decision_vals.ndim == 1:
+            decision_vals = decision_vals.reshape(1,-1)
         batch_size, dim = decision_vals.shape
         
         obj = np.zeros((batch_size,self.n_condition))
@@ -1016,11 +1022,14 @@ class objFuncMultiConditionalGoals(objFuncBase):
                 np.sum(self.each_condition_objective_weights[:,None]*np.array(obj_each_cond),axis=0) )
         
         obj_batches = np.sum(obj*self.each_condition_objective_weights[None,:],axis=1)
+        if self.apply_bilog:
+            obj_batches = np.sign(obj_batches)*np.log(1+np.abs(obj_batches))
+            
         self.history['objectives']['total'] += obj_batches.tolist()
         
         if callbacks is not None:
             for f in callbacks:
-                f()
+                f()   
         return obj_batches
         
     
@@ -1102,7 +1111,10 @@ class objFuncMultiConditionalGoals(objFuncBase):
                 np.sum(self.each_condition_objective_weights[:,None]*np.array(objs),axis=0) )
             
         objs = [o.history['objectives']['total'] for o in self.objFuncGoals]
-        self.history['objectives']['total'] = np.sum(self.each_condition_objective_weights[:,None]*np.array(objs),axis=0)
+        obj_batches = np.sum(self.each_condition_objective_weights[:,None]*np.array(objs),axis=0)
+        if self.apply_bilog:
+            obj_batches = np.sign(obj_batches)*np.log(1+np.abs(obj_batches))
+        self.history['objectives']['total'] = [v for v in obj_batches]
         
         
         
@@ -1123,7 +1135,7 @@ class objFuncMultiConditionalVar(objFuncMultiConditionalGoals):
                  
         each_condition_objective_weights: Optional[List[float]] = None,         
 #         objective_BPM_var_weight: Optional[Dict] = {'XY':2./3,'PHASE':1./3},
-        var_obj_weight_ratio: Optional[float] = 1.,
+        var_obj_weight_fraction: Optional[float] = 1.,
                  
         objective_p_order:Optional[float] = 2,
         apply_bilog:Optional[bool] = False,
@@ -1165,34 +1177,40 @@ class objFuncMultiConditionalVar(objFuncMultiConditionalGoals):
             assert key in self.history['objectives']['names']
             self.objective_var_weight[key] /= wtot
         self.history['objectives_var'] = {'names': list(objective_var_weight.keys()),
-                                          'description':'variation of objectives(residuals) over conditions',
+                                          'description':'variation of normalized objective RDs over conditions',
                                           'values':[]}
         self.objective_var_ipv = {key:self.history['objectives']['names'].index(key) for key in self.objective_var_weight.keys()}
         self.objective_var_norm = OrderedDict()
         for key in self.objective_var_weight.keys():
             self.objective_var_norm[key] = np.mean([self.objFuncGoals[i].objective_norm[key] for i in range(self.n_condition)])
-        self.var_obj_weight_ratio = var_obj_weight_ratio
+        self.var_obj_weight_fraction = var_obj_weight_fraction
         
         if init_verbose:
             self.print_class_info()
         
         
     def __call__(self,decision_vals,time_span=None,abs_z=None,callbacks=None):
-        decision_vals = np.atleast_2d(decision_vals)
+        
+        decision_vals = np.array(decision_vals)
+        if decision_vals.ndim == 1:
+            decision_vals = decision_vals.reshape(1,-1)
         batch_size, dim = decision_vals.shape
         obj_batches = super().__call__(decision_vals,time_span=time_span,abs_z=abs_z)
-        obj_vars = np.zeros(batch_size,len(self.objective_var_weight),self.n_condition)
+        obj_vars = np.zeros((batch_size,len(self.objective_var_weight),self.n_condition))
         for icon in range(self.n_condition):
             objective_RDs = self.history['condition'+str(icon)]['objective_RDs']
             for j,key in enumerate(self.objective_var_weight.keys()):
                 ipv = self.objective_var_ipv[key]
-                obj_vars[:,j,icon] = objective_RDs['values'][-batch_size:,ipv]/self.objective_var_norm[key]
-        obj_vars = -np.var(obj_vars,axis=2) + 0.5
-        self.history['objectives_var'] += obj_vars.tolist()
+                obj_vars[:,j,icon] = np.array(objective_RDs['values'])[-batch_size:,ipv]/self.objective_var_norm[key]
+        obj_vars = -np.var(obj_vars,axis=2) + 1
+        if self.apply_bilog:
+            obj_vars = np.sign(obj_vars)*np.log(1+np.abs(obj_vars))
+        obj_batches *= (1.-self.var_obj_weight_fraction)
+        obj_batches += self.var_obj_weight_fraction*np.sum(np.array(list(self.objective_var_weight.values()))[None,:]*obj_vars,axis=1)
         
-        obj_batches *= (1.-var_obj_weight_ratio)
-        obj_batches += var_obj_weight_ratio*np.sum(np.array(objective_var_weight.values())[None,:]*obj_vars,axis=1)
-        self.history['objectives']['total'] += obj_batches.tolist()
+                                                           
+        self.history['objectives_var']['values'] += [v for v in obj_vars]
+        self.history['objectives']['total'][-len(decision_vals):] = [v for v in obj_batches]
 
         if callbacks is not None:
             for f in callbacks:
@@ -1207,7 +1225,7 @@ class objFuncMultiConditionalVar(objFuncMultiConditionalGoals):
         
         objective_var_weight: Optional[Union[Dict]] = None,                 
         each_condition_objective_weights: Optional[List[float]] = None,         
-        var_obj_weight_ratio: Optional[float] = None,                
+        var_obj_weight_fraction: Optional[float] = None,                
 
         objective_p_order: Optional[int] = None,
         time_span:Optional[float] = None,
@@ -1234,7 +1252,7 @@ class objFuncMultiConditionalVar(objFuncMultiConditionalGoals):
             for key in self.objective_var_weight.keys():
                 self.objective_var_norm[key] = np.mean([self.objFuncGoals[i].objective_norm[key] for i in range(self.n_condition)])
                 
-        self.var_obj_weight_ratio = var_obj_weight_ratio or self.var_obj_weight_ratio
+        self.var_obj_weight_fraction = var_obj_weight_fraction or self.var_obj_weight_fraction
 
         obj_batches = self.history['objectives']['total']
         obj_vars = np.zeros(len(obj_batches),len(self.objective_var_weight),self.n_condition)
@@ -1243,9 +1261,12 @@ class objFuncMultiConditionalVar(objFuncMultiConditionalGoals):
             for j,key in enumerate(self.objective_var_weight.keys()):
                 ipv = self.objective_var_ipv[key]
                 obj_vars[:,j,icon] = objective_RDs['values'][:,ipv]/self.objective_var_norm[key]
-        obj_vars = -np.var(obj_vars,axis=2) + 0.5
-        self.history['objectives_var'] += obj_vars.tolist()
+        obj_vars = -np.var(obj_vars,axis=2) + 1
+        if self.apply_bilog:
+            obj_vars = np.sign(obj_vars)*np.log(1+np.abs(obj_vars))
         
-        obj_batches *= (1.-var_obj_weight_ratio)
-        obj_batches += var_obj_weight_ratio*np.sum(np.array(objective_var_weight.values())[None,:]*obj_vars,axis=1)
-        self.history['objectives']['total'] = obj_batches.tolist()
+        obj_batches *= (1.-var_obj_weight_fraction)
+        obj_batches += var_obj_weight_fraction*np.sum(np.array(list(objective_var_weight.values()))[None,:]*obj_vars,axis=1)
+
+        self.history['objectives_var']['values'] = [v for v in obj_vars]
+        self.history['objectives']['total'] = [v for v in obj_batches]

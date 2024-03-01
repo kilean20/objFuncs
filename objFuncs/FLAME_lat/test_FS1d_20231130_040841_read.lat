@@ -124,11 +124,11 @@ FS1_drift_38: drift, L = 0.159885;
 FS1_CSS:GV_D2386: marker; 
 FS1_drift_39: drift, L = 0.2217175; 
 
-FS1_BBS:DH_D2394_0: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = -7.0, phi2 = 0.0; 
-FS1_BBS:DH_D2394_1: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
-FS1_BBS:DH_D2394_2: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
-FS1_BBS:DH_D2394_3: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
-FS1_BBS:DH_D2394_4: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = -7.0; 
+FS1_BBS:DH_D2394_0: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = -7.0, phi2 = 0.0; 
+FS1_BBS:DH_D2394_1: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2394_2: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2394_3: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2394_4: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = -7.0; 
 
 FS1_BBS:DH_D2394: sbend, L = 1.0406525665, phi = -45.0, phi1 = -7.0, phi2 = -7.0;
 
@@ -148,11 +148,11 @@ FS1_drift_45: drift, L = 0.16175;
 FS1_BBS:QV_D2424: quadrupole, B2 = -2.8819320000000004, L = 0.25, aper = 0.025; 
 FS1_drift_46: drift, L = 0.403223; 
 
-FS1_BBS:DH_D2435_0: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = -7.0, phi2 = 0.0; 
-FS1_BBS:DH_D2435_1: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
-FS1_BBS:DH_D2435_2: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
-FS1_BBS:DH_D2435_3: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
-FS1_BBS:DH_D2435_4: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = -7.0; 
+FS1_BBS:DH_D2435_0: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = -7.0, phi2 = 0.0; 
+FS1_BBS:DH_D2435_1: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2435_2: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2435_3: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2435_4: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = -7.0; 
 
 FS1_BBS:DH_D2435: sbend, L = 1.0406525665, phi = -45.0, phi1 = -7.0, phi2 = -7.0;
 
@@ -160,11 +160,11 @@ FS1_drift_47: drift, L = 0.3890417444;
 FS1_BBS:PM_D2444: marker; 
 FS1_drift_48: drift, L = 0.3809582556; 
 
-FS1_BBS:DH_D2453_0: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = -7.0, phi2 = 0.0; 
-FS1_BBS:DH_D2453_1: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
-FS1_BBS:DH_D2453_2: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
-FS1_BBS:DH_D2453_3: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
-FS1_BBS:DH_D2453_4: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = -7.0; 
+FS1_BBS:DH_D2453_0: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = -7.0, phi2 = 0.0; 
+FS1_BBS:DH_D2453_1: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2453_2: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2453_3: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2453_4: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = -7.0; 
 
 FS1_BBS:DH_D2453: sbend, L = 1.0406525665, phi = -45.0, phi1 = -7.0, phi2 = -7.0;
 
@@ -184,11 +184,11 @@ FS1_drift_54: drift, L = 0.68;
 FS1_BBS:PM_D2482: marker; 
 FS1_drift_55: drift, L = 0.63; 
 
-FS1_BBS:DH_D2494_0: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = -7.0, phi2 = 0.0; 
-FS1_BBS:DH_D2494_1: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
-FS1_BBS:DH_D2494_2: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
-FS1_BBS:DH_D2494_3: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
-FS1_BBS:DH_D2494_4: sbend, L = 0.2081305133, bg = 0.6, phi = -9.0, phi1 = 0.0, phi2 = -7.0; 
+FS1_BBS:DH_D2494_0: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = -7.0, phi2 = 0.0; 
+FS1_BBS:DH_D2494_1: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2494_2: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2494_3: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = 0.0; 
+FS1_BBS:DH_D2494_4: sbend, L = 0.2081305133, bg = 0.20733087, phi = -9.0, phi1 = 0.0, phi2 = -7.0; 
 
 FS1_BBS:DH_D2494: sbend, L = 1.0406525665, phi = -45.0, phi1 = -7.0, phi2 = -7.0;
 

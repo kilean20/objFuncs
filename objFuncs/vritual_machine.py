@@ -221,8 +221,11 @@ class VM:
         """
         self.t += self.dt
         self.objective_RD_vals = self.fun(self.decision_CSET_vals)
-        self.history = self.history.append({**dict(zip(self.decision_CSETs, self.decision_CSET_vals)),
-                                            **dict(zip(self.objective_RDs, self.objective_RD_vals))}, ignore_index=True)
+        #self.history = self.history.append({**dict(zip(self.decision_CSETs, self.decision_CSET_vals)),
+        #                                    **dict(zip(self.objective_RDs, self.objective_RD_vals))}, ignore_index=True)
+        df = pd.DataFrame({**dict(zip(self.decision_CSETs, self.decision_CSET_vals)),
+                           **dict(zip(self.objective_RDs, self.objective_RD_vals))},index=[len(self.history)])
+        self.history = pd.concat([self.history, df], ignore_index=True)
         
     def caput(self,pvname,value):
         for i, pv in enumerate(self.decision_CSETs):
