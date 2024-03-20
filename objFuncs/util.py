@@ -6,6 +6,7 @@ from typing import List, Dict, Union, Optional, Callable
 import re
 from IPython import display
 import pickle
+import json
 
 import numpy as np
 import pandas as pd
@@ -67,6 +68,62 @@ def cyclic_difference(x,y,Lo,Hi):
     distance = cyclic_distance(x,y,Lo,Hi)        
     return distance*np.sign(np.sin(y_ang-x_ang))
 
+
+def dict_2_serializable_dict(dct):
+    dct_ = {}
+    for k,v in dct.items():
+        if "plot" in k:
+            pass
+        elif hasattr(v,'__dict__') and not isinstance(v,dict):
+            dct_[k] = dict_2_serializable_dict( v.__dict__ )
+        elif isinstance(v,dict):
+            dct_[k] = dict_2_serializable_dict( v )
+        elif isinstance(v,np.ndarray):
+            dct_[k] = list_2_serializable_list( v.tolist() )
+        elif isinstance(v,list):
+            dct_[k] = list_2_serializable_list( v )
+        elif isinstance(v,pd.DataFrame):
+            dct_[k] = dict_2_serializable_dict( v.to_dict() )
+        elif isinstance(v,datetime.datetime):
+            dct_[k] = v.isoformat()
+        else:
+            dct_[k] = v
+    return dct_
+
+def list_2_serializable_list(lst):
+    lst_ = []
+    for v in lst:
+        if hasattr(v,'__dict__') and not isinstance(v,dict):
+            lst_.append( dict_2_serializable_dict(v.__dict__) )
+        elif isinstance(v,dict):
+            lst_.append( dict_2_serializable_dict(v) )
+        elif isinstance(v,np.ndarray):
+            lst_.append( list_2_serializable_list(v.tolist()) )
+        elif isinstance(v,list):
+            lst_.append( list_2_serializable_list(v) )
+        elif isinstance(v,pd.DataFrame):
+            lst_.append( dict_2_serializable_dict(v.to_dict()) )
+        elif isinstance(v,datetime.datetime):
+            lst_.append( v.isoformat() )
+        else:
+            lst_.append( v )
+    return lst_
+
+
+# class jsonEncoder(json.JSONEncoder):
+#     def default(self,obj):
+#         if hasattr(obj,'__dict__') and not isinstance(obj,dict):
+#             return obj.__dict__
+#         elif isinstance(obj,np.ndarray):
+#             return obj.tolist()
+#         elif isinstance(obj,datetime.datetime):
+#             return obj.isoformat()
+#         elif isinstance(obj,pd.DataFrame):
+#             return obj.to_dict()
+#         else:
+#             return obj
+        
+
 def is_picklable(obj):
     try:
         pickle.dumps(obj)
@@ -84,8 +141,6 @@ def get_picklable_items_from_dict(dic):
             continue
     if 'self' in new_dic.keys():
         del new_dic['self']
-    if '__class__' in new_dic.keys():
-        del new_dic['__class__']
     return new_dic
 
     
@@ -210,7 +265,7 @@ def _multicolor_ylabel(ax, list_of_strings, list_of_colors=None, offset=-0.02, a
         _list_of_colors = list_of_colors[n:n+len(_list_of_strings[i])] 
         n += len(_list_of_strings[i])
         boxes = [TextArea(text, textprops=dict(color=color, ha='left', va='bottom', rotation=90, **kw))
-                 for text, color in zip(_list_of_strings[i][::-1], _list_of_colors)]
+                 for text, color in zip(_list_of_strings[i], _list_of_colors)]
 
         vboxes.append( VPacker(children=boxes, align="left", pad=0, sep=5) )
 
@@ -224,6 +279,150 @@ def _multicolor_ylabel(ax, list_of_strings, list_of_colors=None, offset=-0.02, a
     ax.add_artist(anchored_ybox)
     
     return len(vboxes)
+
+
+class plot_time_val:
+    def __init__(self,
+                 history: Dict,
+                 keys: Optional[List[List[str]]] = None,
+                 inline = True,
+                 hdisplay = None,
+                 fig = None,
+                 ax = None,
+                 xaxis = None,
+                 xlabel = 'time',
+                 title = None,
+                ):
+        self.hist = history
+        if keys is None:
+            self.keys = [list(self.hist.keys())]
+        else:
+            if type(keys[0]) is list:
+                self.keys = [key for key in keys if len(key)>0]
+            else:
+                self.keys = [keys]
+        self.n_yaxis = len(self.keys)
+        self.colors = []
+        self.inline = inline
+        n=0
+        for i in range(self.n_yaxis):
+            self.colors.append(['C'+str(n+j) for j in range(len(self.keys[i]))])
+            n+=len(self.keys[i])
+        self.xaxis = xaxis 
+        self.xlabel = xlabel
+        self.hdisplay = hdisplay
+        self.fig = fig
+        self.ax = ax
+        self._plot_constructed = False
+        self.title = title
+        
+        
+    def _construct_plot(self,
+                        hdisplay=None,
+                        fig=None,
+                        ax=None,
+                        inline=None
+                        ):        
+        self.ax = ax or self.ax
+        self.fig = fig or self.fig
+        self.hdisplay = hdisplay or self.hdisplay
+        inline = inline or self.inline
+        if ax is None:
+            self.fig, self.ax = plt.subplots(figsize=(15,6),dpi=96)
+            if inline:
+                self.hdisplay = display.display("",display_id=True)
+            
+        offset = 0
+        self.axes = []
+        for i,keys in enumerate(self.keys):
+            if i==0:
+                ax = self.ax
+                ax.tick_params(axis="y",direction="in", pad=-30)
+                ax.grid()
+            else:
+                ax = self.ax.twinx()
+                ax.spines['right'].set_position(('axes', offset))
+#                 offset -= 0.02
+            for j,k in enumerate(keys):
+                if k in self.hist:
+                    if len(self.hist[k]['t']) > 0:
+                        ax.plot(self.hist[k]['t'], self.hist[k]['v'], color=self.colors[i][j],label=k)
+            ncol = _multicolor_ylabel(self.ax,self.keys[i],self.colors[i],offset=offset)
+            offset -= 0.02*ncol + 0.06
+            self.axes.append(ax)
+        self.ax.set_xlabel(self.xlabel)
+        if self.xlabel in ['t','time','TIME','T']:
+            self.fig.autofmt_xdate(rotation=45)
+            
+        self.ax.set_title(self.title)
+        self.fig.tight_layout()
+        
+        if inline:
+            self.hdisplay.update(self.fig)
+        else:
+            self.fig.show()
+            self.fig.canvas.draw()
+
+    def _update_plot(self,inline=None):
+#         self.values = np.atleast_2d(self.hist['values']).T
+#         if self.xaxis is None:
+#             self.xaxis = np.arange(len(self.values[:,0]))
+#         else:
+#             self.xaxis = self.xaxis
+#         xmin = np.min(self.xaxis)
+#         xmax = np.max(self.xaxis)
+#         
+#         print("self.xaxis.shape",self.xaxis.shape)
+        inline = inline or self.inline
+        for i,keys in enumerate(self.keys):
+            ax = self.axes[i]
+            for j,k in enumerate(keys):
+                if k in self.hist:
+#                     print(k, self.hist.keys())
+                    if len(self.hist[k]['t']) > 0:
+                        line = ax.lines[j]
+        #                 print("self.values[self.index[i][j],:].shape",self.values[self.index[i][j],:].shape)
+                        line.set_xdata(self.hist[k]['t'])
+                        line.set_ydata(self.hist[k]['v'])
+            ax.relim()
+            ax.autoscale_view()
+#             ymin = np.min(self.values[:,self.index[i]])
+#             ymax = np.max(self.values[:,self.index[i]])
+#             ax.set_xlim(-xmax*0.05,xmax)   
+#             ax.set_ylim(ymin,ymax)   
+
+
+#         self.ax.relim()
+#         self.ax.autoscale_view()
+#         self.fig.canvas.flush_events()
+#         self.fig.canvas.draw()
+        if inline:
+            self.hdisplay.update(self.fig)
+        else:
+            self.fig.show()
+            self.fig.canvas.draw()
+          
+    def close(self):
+        plt.close(self.fig)
+        self._plot_constructed = False
+            
+        
+    def __call__(self,
+                hdisplay=None,
+                fig=None,
+                ax=None,
+                inline=None,
+                ):
+        inline = inline or self.inline
+        
+#         if len(self.values) < 2:
+#             return
+
+        if self._plot_constructed:
+            self._update_plot(inline=inline)
+        else:
+            self._construct_plot(inline=inline)
+            self._plot_constructed = True
 
 
 
@@ -274,13 +473,14 @@ class plot_obj_history:
                         hdisplay=None,
                         fig=None,
                         ax=None,
-                        inline=False
+                        inline=None,
                         ):        
         self.ax = ax or self.ax
         self.fig = fig or self.fig
         self.hdisplay = hdisplay or self.hdisplay
+        inline = inline or self.inline
         if ax is None:
-            self.fig, self.ax = plt.subplots(figsize=(15,6))
+            self.fig, self.ax = plt.subplots(figsize=(15,6),dpi=96)
             if inline:
                 self.hdisplay = display.display("",display_id=True)
             
@@ -318,7 +518,7 @@ class plot_obj_history:
             self.fig.show()
             self.fig.canvas.draw()
 
-    def _update_plot(self,inline=False):
+    def _update_plot(self,inline=None):
 #         self.values = np.atleast_2d(self.hist['values']).T
 #         if self.xaxis is None:
 #             self.xaxis = np.arange(len(self.values[:,0]))
@@ -328,6 +528,7 @@ class plot_obj_history:
 #         xmax = np.max(self.xaxis)
 #         
 #         print("self.xaxis.shape",self.xaxis.shape)
+        inline = inline or self.inline
         for i,keys in enumerate(self.keys):
             ax = self.axes[i]
             for j,k in enumerate(keys):
@@ -369,7 +570,7 @@ class plot_obj_history:
                 hdisplay=None,
                 fig=None,
                 ax=None,
-                inline=False,
+                inline=None,
                 ):
         inline = inline or self.inline
         self.values = np.array(self.hist['values'])
@@ -447,7 +648,7 @@ class plot_multi_obj_history(plot_obj_history):
                 hdisplay=None,
                 fig=None,
                 ax=None,
-                inline=False,
+                inline=None,
                 ):
         self.update_histories()
         super().__call__(
@@ -471,8 +672,6 @@ def calculate_parsed_operation(txt,names,data,operations):
         txt = data_string.replace(name, '('+str(data[i])+')')
     result = eval(txt)  # Evaluate the final expression
     return result
-
-
 
 
 
@@ -532,7 +731,7 @@ def get_dnum_from_pv(pv):
     
     
 
-def get_MEBT_objective_goal_from_BPMoverview(fname):
+def get_MEBT_objective_goal_from_BPMoverview(fname,BCMratio=False):
     try:
         with open(fname,'r') as f:
             lines = f.readlines()
@@ -552,22 +751,40 @@ def get_MEBT_objective_goal_from_BPMoverview(fname):
         
     MEBT_BPM_vals = [float_vec(line.split()) for line in lines[i+3:i+6]]
     
-    return { 
-            'FE_MEBT:BPM_D1056:XPOS_RD' : MEBT_BPM_vals[0][3],
-            'FE_MEBT:BPM_D1056:YPOS_RD' : MEBT_BPM_vals[0][4],
-            'FE_MEBT:BPM_D1056:PHASE_RD': MEBT_BPM_vals[0][1],
-            'FE_MEBT:BPM_D1056:MAG_RD'  : {'more than': None},
-            'FE_MEBT:BPM_D1072:XPOS_RD' : MEBT_BPM_vals[1][3],
-            'FE_MEBT:BPM_D1072:YPOS_RD' : MEBT_BPM_vals[1][4],
-            'FE_MEBT:BPM_D1072:PHASE_RD': MEBT_BPM_vals[1][1],
-            'FE_MEBT:BPM_D1072:MAG_RD'  : {'more than': None},
-            'FE_MEBT:BPM_D1094:XPOS_RD' : MEBT_BPM_vals[2][3],
-            'FE_MEBT:BPM_D1094:YPOS_RD' : MEBT_BPM_vals[2][4],
-            'FE_MEBT:BPM_D1094:PHASE_RD': MEBT_BPM_vals[2][1],
-            'FE_MEBT:BPM_D1094:MAG_RD'  : {'more than': None},
-            'FE_MEBT:BCM_D1055:AVGPK_RD/FE_LEBT:BCM_D0989:AVGPK_RD': {'more than': 1.00},
-            'FE_MEBT:FC_D1102:PKAVG_RD': {'more than': None},
-           } 
+    if BCMratio:
+        return { 
+                'FE_MEBT:BPM_D1056:XPOS_RD' : MEBT_BPM_vals[0][3],
+                'FE_MEBT:BPM_D1056:YPOS_RD' : MEBT_BPM_vals[0][4],
+                'FE_MEBT:BPM_D1056:PHASE_RD': MEBT_BPM_vals[0][1],
+                'FE_MEBT:BPM_D1056:MAG_RD'  : {'more than': None},
+                'FE_MEBT:BPM_D1072:XPOS_RD' : MEBT_BPM_vals[1][3],
+                'FE_MEBT:BPM_D1072:YPOS_RD' : MEBT_BPM_vals[1][4],
+                'FE_MEBT:BPM_D1072:PHASE_RD': MEBT_BPM_vals[1][1],
+                'FE_MEBT:BPM_D1072:MAG_RD'  : {'more than': None},
+                'FE_MEBT:BPM_D1094:XPOS_RD' : MEBT_BPM_vals[2][3],
+                'FE_MEBT:BPM_D1094:YPOS_RD' : MEBT_BPM_vals[2][4],
+                'FE_MEBT:BPM_D1094:PHASE_RD': MEBT_BPM_vals[2][1],
+                'FE_MEBT:BPM_D1094:MAG_RD'  : {'more than': None},
+                'FE_MEBT:BCM_D1055:AVGPK_RD/FE_LEBT:BCM_D0989:AVGPK_RD': {'more than': 1.00},
+                'FE_MEBT:FC_D1102:PKAVG_RD': {'more than': None},
+               } 
+    else:
+        return { 
+                'FE_MEBT:BPM_D1056:XPOS_RD' : MEBT_BPM_vals[0][3],
+                'FE_MEBT:BPM_D1056:YPOS_RD' : MEBT_BPM_vals[0][4],
+                'FE_MEBT:BPM_D1056:PHASE_RD': MEBT_BPM_vals[0][1],
+                'FE_MEBT:BPM_D1056:MAG_RD'  : {'more than': None},
+                'FE_MEBT:BPM_D1072:XPOS_RD' : MEBT_BPM_vals[1][3],
+                'FE_MEBT:BPM_D1072:YPOS_RD' : MEBT_BPM_vals[1][4],
+                'FE_MEBT:BPM_D1072:PHASE_RD': MEBT_BPM_vals[1][1],
+                'FE_MEBT:BPM_D1072:MAG_RD'  : {'more than': None},
+                'FE_MEBT:BPM_D1094:XPOS_RD' : MEBT_BPM_vals[2][3],
+                'FE_MEBT:BPM_D1094:YPOS_RD' : MEBT_BPM_vals[2][4],
+                'FE_MEBT:BPM_D1094:PHASE_RD': MEBT_BPM_vals[2][1],
+                'FE_MEBT:BPM_D1094:MAG_RD'  : {'more than': None},
+                'FE_MEBT:BCM_D1055:AVGPK_RD': {'more than': None},
+                'FE_MEBT:FC_D1102:PKAVG_RD' : {'more than': None},
+               } 
     
     
 

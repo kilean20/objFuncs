@@ -2,11 +2,13 @@ import time
 import warnings
 import numpy as np
 import pandas as pd
+import datetime
 
 from .gui import popup_handler
 from .util import warn, cyclic_mean_var, suppress_outputs
+from abc import ABC, abstractmethod
     
-        
+      
 popup_ramping_not_OK = popup_handler("Action required", "Ramping not OK. Manually adjust PV CSETs to jitter the power suppply before continue.")
 _n_popup_ramping_not_OK = 0
 
@@ -113,101 +115,241 @@ def _dummy_fetch_data(pvlist,time_span = _fetch_data_time_span,
     return data['mean'].to_numpy(), data
 
 
-    
-class construct_machineIO:
-    def __init__(self):
-        self._test = False
-#         self._machine = 'FRIB'
+class Abstract_machineIO(ABC):
+    def __init__(self,
+                 _ensure_set_timeout = _ensure_set_timeout, 
+                 _fetch_data_time_span = _fetch_data_time_span,
+                 _check_chopper_blocking = _check_chopper_blocking,
+                 _n_popup_ramping_not_OK = _n_popup_ramping_not_OK
+                ):
         self._ensure_set_timeout = _ensure_set_timeout
         self._ensure_set_timewait_after_ramp = 0.25
         self._fetch_data_time_span = _fetch_data_time_span
         self._return_obj_var = False
         self._check_chopper_blocking = _check_chopper_blocking
-        #self.view()
         self._n_popup_ramping_not_OK = _n_popup_ramping_not_OK
         self._verbose = False
+        self.history = {}
         
+#     def view(self):
+#         for k,v in vars(self).items():
+#             if k not in ['caget','caput','ensure_set','fetch_data']:
+#                 print("  ",k,":",v)
+        
+    @abstractmethod
+    def _caget(self,pvname):
+        pass
         
     def caget(self,pvname):
-            if _epics_imported:
-                return _epics_caget(pvname)
-            else:
-                if self._test:
-                    warn("EPICS is not imported. caget will return fake zero")
-                    return 0
-                else:
-                    raise ValueError("EPICS is not imported. cannot caget")
-            
+        now = datetime.datetime.now()
+        value = self._caget(pvname)
+        if not pvname in self.history:
+            self.history[pvname] = {'t':[],'v':[]}
+#         self.history[pvname].append(f)
+        self.history[pvname]['t'].append(now)
+        self.history[pvname]['v'].append(value)
+        return value
+        
+    @abstractmethod
+    def _caput(self,pvname,value):
+        pass
+    
     def caput(self,pvname,value):
-            if _epics_imported:
-                _epics_caput(pvname,value)
-            else:
-                if self._test:
-                    warn("EPICS is not imported. caput will do noting")
-                else:
-                    raise ValueError("EPICS is not imported. cannot caput")
-      
+        now = datetime.datetime.now()
+        self._caput(pvname,value)
+        if not pvname in self.history:
+            self.history[pvname] = {'t':[],'v':[]}
+        self.history[pvname]['t'].append(now)
+        self.history[pvname]['v'].append(value)
+    
+    @abstractmethod
+    def _ensure_set(self,
+                   setpoint_pv,readback_pv,goal,
+                   tol=0.01,
+                   timeout=None,
+                   verbose=None):
+        pass
+
     def ensure_set(self,
                    setpoint_pv,readback_pv,goal,
                    tol=0.01,
                    timeout=None,
-                   verbose=False):
+                   verbose=None):
         
-        verbose = verbose or self._verbose
+        if verbose is None:
+            verbose = self._verbose
+        if verbose:
+            print('ramping...')
+            display(pd.DataFrame(np.array(goal).reshape(1,-1), 
+                                 columns=setpoint_pv))
+
         timeout = timeout or self._ensure_set_timeout
-        t0 = time.monotonic()
-        if self._test:
-            pass
-        elif _phantasy_imported:
-            _phantasy_ensure_set(setpoint_pv,readback_pv,goal,tol,timeout,verbose)
-        elif _epics_imported:
-            _epics_ensure_set(setpoint_pv,readback_pv,goal,tol,timeout,verbose)
-        else:
-            raise ValueError("Cannot change SET: PHANTASY or EPICS is not imported.")
-        # print("_ensure_set_timewait_after_ramp",self._ensure_set_timewait_after_ramp)
+        self._ensure_set(setpoint_pv,readback_pv,goal,
+                         tol=tol,
+                         timeout=timeout,
+                         )
         time.sleep(self._ensure_set_timewait_after_ramp)
         
-        if time.monotonic() - t0 > timeout+self._ensure_set_timewait_after_ramp: 
-            warn("ramping_not_OK. trying again...")
-            print("ramping_not_OK. trying again...")
-            if self._n_popup_ramping_not_OK<5:
-                popup_ramping_not_OK()
-                self._n_popup_ramping_not_OK +=1
-            else:
-                warn("'ramping_not_OK' issued 5 times already. Ignoring 'ramping_not_OK' issue...")
-            
-            
-            
+        now = datetime.datetime.now()
+        for pvname,val in zip(setpoint_pv, goal):
+            if not pvname in self.history:
+                self.history[pvname] = {'t':[],'v':[]}
+            self.history[pvname]['t'].append(now)
+            self.history[pvname]['v'].append(val)
+                
+
+    @abstractmethod
+    def _fetch_data(self,pvlist,
+                    time_span = None, 
+                    abs_z = None, 
+                    with_data=False,
+                    verbose=None):
+        pass
+
     def fetch_data(self,pvlist,
                    time_span = None, 
                    abs_z = None, 
                    with_data=False,
-                   verbose=False,
+                   verbose=None,
                    check_chopper_blocking = None,
                    debug = False):
-        time_span = time_span or self._fetch_data_time_span
-        check_chopper_blocking = check_chopper_blocking or self._check_chopper_blocking
         
+        now = datetime.datetime.now()
+        time_span = time_span or self._fetch_data_time_span
+        verbose = verbose or self._verbose
+
+        ave, raw = self._fetch_data(pvlist,
+                                    time_span = time_span, 
+                                    abs_z = abs_z, 
+                                    with_data = with_data)
+        
+        for pvname, val in zip(pvlist, ave):
+            if not pvname in self.history:
+                self.history[pvname] = {'t':[],'v':[]}
+            self.history[pvname]['t'].append(now)
+            self.history[pvname]['v'].append(val)
+        
+        if verbose:
+            print(f'fetched data:')
+            display(pd.DataFrame(np.array(ave).reshape(1,-1), columns=pvlist))
+            
+        return ave, raw
+    
+    
+class construct_machineIO(Abstract_machineIO):
+    def __init__(self):
+        super().__init__()
+        self._test = False
+        
+    def _caget(self,pvname):
+        if _epics_imported:
+            f = _epics_caget(pvname)
+        else:
+            if self._test:
+                warn("EPICS is not imported. caget will return fake zero")
+                f = 0
+            else:
+                raise ValueError("EPICS is not imported. cannot caget")
+        return f
+            
+    def _caput(self,pvname,value):
+        if self._test:
+            pass
+        elif _epics_imported:
+            _epics_caput(pvname,value)
+        else:
+            raise ValueError("EPICS is not imported. cannot caput")
+      
+    def _ensure_set(self,
+                   setpoint_pv,readback_pv,goal,
+                   tol=0.01,
+                   timeout=None,
+                   verbose=None):
+        
+        t0 = time.monotonic()
+        if self._test:
+            pass
+        elif _phantasy_imported:
+            _phantasy_ensure_set(setpoint_pv,readback_pv,goal,tol,timeout,verbose=False)
+        elif _epics_imported:
+            _epics_ensure_set(setpoint_pv,readback_pv,goal,tol,timeout,verbose=False)
+        else:
+            raise ValueError("Cannot change SET: PHANTASY or EPICS is not imported.")
+        
+        # if ramping fail, try to re-set twice 
+        for i in range(2):
+            if time.monotonic() - t0 > timeout: 
+                warn("ramping_not_OK. trying again...")
+                t0 = time.monotonic()
+                if _phantasy_imported:
+                    _phantasy_ensure_set(setpoint_pv,readback_pv,goal,tol,timeout,verbose=False)
+                elif _epics_imported:
+                    _epics_ensure_set(setpoint_pv,readback_pv,goal,tol,timeout,verbose=False) 
+                    
+        if time.monotonic() - t0 > timeout: 
+            if self._n_popup_ramping_not_OK<2:
+                popup_ramping_not_OK()
+                self._n_popup_ramping_not_OK +=1
+            else:
+                warn("'ramping_not_OK' issued 2 times already. Ignoring 'ramping_not_OK' issue from now on...")
+                
+                
+#     def _ensure_set(self,
+#                    setpoint_pv,readback_pv,goal,
+#                    tol=0.01,
+#                    timeout=None,
+#                    verbose=None):
+        
+#         t0 = time.monotonic()
+#         if self._test:
+#             pass
+#         elif _phantasy_imported:
+#             _phantasy_ensure_set(setpoint_pv,readback_pv,goal,tol,timeout,verbose=False)
+#         elif _epics_imported:
+#             _epics_ensure_set(setpoint_pv,readback_pv,goal,tol,timeout,verbose=False)
+#         else:
+#             raise ValueError("Cannot change SET: PHANTASY or EPICS is not imported.")
+        
+#         if time.monotonic() - t0 > timeout: 
+#             warn("ramping_not_OK. trying again...")
+#             t0 = time.monotonic()
+#             if _phantasy_imported:
+#                 _phantasy_ensure_set(setpoint_pv,readback_pv,goal,tol,timeout,verbose=False)
+#             elif _epics_imported:
+#                 _epics_ensure_set(setpoint_pv,readback_pv,goal,tol,timeout,verbose=False) 
+#             if time.monotonic() - t0 > timeout: 
+#                 if self._n_popup_ramping_not_OK<2:
+#                     popup_ramping_not_OK()
+#                     self._n_popup_ramping_not_OK +=1
+#             else:
+#                 warn("'ramping_not_OK' issued 2 times already. Ignoring 'ramping_not_OK' issue from now on...")
+                
+            
+    def _fetch_data(self,pvlist,
+                   time_span = None, 
+                   abs_z = None, 
+                   with_data=False,
+                   verbose=None,
+                   check_chopper_blocking = None,
+                   debug = False):
+        
+        check_chopper_blocking = check_chopper_blocking or self._check_chopper_blocking
         if check_chopper_blocking and not self._test :
             pvlist = list(pvlist) + ["ACS_DIAG:CHP:STATE_RD"]
             
-        
-        # print("self._fetch_data_time_span",self._fetch_data_time_span)
-            
         while(True):
-            
             if debug:
                 print('[debug][objFuncs][machineIO][construct_machineIO]fetch_data')
                 print(  '_phantasy_imported, _epics_imported',_phantasy_imported, _epics_imported)
                 print(  'pvlist', pvlist)
                 
             if _phantasy_imported:
-                ave,raw = _phantasy_fetch_data(pvlist,time_span,abs_z,with_data=True,verbose=verbose)
+                ave,raw = _phantasy_fetch_data(pvlist,time_span,abs_z,with_data=True,verbose=False)
             elif _epics_imported:
-                ave,raw =    _epics_fetch_data(pvlist,time_span,abs_z,with_data=True,verbose=verbose)
+                ave,raw =    _epics_fetch_data(pvlist,time_span,abs_z,with_data=True,verbose=False)
             elif self._test:
                 warn("PHANTASY or EPICS is not imported. fetch_data will return zeros")
-                ave,raw =    _dummy_fetch_data(pvlist,time_span,abs_z,with_data=True,verbose=verbose)
+                ave,raw =    _dummy_fetch_data(pvlist,time_span,abs_z,with_data=True,verbose=False)
             else:
                 raise ValueError("PHANTASY or EPICS is not imported and the machineIO is not in test mode.")
                 
@@ -224,7 +366,6 @@ class construct_machineIO:
             else:
                 break
                 
-            
         if np.any(pd.isna(raw[0])):
             raise ValueError("fetch_data 0th column have NaN. re-fetch")
         
@@ -241,7 +382,6 @@ class construct_machineIO:
                 mean,var = cyclic_mean_var(raw.iloc[i,:nsample].dropna().values,Lo,Hi)
                 ave[i] = mean
                 std[i] = var**0.5
-
                 
         if with_data:
             raw['mean'] = ave
@@ -249,11 +389,6 @@ class construct_machineIO:
             return ave,raw
         else:
             return ave,None
-        
-    def view(self):
-        for k,v in vars(self).items():
-            print("  ",k,":",v)
-
             
 
 class construct_manual_fetch_data:
@@ -301,10 +436,10 @@ class construct_manual_fetch_data:
         n_data = 2  # dummy numer of data samples
         if len(pvlist_blank) > 0:
             if _phantasy_imported:
-                ave,raw = _phantasy_fetch_data(pvlist_blank,time_span,abs_z,with_data=True,verbose=verbose)
+                ave,raw = _phantasy_fetch_data(pvlist_blank,time_span,abs_z,with_data=True,verbose=False)
                 n_data = raw.shape[1]-3
             elif _epics_imported:
-                ave,raw =    _epics_fetch_data(pvlist_blank,time_span,abs_z,with_data=True,verbose=verbose)
+                ave,raw =    _epics_fetch_data(pvlist_blank,time_span,abs_z,with_data=True,verbose=False)
                 n_data = raw.shape[1]-3
             else:
                 print("Automatic data read failed. please input manually:")

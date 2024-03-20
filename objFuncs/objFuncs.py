@@ -10,41 +10,16 @@ from IPython.display import display
 import numpy as np
 import pandas as pd
 import pickle
+import json
 
-from .util import warn, elu, cyclic_distance, cyclic_mean, cyclic_mean_var, get_class_hierarchy, get_picklable_items_from_dict, print_nested_dict
+from .util import warn, elu, cyclic_distance, cyclic_mean, cyclic_mean_var, get_class_hierarchy, get_picklable_items_from_dict, print_nested_dict, plot_time_val, plot_obj_history, dict_2_serializable_dict
+from .construct_machineIO import construct_machineIO
+from .preset import get_tolerance, get_RDs
 from . import _global_machineIO
 
 __all__ = ["objFuncBase","objFuncGoals","objFuncMultiConditionalGoals"]
 _eps = 1e-15
 
-        
-def get_tolerance(PV_CSETs: List[str], machineIO=_global_machineIO):
-    '''
-    Automatically define tolerance
-    tol is defined by 5% of ramping rate: i.e.) tol = ramping distance in a 0.05 sec
-    PV_CSETs: list of CSET-PVs 
-    '''
-    pv_ramp_rate = []
-    for pv in PV_CSETs:
-        if 'PSOL' in pv:
-            pv_ramp_rate.append(pv[:pv.rfind(':')]+':RRTE_RSET')
-        else:
-            pv_ramp_rate.append(pv[:pv.rfind(':')]+':RSSV_RSET')
-    ramp_rate,_ = machineIO.fetch_data(pv_ramp_rate,1)
-    return 0.2*ramp_rate
-
- 
-def get_RDs(PV_CSETs: List[str], machineIO=_global_machineIO):
-    PV_RDs = []
-    for pv in PV_CSETs:
-        if '_CSET' in pv:
-            PV_RDs.append(pv.replace('_CSET','_RD'))
-        elif '_MTR.VAL' in pv:
-            PV_RDs.append(pv.replace('_MTR.VAL','_MTR.RBV'))
-        else:
-            self._RuntimeError("Automatic decision of 'RD' for above 'PV_CSET' failed", machineIO)
-    _,_ = machineIO.fetch_data(PV_RDs,1)
-    return PV_RDs
 
 
 def getPVs_from_objective_keys(objective_keys):
@@ -57,8 +32,9 @@ def getPVs_from_objective_keys(objective_keys):
         else:
             PVs.append(key)
     return PVs
-    
-class objFuncBase():#(ABC):
+
+
+class objFuncBase():
     def __init__(self,
         decision_CSETs: List[Union[str,List[str]]] = None,  
         decision_min: Union[float,List[float]] = None,  
@@ -72,8 +48,10 @@ class objFuncBase():#(ABC):
         logging_fname: Optional[str] = None,
         load_from_file: Optional[str] = None,
         init_verbose: Optional[bool] = True,
-        called_by_child: Optional[bool] = False, 
-        machineIO: Optional = None,
+        machineIO: Optional[construct_machineIO] = None,
+        plot_time_val = plot_time_val,
+        plot_obj_history = plot_obj_history,
+        **kwargs,
         ):
         '''
         decision_CSETs: [List of] List of CSET-PVs for control. 
@@ -92,11 +70,13 @@ class objFuncBase():#(ABC):
             self.load(load_from_file)
             return
         
-        
         self.init_time = datetime.datetime.now()
-        self.input_parameters = get_picklable_items_from_dict(locals())        
+#         self.input_parameters = get_picklable_items_from_dict(locals())
         self.class_hierarchy = get_class_hierarchy(self)
-        self.machineIO = _global_machineIO
+        if machineIO is None:
+            self.machineIO = _global_machineIO
+        else:
+            self.machineIO = machineIO
         
         self.decision_CSETs = decision_CSETs
         if type(decision_min) is float or type(decision_min) is int:
@@ -108,8 +88,7 @@ class objFuncBase():#(ABC):
         assert len(decision_max) == len(decision_CSETs)
         self.decision_max = np.array(decision_max).astype(np.float64)
         self.decision_bounds = np.array([(d_min,d_max) for (d_min,d_max) in zip(decision_min, decision_max)])
-         
-        
+
         if decision_RDs is None:
             try:
                 self.decision_RDs = get_RDs(decision_CSETs)
@@ -161,10 +140,8 @@ class objFuncBase():#(ABC):
             try:
                 self._coupled_decision_info["tols"] = get_tolerance(self._coupled_decision_info["CSETs"]) 
             except:
-                print(self._coupled_decision_info["CSETs"])
-                self._RuntimeError("Automatic decision of the 'decision_tols' of coupled CSETs (shown above) failed.")
+                self._RuntimeError("Automatic decision of the 'decision_tols' of coupled CSETs failed.")
             
-        
         self.history_buffer_size = history_buffer_size
         self.logging_frequency = logging_frequency or 10
         self.logging_tag = logging_tag or ""
@@ -178,18 +155,20 @@ class objFuncBase():#(ABC):
         if self.decision_couplings is not None:
             self.history['coupled_decision_CSETs'] = {'names':copy(self._coupled_decision_info["CSETs"]),
                                                       'values':[]}
-
         self._get_xinit()
         
-        if init_verbose and not called_by_child:
+        if init_verbose:
             self.print_class_info()
+            
+        self.plot_time_val = plot_time_val
+        self.plot_obj_history = plot_obj_history
             
                 
     def print_class_info(self, include_history = False):
         print("======== class info ========")
         dic = get_picklable_items_from_dict(self.__dict__)
-        if 'input_parameters' in dic.keys():
-            del dic['input_parameters']
+#         if 'input_parameters' in dic.keys():
+#             del dic['input_parameters']
         if not include_history:
             del dic['history']
         print_nested_dict(dic)
@@ -214,24 +193,34 @@ class objFuncBase():#(ABC):
         
         if fname is None:
             if tag is None:
-                fname = self.logging_fname or now+self.class_hierarchy[0]+".pkl"
+                fname = self.logging_fname or now+self.class_hierarchy[0]
             else:
                 if tag !="":
                     if tag[0] != "_":
                         tag = "_"+tag
-                fname = now+self.class_hierarchy[0]+tag+".pkl"
+                fname = now+self.class_hierarchy[0]+tag
             fname = path + fname
 
         self.save(fname)
         
 
-    def save(self,fname):
-        dic = get_picklable_items_from_dict(self.__dict__)
-        if  fname[-4:]!='.pkl':
-            fname = fname +'.pkl'
-            print(f'only .pkl file extension is accepted. saving to: {fname}')
-        pickle.dump(dic, open(fname, "wb"))
-
+    def save(self,fname,overdrive=False):
+        '''
+        if file extension is .pkl, save whole object
+        otherwise save objFuncs.history and machineIO.history
+        '''
+        if not overdrive and self.machineIO._test:
+            print("machineIO is in test mode. skip saving data")
+            return
+        if  fname[-4:]=='.pkl':
+            dic = get_picklable_items_from_dict(self.__dict__)
+            pickle.dump(dic, open(fname, "wb"))
+        else:
+            if fname[-5:]!='.json':
+                fname += '.json'
+            dct = dict_2_serializable_dict(self.__dict__)
+            json.dump(dct, open(fname, "w"), indent=4)# default=str, cls=jsonEncoder)
+        
         
     def load(self, fname):
         i = fname.rfind('.')
@@ -411,7 +400,6 @@ class objFuncGoals(objFuncBase):
         objective_fill_none_by_init: Optional[bool] = False,
         objective_p_order:Optional[int] = 2,
         apply_bilog:Optional[bool] = False,
-                 
         decision_couplings: Optional[Dict] = None,
         decision_RDs: Optional[List[str]] = None,
         decision_tols: Optional[List[float]] = None,
@@ -421,8 +409,8 @@ class objFuncGoals(objFuncBase):
         logging_fname: Optional[str] = None,
         load_from_file: Optional[str] = None,
         init_verbose: Optional[bool] = True,
-        called_by_child: Optional[bool] = False, 
-                   
+        machineIO: Optional[construct_machineIO] = None,
+        **kwargs,
         ):
         '''
         objective_goal: a Dict specifing goal of key=PVname, val=goal. 
@@ -518,8 +506,8 @@ class objFuncGoals(objFuncBase):
             logging_tag = logging_tag,
             logging_fname = logging_fname,
             load_from_file = load_from_file,
-            init_verbose = init_verbose,
-            called_by_child =True,
+            init_verbose = False,
+            machineIO = machineIO,
             )        
         if load_from_file is None:
             assert decision_CSETs is not None
@@ -531,7 +519,7 @@ class objFuncGoals(objFuncBase):
             return
         
         # objective_weight must be defined first
-        self.input_parameters = get_picklable_items_from_dict(locals())
+#         self.input_parameters = get_picklable_items_from_dict(locals())
         self.objective_weight = OrderedDict([(key,val) for key,val in objective_weight.items() if val > 0.])
         isBPMphase = False
         for key in self.objective_weight.keys():
@@ -602,7 +590,7 @@ class objFuncGoals(objFuncBase):
         self.objective_p_order = objective_p_order or 2+np.clip(np.log(len(self.objective_goal.keys())),a_min=0,a_max=4)
         self.apply_bilog = apply_bilog
 
-        if init_verbose and not called_by_child:   
+        if init_verbose :   
 #             print("== objective_goal ==")
 #             display(self.objective_goal)
 #             print("== objective_norm ==")
@@ -730,7 +718,7 @@ class objFuncGoals(objFuncBase):
         self.history['decision_RDs' ]['values'].append(ave_data[:len(self.decision_RDs) ])
         self.history['objective_RDs']['values'].append(ave_data[ len(self.decision_RDs):])
         self.history['objectives'   ]['values'].append(objs)
-        self.history['objectives']['total'].append(obj_tot)  
+        self.history['objectives'   ]['total'].append(obj_tot)  
         
         super().write_log()
         
@@ -811,11 +799,9 @@ class objFuncMultiConditionalGoals(objFuncBase):
         conditional_tols: Optional[List[float]] = None,
         conditional_control_cost_more: bool = True,
         each_condition_objective_weights: Optional[List[float]] = None,
-        
         objective_fill_none_by_init: Optional[bool] = False,         
         objective_p_order:Optional[float] = 2,
         apply_bilog:Optional[bool] = False,
-                 
         decision_couplings: Optional[Dict] = None,
         decision_RDs: Optional[List[str]] = None,
         decision_tols: Optional[List[float]] = None,
@@ -824,11 +810,12 @@ class objFuncMultiConditionalGoals(objFuncBase):
         logging_tag: Optional[str] = "",
         logging_fname: Optional[str] = None,
         init_verbose: Optional[bool] = True,
-        called_by_child: Optional[bool] = False, 
+        machineIO: Optional[construct_machineIO] = None,
+        **kwargs,
         ):
         '''
         conditions_SETs: 
-            a OrderedDict specifing fixed self.machineIOs for defining conditions (e.g. charge state) 
+            a OrderedDict specifing fixed sets for defining conditions (e.g. charge state) 
             for aggregated objective definition. 
                 (e.g.) for different chage coditions (i.e. charge selector), 
                   conditional_SETs = {
@@ -887,8 +874,8 @@ class objFuncMultiConditionalGoals(objFuncBase):
             logging_frequency = logging_frequency,
             logging_tag = logging_tag,
             logging_fname = logging_fname,
-            init_verbose = init_verbose,
-            called_by_child = True,
+            init_verbose = False,
+            machineIO = machineIO,
             )      
         
         
@@ -919,7 +906,7 @@ class objFuncMultiConditionalGoals(objFuncBase):
             history_buffer_size = history_buffer_size,
             logging_frequency = np.inf,
             logging_tag = logging_tag + "condition_controler",
-            init_verbose = init_verbose,
+            init_verbose = False,
             )
           
             
@@ -962,7 +949,7 @@ class objFuncMultiConditionalGoals(objFuncBase):
                     history_buffer_size = history_buffer_size,
                     logging_frequency = np.inf,
                     logging_tag = logging_tag + "objFuncGoal_condition"+str(i),
-                    init_verbose = init_verbose,    
+                    init_verbose = False,    
                     )
                 )
         
@@ -982,7 +969,7 @@ class objFuncMultiConditionalGoals(objFuncBase):
         
         
         self.apply_bilog = apply_bilog
-        if init_verbose and not called_by_child:
+        if init_verbose:
             self.print_class_info()
             
            
@@ -1127,25 +1114,22 @@ class objFuncMultiConditionalVar(objFuncMultiConditionalGoals):
         objective_weight:  Dict,
         objective_norm: Dict,
         objective_var_weight: Dict,
-        
         conditional_SETs: Dict,
         conditional_RDs: Optional[List[str]] = None,
         conditional_tols: Optional[List[float]] = None,
-        conditional_control_cost_more:[bool] = True,
-                 
+        conditional_control_cost_more:[bool] = True,     
         each_condition_objective_weights: Optional[List[float]] = None,         
 #         objective_BPM_var_weight: Optional[Dict] = {'XY':2./3,'PHASE':1./3},
         var_obj_weight_fraction: Optional[float] = 1.,
-                 
         objective_p_order:Optional[float] = 2,
         apply_bilog:Optional[bool] = False,
-                 
         decision_couplings: Optional[Dict] = None,
         decision_RDs: Optional[List[str]] = None,
         decision_tols: Optional[List[float]] = None,
         history_buffer_size: Optional[int] = None,
         init_verbose: Optional[bool] = True,
-                         
+        machineIO: Optional[construct_machineIO] = None,
+        **kwargs,
         ):
         super().__init__(
             decision_CSETs = decision_CSETs,
@@ -1154,21 +1138,19 @@ class objFuncMultiConditionalVar(objFuncMultiConditionalGoals):
             objective_goal = objective_goal,
             objective_weight = objective_weight,
             objective_norm = objective_norm,
-
             conditional_SETs = conditional_SETs,
             conditional_RDs = conditional_RDs,
             conditional_tols = conditional_tols,
             conditional_control_cost_more = conditional_control_cost_more,
             each_condition_objective_weights = each_condition_objective_weights,
-
             objective_p_order = objective_p_order,
             apply_bilog = apply_bilog,
-
             decision_couplings = decision_couplings,
             decision_RDs = decision_RDs,
             decision_tols = decision_tols,
             history_buffer_size = history_buffer_size,
-            init_verbose = init_verbose
+            init_verbose = False,
+            machineIO = machineIO,
             )
         
         self.objective_var_weight = OrderedDict([(key,val) for key,val in objective_var_weight.items() if val > 0.])

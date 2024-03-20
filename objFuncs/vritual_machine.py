@@ -163,7 +163,8 @@ class VM:
                  decision_max: Optional[List[float]] = None,
                  fun: Optional = None,
                  dt: Optional[float] = 0.2,
-                 fetch_data_time_span = 0.2,
+                 fetch_data_time_span: Optional[float] = 0.2,
+                 verbose: Optional[bool]  = False
                  ):
         # Initialize decision variables and objectives
         self._test = True
@@ -171,6 +172,7 @@ class VM:
         self.decision_CSETs = decision_CSETs
         self.objective_RDs = objective_RDs
         self.fetch_data_time_span = fetch_data_time_span
+        self._verbose = verbose
         assert len(self.decision_CSET_vals) == len(self.decision_CSETs)
         
         # Initialize objective function if not provided
@@ -227,10 +229,19 @@ class VM:
                            **dict(zip(self.objective_RDs, self.objective_RD_vals))},index=[len(self.history)])
         self.history = pd.concat([self.history, df], ignore_index=True)
         
-    def caput(self,pvname,value):
+    def caput(self,pvname,value,verbose=None):
+        
+        verbose = verbose or self._verbose
+        if verbose:
+            print('ramping...')
+            display(pd.DataFrame(np.array(goal).reshape(1,-1), columns=setpoint_pv))
+            
         for i, pv in enumerate(self.decision_CSETs):
             if pv == pvname:
                 self.decision_CSET_vals[i] = value
+                
+        if verbose:
+            print('done')
                 
     def caget(self,pvname):
         t0 = self.t
@@ -243,7 +254,7 @@ class VM:
                    goal: Union[float, List[float]], 
                    tol: Union[float, List[float]] = 0.01, 
                    timeout: float = 10.0, 
-                   verbose: bool = False):
+                   verbose: bool = None):
         """
         Ensure that setpoint values reach the specified goals for given time steps.
 
@@ -255,13 +266,16 @@ class VM:
         - timeout (float, optional): Maximum time allowed for reaching the target values.
         - verbose (bool, optional): Print verbose messages.
         """
+        verbose = verbose or self._verbose
+        if verbose:
+            print('ramping...')
+            display(pd.DataFrame(np.array(goal).reshape(1,-1), columns=setpoint_pv))
+        
         for i, pv in enumerate(self.decision_CSETs):
             for j, pv_sp in enumerate(setpoint_pv):
                 if pv == pv_sp:
-                    if verbose:
-                        print('-- vm ensure_set')
-                        print('  {pv}: {goal[j]}')
                     self.decision_CSET_vals[i] = goal[j]
+                    
     
     def fetch_data(self, 
                    pvlist: List[str], 
@@ -282,6 +296,10 @@ class VM:
         Returns:
         Tuple[List[float]]: A tuple containing averaged data and raw data (optional).
         """
+        verbose = verbose or self._verbose
+        if verbose:
+            print(f'reading ...')
+        
         time_span = time_span or self.fetch_data_time_span
         
         t0 = self.t
@@ -297,9 +315,11 @@ class VM:
         ave_data = [zscore_mean(raw_data[pv], abs_z) for pv in pvlist]
         raw_data = pd.DataFrame(raw_data)
         
+        if verbose:
+            display(pd.DataFrame(np.array(ave_data).reshape(1,-1), columns=pvlist))
+        
         if with_data:
             return ave_data, raw_data
         else:
             return ave_data, None
-
-      
+        

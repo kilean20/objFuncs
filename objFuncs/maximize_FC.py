@@ -3,6 +3,8 @@ from typing import List, Dict, Union, Optional
 
 from .objFuncs import objFuncGoals
 from .util import warn
+from .construct_machineIO import construct_machineIO
+
 
 
 class maximize_FC814(objFuncGoals):
@@ -12,8 +14,8 @@ class maximize_FC814(objFuncGoals):
                           'FE_LEBT:PSC2_D0790:I_CSET',
                           'FE_LEBT:PSC1_D0790:I_CSET',
                           ],
-        decision_min = -4,
-        decision_max =  4,
+        decision_min     = -4,
+        decision_max     =  4,
         objective_goal   = {'FE_LEBT:FC_D0814:PKAVG_RD': {'more than': None}},
         objective_weight = {'FE_LEBT:FC_D0814:PKAVG_RD': 1},
         objective_norm   = {'FE_LEBT:FC_D0814:PKAVG_RD': None},
@@ -29,6 +31,7 @@ class maximize_FC814(objFuncGoals):
         logging_tag: Optional[str] = "FC814",
         logging_fname: Optional[str] = None,
         init_verbose: Optional[bool] = True,
+        machineIO: Optional[construct_machineIO] = None,
         ):
         super().__init__(
             decision_CSETs=decision_CSETs,
@@ -48,6 +51,7 @@ class maximize_FC814(objFuncGoals):
             logging_tag=logging_tag,
             logging_fname=logging_fname,
             init_verbose=init_verbose,
+            machineIO = machineIO,
             )
     def _check_device_init(self):
         if self.machineIO._test:
@@ -80,7 +84,6 @@ class maximize_FC977(objFuncGoals):
         objective_fill_none_by_init: Optional[bool] = False,
         objective_p_order:Optional[float] = 2,
         apply_bilog:Optional[bool] = False,
-                 
         decision_couplings: Optional[Dict] = None,
         decision_RDs: Optional[List[str]] = None,
         decision_tols: Optional[List[float]] = None,
@@ -88,7 +91,8 @@ class maximize_FC977(objFuncGoals):
         logging_frequency: Optional[int] = np.inf,
         logging_tag: Optional[str] = "FC977",
         logging_fname: Optional[str] = None,
-        init_verbose: Optional[bool] = True,        
+        init_verbose: Optional[bool] = True,  
+        machineIO: Optional[construct_machineIO] = None,
         ):
         super().__init__(
             decision_CSETs=decision_CSETs,
@@ -108,6 +112,7 @@ class maximize_FC977(objFuncGoals):
             logging_tag=logging_tag,
             logging_fname=logging_fname,
             init_verbose=init_verbose,
+            machineIO = machineIO,
             )
     def _check_device_init(self):
         if self.machineIO._test:
@@ -158,7 +163,7 @@ class maximize_FC998(objFuncGoals):
         logging_tag: Optional[str] = "FC998",    
         logging_fname: Optional[str] = None,
         init_verbose: Optional[bool] = True,
-     
+        machineIO: Optional[construct_machineIO] = None,
         ):
         super().__init__(
             decision_CSETs=decision_CSETs,
@@ -178,6 +183,7 @@ class maximize_FC998(objFuncGoals):
             logging_tag=logging_tag,
             logging_fname = logging_fname,
             init_verbose=init_verbose,
+            machineIO = machineIO,
             )
     def _check_device_init(self):
         if self.machineIO._test:
@@ -271,7 +277,6 @@ class maximize_FC1102(objFuncGoals):
         objective_fill_none_by_init: Optional[bool] = False,
         objective_p_order:Optional[float] = 2,
         apply_bilog:Optional[bool] = True,
-                 
         decision_couplings: Optional[Dict] = None,
         decision_RDs: Optional[List[str]] = None,
         decision_tols: Optional[List[float]] = None,
@@ -280,7 +285,7 @@ class maximize_FC1102(objFuncGoals):
         logging_tag: Optional[str] = "FC1102", 
         logging_fname: Optional[str] = None,
         init_verbose: Optional[bool] = True,
-                      
+        machineIO: Optional[construct_machineIO] = None,
         ):
         super().__init__(
             decision_CSETs=decision_CSETs,
@@ -300,6 +305,7 @@ class maximize_FC1102(objFuncGoals):
             logging_tag=logging_tag, 
             logging_fname=logging_fname,
             init_verbose=init_verbose, 
+            machineIO=machineIO,
             )
         
 
@@ -319,7 +325,7 @@ class maximize_FC1102(objFuncGoals):
         if hasattr(self.objective_weight,'FE_MEBT:FC_D1102:PKAVG_RD'):
             if self.objective_weight['FE_MEBT:FC_D1102:PKAVG_RD']>0:
                 if self.machineIO.caget('FE_MEBT:FC_D1102:RNG_CMD')==1:
-                    warn("FC_D0998 range is set to 1uA. Changing to 1055uA.")
+                    warn("FC_D1102 range is set to 1uA. Changing to 1055uA.")
                     self.machineIO.caput('FE_MEBT:FC_D1102:RNG_CMD',0)
                 if self.machineIO.caget("FE_MEBT:FC_D1102:LMIN_RSTS") == 0:
                     self._RuntimeError("FC_D1102 is not in.")

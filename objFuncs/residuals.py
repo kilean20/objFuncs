@@ -8,7 +8,8 @@ from copy import deepcopy as copy
 
 from .objFuncs import objFuncBase, _eps
 from .util import warn
-# from . import _global_machineIO as machineIO
+from .construct_machineIO import construct_machineIO
+from . import _global_machineIO
 
        
 class residualObj(objFuncBase):
@@ -19,7 +20,6 @@ class residualObj(objFuncBase):
         objective_goal: Dict,
         objective_norm: Dict,
         objective_weight: Optional[Dict] = None,
-                 
         decision_couplings: Optional[Dict] = None,
         decision_RDs: Optional[List[str]] = None,
         decision_tols: Optional[List[float]] = None,
@@ -28,6 +28,7 @@ class residualObj(objFuncBase):
         logging_tag: Optional[str] = "",
         init_verbose: Optional[bool] = True, 
         called_by_child: Optional[bool] = False, 
+        machineIO: Optional[construct_machineIO] = None,
         ):
         '''
         objective_goal: a Dict specifing goal of key=PVname, val=goal. 
@@ -57,6 +58,7 @@ class residualObj(objFuncBase):
             logging_tag = logging_tag,
             init_verbose = init_verbose,
             called_by_child = True,
+            machineIO = machineIO,
             )        
         
         self.objective_goal   = OrderedDict({key:val for key,val in objective_goal.items()})
@@ -253,11 +255,9 @@ class residualObjMultiConditional(objFuncBase):
         conditional_SETs: Dict[str,List[float]],
         conditional_RDs: Optional[List[str]] = None,
         conditional_tols: Optional[List[float]] = None,
-        conditional_control_cost_more: bool = True,
-                 
+        conditional_control_cost_more: bool = True,  
         objective_weight: Optional[Dict] = None,
-        each_condition_objective_weights: Optional[List[float]] = None,
-                 
+        each_condition_objective_weights: Optional[List[float]] = None,   
         decision_couplings: Optional[Dict] = None,
         decision_RDs: Optional[List[str]] = None,
         decision_tols: Optional[List[float]] = None,
@@ -266,6 +266,7 @@ class residualObjMultiConditional(objFuncBase):
         logging_tag: Optional[str] = "",
         init_verbose: Optional[bool] = True,
         called_by_child: Optional[bool] = False, 
+        machineIO: Optional[construct_machineIO] = None,
         ):
         '''
         conditions_SETs: 
@@ -311,6 +312,7 @@ class residualObjMultiConditional(objFuncBase):
             logging_tag = logging_tag,
             init_verbose = init_verbose,
             called_by_child = True, 
+            machineIO = machineIO,
             )      
         
         i=0
@@ -622,10 +624,11 @@ class residualObjMultiConditionalVar(residualObjMultiConditional):
         logging_tag: Optional[str] = "",
         init_verbose: Optional[bool] = True,
         called_by_child: Optional[bool] = False, 
+        machineIO: Optional[construct_machineIO] = None,
         ):
         '''
         conditions_SETs: 
-            a OrderedDict specifing fixed self.machineIOs for defining conditions (e.g. charge state, quad scan) 
+            a OrderedDict specifing fixed sets for defining conditions (e.g. charge state, quad scan) 
             for aggregated objective definition. 
                 (e.g.) for different chage coditions (i.e. charge selector), 
                   conditional_SETs = {
@@ -678,6 +681,7 @@ class residualObjMultiConditionalVar(residualObjMultiConditional):
             logging_tag=logging_tag,
             init_verbose=init_verbose, 
             called_by_child = True, 
+            machineIO = machineIO,
             )      
         self.var_obj_weight_fraction = var_obj_weight_fraction or 1.
         assert 0< var_obj_weight_fraction <= 1
