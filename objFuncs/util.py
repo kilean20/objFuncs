@@ -421,7 +421,7 @@ class plot_time_val:
         if self._plot_constructed:
             self._update_plot(inline=inline)
         else:
-            self._construct_plot(inline=inline)
+            self._construct_plot(inline=False)
             self._plot_constructed = True
 
 
@@ -583,7 +583,7 @@ class plot_obj_history:
         if self._plot_constructed:
             self._update_plot(inline=inline)
         else:
-            self._construct_plot(inline=inline)
+            self._construct_plot(inline=False)
             self._plot_constructed = True
 
             
