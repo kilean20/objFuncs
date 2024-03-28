@@ -2,6 +2,7 @@ import numpy as np
 from typing import List, Union, Optional, Callable
 import pandas as pd
 from IPython.display import display
+import time
 
 
 class RandomNeuralNetwork:
@@ -164,7 +165,8 @@ class VM:
                  fun: Optional = None,
                  dt: Optional[float] = 0.2,
                  fetch_data_time_span: Optional[float] = 0.2,
-                 verbose: Optional[bool]  = False
+                 verbose: Optional[bool]  = False,
+                 real_time_delay: Optional[float] = 0.01,
                  ):
         # Initialize decision variables and objectives
         self._test = True
@@ -212,6 +214,7 @@ class VM:
         # Initialize simulation parameters
         self.dt = dt or 0.2
         self.t = 0
+        self.real_time_delay = real_time_delay
         
         # Initialize simulation history
         self.history = pd.DataFrame(np.hstack((self.decision_CSET_vals,self.objective_RD_vals)).reshape(1,-1), 
@@ -246,6 +249,7 @@ class VM:
     def caget(self,pvname):
         t0 = self.t
         self()
+        time.sleep(self.real_time_delay)
         return self.history[pvname].iloc[-1]
                 
     def ensure_set(self, 
@@ -301,7 +305,7 @@ class VM:
             print(f'reading ...')
         
         time_span = time_span or self.fetch_data_time_span
-        
+        time.sleep(self.real_time_delay)
         t0 = self.t
         raw_data = {pv: [] for pv in pvlist}
         while self.t - t0 <= time_span:
@@ -312,7 +316,7 @@ class VM:
                 else:
                     raw_data[pv].append(0.5)
                         
-        ave_data = [zscore_mean(raw_data[pv], abs_z) for pv in pvlist]
+        ave_data = np.array([zscore_mean(raw_data[pv], abs_z) for pv in pvlist])
         raw_data = pd.DataFrame(raw_data)
         
         if verbose:

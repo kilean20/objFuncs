@@ -7,16 +7,21 @@ from .util import warn, get_MEBT_objective_goal_from_BPMoverview
 
   
     
-def get_preset(name: str,Q=None,A=None, machineIO=_global_machineIO, BPM_snapshot_fname=None) -> Dict:
+def get_preset(name: str,Q=None,A=None, machineIO=_global_machineIO, BPM_snapshot_fname=None, offline=False) -> Dict:
     prst = {}
     if Q is None or A is None:
         try:
+            if offline:
+                raise ValueError
             SCS = _global_machineIO.caget("ACS_DIAG:DEST:ACTIVE_ION_SOURCE")
             Q   = _global_machineIO.caget("FE_ISRC"+str(SCS)+":BEAM:Q_BOOK")
             A   = _global_machineIO.caget("FE_ISRC"+str(SCS)+":BEAM:A_BOOK")
+            if SCS is None or Q is None or A is None:
+                raise ValueError
         except:
             A = 2; Q = 1;
     AQ = A/Q
+    
     
 #========= [U-LEBT]FC814 =============
     if name == '[U-LEBT]FC814':
@@ -28,19 +33,25 @@ def get_preset(name: str,Q=None,A=None, machineIO=_global_machineIO, BPM_snapsho
                   'FE_LEBT:PSC1_D0790:I_CSET',
                   ]
         try:
+            if offline:
+                raise ValueError
             ave, _ = machineIO._fetch_data(decision_CSETs,0.01)
-            decision_min = ave -AQ
-            decision_max = ave +AQ
+            decision_min = ave -0.7*AQ
+            decision_max = ave +0.7*AQ
         except:
-            decision_min = [-AQ]*len(decision_CSETs)
-            decision_max = [ AQ]*len(decision_CSETs)
+            decision_min = [-0.7*AQ]*len(decision_CSETs)
+            decision_max = [ 0.7*AQ]*len(decision_CSETs)
         try:
+            if offline:
+                raise ValueError
             decision_tol = get_tolerance(decision_CSETs)
         except:
             decision_tol = [0.2]*len(decision_CSETs)
         # == objective info
         PV = 'FE_LEBT:FC_D0814:PKAVG_RD'
         try:
+            if offline:
+                raise ValueError
             goal = 5*round(machineIO._fetch_data([PV],2)[0][0])
         except:
             goal = 50
@@ -58,19 +69,25 @@ def get_preset(name: str,Q=None,A=None, machineIO=_global_machineIO, BPM_snapsho
                   'FE_LEBT:PSC1_D0790:I_CSET',
                   ]
         try:
+            if offline:
+                raise ValueError
             ave, _ = machineIO._fetch_data(decision_CSETs,0.01)
-            decision_min = ave -AQ
-            decision_max = ave +AQ
+            decision_min = ave -0.7*AQ
+            decision_max = ave +0.7*AQ
         except:
-            decision_min = [-AQ]*len(decision_CSETs)
-            decision_max = [ AQ]*len(decision_CSETs)
+            decision_min = [-0.7*AQ]*len(decision_CSETs)
+            decision_max = [ 0.7*AQ]*len(decision_CSETs)
         try:
+            if offline:
+                raise ValueError
             decision_tol = get_tolerance(decision_CSETs)
         except:
             decision_tol = [0.2]*len(decision_CSETs)
         # == objective info
         PV = 'FE_LEBT:FC_D0814:AVGNSE_RD'
         try:
+            if offline:
+                raise ValueError
             goal = 5*round(machineIO._fetch_data([PV],2)[0][0])
         except:
             goal = 50
@@ -87,13 +104,15 @@ def get_preset(name: str,Q=None,A=None, machineIO=_global_machineIO, BPM_snapsho
                  'FE_LEBT:PSC2_D0979:I_CSET', 'FE_LEBT:PSC1_D0979:I_CSET',  # one COR pair in L-LEBT
                   ]
         try:
+            if offline:
+                raise ValueError
             ave, _ = machineIO._fetch_data(decision_CSETs,0.2)
             decision_min = []
             decision_max = []
             for PV in decision_CSETs:
                 if 'PSC' in PV:
-                    decision_min += [ -AQ]
-                    decision_max += [ +AQ]
+                    decision_min += [ -0.7*AQ]
+                    decision_max += [ +0.7*AQ]
                 elif 'PSD' in PV:
                     decision_min += [x0* 0.9995]
                     decision_max += [x0* 1.0005]
@@ -109,7 +128,9 @@ def get_preset(name: str,Q=None,A=None, machineIO=_global_machineIO, BPM_snapsho
             decision_min = [np.nan]*len(decision_CSETs)
             decision_max = [np.nan]*len(decision_CSETs)
         try:
-            decision_tol = get_tolerance(decision_CSETs)
+            if offline:
+                raise ValueError
+            decision_tol = get_tolerance(decision_CSETs,machineIO=machineIO)
         except:
             warn('decision_tol could not be automatically determined. Please adjust it manually ') 
             decision_tol = [0.2]*len(decision_CSETs)
@@ -125,6 +146,8 @@ def get_preset(name: str,Q=None,A=None, machineIO=_global_machineIO, BPM_snapsho
         objective_weight = {PV:1 for PV in objective_goal.keys()}
         objective_norm   = {PV:1 for PV in objective_goal.keys()}
         try:
+            if offline:
+                raise ValueError
             goal = 5*round(machineIO._fetch_data(['FE_MEBT:FC_D1102:PKAVG_RD'],2)[0][0])
         except:
             goal = 50
@@ -161,7 +184,7 @@ def get_preset(name: str,Q=None,A=None, machineIO=_global_machineIO, BPM_snapsho
 def get_tolerance(PV_CSETs: List[str], machineIO=_global_machineIO):
     '''
     Automatically define tolerance
-    tol is defined by 5% of ramping rate: i.e.) tol = ramping distance in a 0.05 sec
+    tol is defined by 10% of ramping rate: i.e.) tol = ramping distance in a 0.1 sec
     PV_CSETs: list of CSET-PVs 
     '''
     pv_ramp_rate = []
@@ -171,8 +194,8 @@ def get_tolerance(PV_CSETs: List[str], machineIO=_global_machineIO):
         else:
             pv_ramp_rate.append(pv[:pv.rfind(':')]+':RSSV_RSET')
     try:
-        ramp_rate,_ = machineIO._fetch_data(pv_ramp_rate,1)
-        tol = 0.2*ramp_rate
+        ramp_rate,_ = machineIO._fetch_data(pv_ramp_rate,0.1)
+        tol = 0.1*ramp_rate
     except:
         if machineIO._test:
             tol = None
@@ -180,6 +203,38 @@ def get_tolerance(PV_CSETs: List[str], machineIO=_global_machineIO):
             warn('decision_tol could not be automatically determined. Please adjust it manually ')
             tol = 0.2*len(PV_CSETs)
     return tol
+
+
+
+def get_limits(PV_CSETs: List[str], machineIO=_global_machineIO):
+    '''
+    Automatically retrive limit for PV put
+    PV_CSETs: list of CSET-PVs 
+    '''
+    lo_lim = []
+    hi_lim = []
+    for pv in PV_CSETs:
+        if ':V_CSET' in pv:
+#             tmp = [pv.replace(':V_CSET',':V_CSET.LOPR'), pv.replace(':V_CSET',':V_CSET.HOPR')]
+            tmp = [pv.replace(':V_CSET',':V_CSET.DRVL'), pv.replace(':V_CSET',':V_CSET.DRVH')]
+            tmp,_ =machineIO._fetch_data(tmp,0.1)
+            lo_lim.append(tmp[0])
+            hi_lim.append(tmp[1])
+        elif ':I_CSET' in pv:
+#             tmp = [pv.replace(':I_CSET',':I_CSET.LOPR'), pv.replace(':I_CSET',':I_CSET.HOPR')]
+            tmp = [pv.replace(':I_CSET',':I_CSET.DRVL'), pv.replace(':I_CSET',':I_CSET.DRVH')]
+            tmp,_ =machineIO._fetch_data(tmp,0.1)
+            lo_lim.append(tmp[0])
+            hi_lim.append(tmp[1])
+        else:
+            warn(f'failed to find operation limit for {pv}. Manually ensure the control limit')
+            lo_lim.append(-np.inf)
+            hi_lim.append( np.inf)
+    lo_lim = np.array(lo_lim)
+    hi_lim = np.array(hi_lim)
+    assert np.all(lo_lim < hi_lim)
+    return lo_lim, hi_lim
+
 
  
 def get_RDs(PV_CSETs: List[str], machineIO=_global_machineIO):

@@ -421,7 +421,7 @@ class plot_time_val:
         if self._plot_constructed:
             self._update_plot(inline=inline)
         else:
-            self._construct_plot(inline=False)
+            self._construct_plot(inline=inline)
             self._plot_constructed = True
 
 
@@ -583,7 +583,7 @@ class plot_obj_history:
         if self._plot_constructed:
             self._update_plot(inline=inline)
         else:
-            self._construct_plot(inline=False)
+            self._construct_plot(inline=inline)
             self._plot_constructed = True
 
             
@@ -731,7 +731,7 @@ def get_dnum_from_pv(pv):
     
     
 
-def get_MEBT_objective_goal_from_BPMoverview(fname,BCMratio=False):
+def get_MEBT_objective_goal_from_BPMoverview(fname):
     try:
         with open(fname,'r') as f:
             lines = f.readlines()
@@ -751,40 +751,18 @@ def get_MEBT_objective_goal_from_BPMoverview(fname,BCMratio=False):
         
     MEBT_BPM_vals = [float_vec(line.split()) for line in lines[i+3:i+6]]
     
-    if BCMratio:
-        return { 
-                'FE_MEBT:BPM_D1056:XPOS_RD' : MEBT_BPM_vals[0][3],
-                'FE_MEBT:BPM_D1056:YPOS_RD' : MEBT_BPM_vals[0][4],
-                'FE_MEBT:BPM_D1056:PHASE_RD': MEBT_BPM_vals[0][1],
-                'FE_MEBT:BPM_D1056:MAG_RD'  : {'more than': None},
-                'FE_MEBT:BPM_D1072:XPOS_RD' : MEBT_BPM_vals[1][3],
-                'FE_MEBT:BPM_D1072:YPOS_RD' : MEBT_BPM_vals[1][4],
-                'FE_MEBT:BPM_D1072:PHASE_RD': MEBT_BPM_vals[1][1],
-                'FE_MEBT:BPM_D1072:MAG_RD'  : {'more than': None},
-                'FE_MEBT:BPM_D1094:XPOS_RD' : MEBT_BPM_vals[2][3],
-                'FE_MEBT:BPM_D1094:YPOS_RD' : MEBT_BPM_vals[2][4],
-                'FE_MEBT:BPM_D1094:PHASE_RD': MEBT_BPM_vals[2][1],
-                'FE_MEBT:BPM_D1094:MAG_RD'  : {'more than': None},
-                'FE_MEBT:BCM_D1055:AVGPK_RD/FE_LEBT:BCM_D0989:AVGPK_RD': {'more than': 1.00},
-                'FE_MEBT:FC_D1102:PKAVG_RD': {'more than': None},
-               } 
-    else:
-        return { 
-                'FE_MEBT:BPM_D1056:XPOS_RD' : MEBT_BPM_vals[0][3],
-                'FE_MEBT:BPM_D1056:YPOS_RD' : MEBT_BPM_vals[0][4],
-                'FE_MEBT:BPM_D1056:PHASE_RD': MEBT_BPM_vals[0][1],
-                'FE_MEBT:BPM_D1056:MAG_RD'  : {'more than': None},
-                'FE_MEBT:BPM_D1072:XPOS_RD' : MEBT_BPM_vals[1][3],
-                'FE_MEBT:BPM_D1072:YPOS_RD' : MEBT_BPM_vals[1][4],
-                'FE_MEBT:BPM_D1072:PHASE_RD': MEBT_BPM_vals[1][1],
-                'FE_MEBT:BPM_D1072:MAG_RD'  : {'more than': None},
-                'FE_MEBT:BPM_D1094:XPOS_RD' : MEBT_BPM_vals[2][3],
-                'FE_MEBT:BPM_D1094:YPOS_RD' : MEBT_BPM_vals[2][4],
-                'FE_MEBT:BPM_D1094:PHASE_RD': MEBT_BPM_vals[2][1],
-                'FE_MEBT:BPM_D1094:MAG_RD'  : {'more than': None},
-                'FE_MEBT:BCM_D1055:AVGPK_RD': {'more than': None},
-                'FE_MEBT:FC_D1102:PKAVG_RD' : {'more than': None},
-               } 
+    return { 
+            'FE_MEBT:BPM_D1056:XPOS_RD' : MEBT_BPM_vals[0][3],
+            'FE_MEBT:BPM_D1056:YPOS_RD' : MEBT_BPM_vals[0][4],
+            'FE_MEBT:BPM_D1056:PHASE_RD': MEBT_BPM_vals[0][1],
+            'FE_MEBT:BPM_D1072:XPOS_RD' : MEBT_BPM_vals[1][3],
+            'FE_MEBT:BPM_D1072:YPOS_RD' : MEBT_BPM_vals[1][4],
+            'FE_MEBT:BPM_D1072:PHASE_RD': MEBT_BPM_vals[1][1],
+            'FE_MEBT:BPM_D1094:XPOS_RD' : MEBT_BPM_vals[2][3],
+            'FE_MEBT:BPM_D1094:YPOS_RD' : MEBT_BPM_vals[2][4],
+            'FE_MEBT:BPM_D1094:PHASE_RD': MEBT_BPM_vals[2][1],
+           } 
+
     
     
 

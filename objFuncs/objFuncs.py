@@ -91,7 +91,7 @@ class objFuncBase():
 
         if decision_RDs is None:
             try:
-                self.decision_RDs = get_RDs(decision_CSETs)
+                self.decision_RDs = get_RDs(decision_CSETs,machineIO=self.machineIO)
             except:
                 if hasattr(self.machineIO,"_test"):
                     if self.machineIO._test:
@@ -106,7 +106,7 @@ class objFuncBase():
             self.decision_RDs = decision_RDs
         if decision_tols is None:
             try:
-                self.decision_tols = get_tolerance(decision_CSETs)                 
+                self.decision_tols = get_tolerance(decision_CSETs,machineIO=self.machineIO)                 
             except:
                 if self.machineIO._test:
                     self.decision_tols = None
@@ -235,8 +235,7 @@ class objFuncBase():
                 setattr(self, key, val)
         self.machineIO = _global_machineIO
         
-        
-    def _RuntimeError(s):
+    def _RuntimeError(self,s):
         if self.machineIO._test:
             warn(s)
         else:
@@ -684,9 +683,9 @@ class objFuncGoals(objFuncBase):
                 i+=2 
             if type(goal) is float:
                 if 'BPM' in key and 'PHASE' in key:
-                    obj = 2 -(np.abs(cyclic_distance(value,goal,-90,90)/(objective_norm[key] +_eps)))**p_order
+                    obj = 1 -(np.abs(cyclic_distance(value,goal,-90,90)/(objective_norm[key] +_eps)))**p_order
                 else:
-                    obj = 2 -(np.abs((value-goal)/(objective_norm[key] +_eps)))**p_order
+                    obj = 1 -(np.abs((value-goal)/(objective_norm[key] +_eps)))**p_order
             elif 'more than' in goal:
                 obj = -elu(-(value-goal['more than'])/(objective_norm[key] +_eps))
 #                 obj = np.sign(obj)*np.abs(obj)**p_order

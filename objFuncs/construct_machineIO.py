@@ -120,7 +120,7 @@ class Abstract_machineIO(ABC):
                  _ensure_set_timeout = _ensure_set_timeout, 
                  _fetch_data_time_span = _fetch_data_time_span,
                  _check_chopper_blocking = _check_chopper_blocking,
-                 _n_popup_ramping_not_OK = _n_popup_ramping_not_OK
+                 _n_popup_ramping_not_OK = _n_popup_ramping_not_OK,
                 ):
         self._ensure_set_timeout = _ensure_set_timeout
         self._ensure_set_timewait_after_ramp = 0.25
@@ -129,6 +129,7 @@ class Abstract_machineIO(ABC):
         self._check_chopper_blocking = _check_chopper_blocking
         self._n_popup_ramping_not_OK = _n_popup_ramping_not_OK
         self._verbose = False
+        self._test = False
         self.history = {}
         
 #     def view(self):
@@ -239,7 +240,6 @@ class Abstract_machineIO(ABC):
 class construct_machineIO(Abstract_machineIO):
     def __init__(self):
         super().__init__()
-        self._test = False
         
     def _caget(self,pvname):
         if _epics_imported:

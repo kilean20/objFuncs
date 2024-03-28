@@ -59,13 +59,13 @@ class maximize_FC814(objFuncGoals):
         if self.machineIO.caget("FE_LEBT:FC_D0814:LMNEG_RSTS_DRV") == 0:
             self._RuntimeError("FC_D0814 is not in.")
         if self.machineIO.caget('FE_LEBT:FC_D0814:RNG_CMD')==1:
-            warn("FC_D0814 range is set to 1uA. Changing to 1055uA.")
-            self.machineIO.caput('FE_LEBT:FC_D0814:RNG_CMD',0)
+            self._RuntimeError("FC_D0814 range is set to 1uA. Change to 1055uA.")
+#             self.machineIO.caput('FE_LEBT:FC_D0814:RNG_CMD',0)
             
         if self.machineIO.caget("FE_LEBT:AP_D0796:LMIN_RSTS")==0 or self.machineIO.caget("FE_LEBT:AP_D0807:LMIN_RSTS")==0:
-            warn("Apertures are not in")
+            self._RuntimeError("Apertures are not in")
         if self.machineIO.caget("ACS_DIAG:CHP:STATE_RD") != 3:
-            warn("Chopper blocking.") 
+            self._RuntimeError("Chopper blocking.") 
 
     
 
@@ -310,40 +310,41 @@ class maximize_FC1102(objFuncGoals):
         
 
     def _check_device_init(self):
-        if self.machineIO._test:
-            return
+#         if self.machineIO._test:
+#             return
         '''
         check devices status,
         '''
-        if 'FE_LEBT:PSC2_D0992:I_CSET' not in self.decision_CSETs:
-            if self.machineIO.caget('FE_LEBT:PSC2_D0992:I_CSET')!=0:
-                warn("FE_LEBT:PSC2_D0992:I_CSET is not zero")
-        if 'FE_LEBT:PSC1_D0992:I_CSET' not in self.decision_CSETs:
-            if self.machineIO.caget('FE_LEBT:PSC1_D0992:I_CSET')!=0:
-                warn("FE_LEBT:PSC1_D0992:I_CSET is not zero")
-                
+#         if 'FE_LEBT:PSC2_D0992:I_CSET' not in self.decision_CSETs:
+#             if self.machineIO.caget('FE_LEBT:PSC2_D0992:I_CSET')!=0:
+#                 warn("FE_LEBT:PSC2_D0992:I_CSET is not zero")
+#         if 'FE_LEBT:PSC1_D0992:I_CSET' not in self.decision_CSETs:
+#             if self.machineIO.caget('FE_LEBT:PSC1_D0992:I_CSET')!=0:
+#                 warn("FE_LEBT:PSC1_D0992:I_CSET is not zero")
         if hasattr(self.objective_weight,'FE_MEBT:FC_D1102:PKAVG_RD'):
-            if self.objective_weight['FE_MEBT:FC_D1102:PKAVG_RD']>0:
-                if self.machineIO.caget('FE_MEBT:FC_D1102:RNG_CMD')==1:
-                    warn("FC_D1102 range is set to 1uA. Changing to 1055uA.")
-                    self.machineIO.caput('FE_MEBT:FC_D1102:RNG_CMD',0)
-                if self.machineIO.caget("FE_MEBT:FC_D1102:LMIN_RSTS") == 0:
-                    self._RuntimeError("FC_D1102 is not in.")
-                if self.machineIO.caget("DIAG-RIO01:FC_ENABLED2") != 1:
-                    self._RuntimeError("FC_D1102 is not enabled. Check bottom of FC overview in CSS")
-                if self.machineIO.caget("DIAG-RIO01:PICO_ENABLED2") != 1:
-                    self._RuntimeError("FC_D1102 pico is not enabled. Check bottom of FC overview in CSS")
-#         if self.machineIO.caget("ACS_DIAG:CHP:STATE_RD") != 3:
-#             self._RuntimeError("Chopper blocking.") 
+            if self.machineIO.caget('FE_MEBT:FC_D1102:RNG_CMD')==1:
+                self._RuntimeError("FC_D1102 range is 1uA. Change to 1055uA.")
+#                 warn("FC_D1102 range is 1uA. Changing to 1055uA.")
+#                 self.machineIO.caput('FE_MEBT:FC_D1102:RNG_CMD',0)
+            if self.machineIO.caget("FE_MEBT:FC_D1102:LMIN_RSTS") == 0:
+                self._RuntimeError("FC_D1102 is not in.")
+            if self.machineIO.caget("DIAG-RIO01:FC_ENABLED2") != 1:
+                self._RuntimeError("FC_D1102 is not enabled. Check bottom of FC overview in CSS")
+            if self.machineIO.caget("DIAG-RIO01:PICO_ENABLED2") != 1:
+                self._RuntimeError("FC_D1102 pico is not enabled. Check bottom of FC overview in CSS")
+        if self.machineIO.caget("ACS_DIAG:CHP:STATE_RD") != 3:
+            self._RuntimeError("Chopper blocking.") 
         if self.machineIO.caget("FE_LEBT:ATT1_D0957:LMOUT_RSTS") == 0:
-            warn("ATT1_D0957 is in.") 
+            self._RuntimeError("ATT1_D0957 is in.") 
         if self.machineIO.caget("FE_LEBT:ATT2_D0957:LMOUT_RSTS") == 0:
-            warn("ATT2_D0957 is in.")  
+            self._RuntimeError("ATT2_D0957 is in.")  
         if self.machineIO.caget("FE_LEBT:ATT1_D0974:LMOUT_RSTS") == 0:
-            warn("ATT1_D0974 is in.") 
+            self._RuntimeError("ATT1_D0974 is in.") 
         if self.machineIO.caget("FE_LEBT:ATT2_D0974:LMOUT_RSTS") == 0:
-            warn("ATT2_D0974 is in.")  
-
+            self._RuntimeError("ATT2_D0974 is in.")  
+        if self.machineIO.caget("GTS_FTS:MSTR_N0001:PCUR_DFAC_RD") > 10.1:
+            self._RuntimeError("Duty factor is more than 10%. Reduce it below 10% to avoid RFQ damage")
+            
 
 
             

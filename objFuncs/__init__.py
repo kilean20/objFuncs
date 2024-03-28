@@ -1,4 +1,4 @@
-__version__ = '1.0.3'
+__version__ = '1.0.4'
 __version_descriptions__ = {
     '1.0.0':['2023-12-04',
              'Implementation of FLAME based Virtual Machine',  
@@ -21,6 +21,9 @@ __version_descriptions__ = {
              'record machineIO history',
              'plot machineIO history',
              ],
+    '1.0.4':['2024-03-26',
+             'get_limits',
+             ],
 }
 
 print(f'objFuncs version: {__version__}. updated on {__version_descriptions__[__version__][0]}')
@@ -40,4 +43,4 @@ except:
     print("flame_utils is not importable. ignoreing this feature...")
     
 from . vritual_machine import VM
-from . import REA
+# from . import REA
