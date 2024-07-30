@@ -21,7 +21,7 @@ The objFuncs package is designed to provide users with an intuitive I/O interfac
 ```python
 
 import objFuncs
-from objFuncs import objFuncGoals, construct_machineIO
+from objFuncs import objFuncGoals
 
 objFuncs._global_machineIO._test = False
 objFuncs._global_machineIO._fetch_data_time_span = timespan_for_average
