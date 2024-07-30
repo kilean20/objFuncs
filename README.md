@@ -1,6 +1,6 @@
 # Overview
 
-The objFuncs package is designed to provide users with an intuitive I/O interface to the EPICS system, specifically tailored for the Facility for Rare Isotope Beams (FRIB). It streamlines the construction of objective functions by scalarizing multi-objective optimization using heuristics that incorporate tolerances for each objective. Additionally, it includes wrapper functions for evaluating these objective functions on the machine.
+The objFuncs package is designed to provide users with an intuitive I/O interface to the EPICS system, specifically tailored for the Facility for Rare Isotope Beams (FRIB) driver LINAC and REA. It streamlines the construction of objective functions by scalarizing multi-objective optimization using heuristics that incorporate tolerances for each objective. Additionally, it includes wrapper functions for evaluating these objective functions on the machine.
 
 ## Key Features
 
