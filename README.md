@@ -36,4 +36,8 @@ obj = objFuncGoals(
     objective_weight = {'FE_LEBT:FC_D0002:PKAVG_RD': 1},
     objective_norm   = {'FE_LEBT:FC_D0002:PKAVG_RD': 0.2*sourceFC},
 )
+
+# set corrector to zero and read objective
+x = [0, 0]
+obj_val = obj(x)
 ```
