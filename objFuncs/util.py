@@ -7,6 +7,7 @@ import re
 from IPython import display
 import pickle
 import json
+import math
 
 import numpy as np
 import pandas as pd
@@ -54,12 +55,11 @@ def cyclic_mean(x,Lo,Hi):
     return mean
     
 def cyclic_mean_var(x,Lo,Hi):
-    x_ = np.array(x)
+    x_ = np.array(x,dtype=np.float64)
     if x_.ndim==1 and len(x_)<1:
-        return x_, np.zeros(x_.shape)
-    x_ang = 2*np.pi*(x-Lo)/(Hi-Lo)
+        return x_, np.zeros(x_.shape) 
     mean = np.mod(np.angle(np.mean(np.exp(1j*2*np.pi*(x_-Lo)/(Hi-Lo)),axis=0)),2*np.pi)/(2*np.pi)*(Hi-Lo)+Lo
-    return mean, np.mean(cyclic_distance(x,mean,Lo,Hi)**2)
+    return mean, np.mean(cyclic_distance(x_,mean,Lo,Hi)**2)
 
 def cyclic_difference(x,y,Lo,Hi):
 #     warn("Orientation of cyclic_distance is not well defined")
@@ -323,6 +323,7 @@ class plot_time_val:
                         ax=None,
                         inline=None
                         ):        
+        
         self.ax = ax or self.ax
         self.fig = fig or self.fig
         self.hdisplay = hdisplay or self.hdisplay
@@ -378,10 +379,8 @@ class plot_time_val:
             ax = self.axes[i]
             for j,k in enumerate(keys):
                 if k in self.hist:
-#                     print(k, self.hist.keys())
                     if len(self.hist[k]['t']) > 0:
                         line = ax.lines[j]
-        #                 print("self.values[self.index[i][j],:].shape",self.values[self.index[i][j],:].shape)
                         line.set_xdata(self.hist[k]['t'])
                         line.set_ydata(self.hist[k]['v'])
             ax.relim()

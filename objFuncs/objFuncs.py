@@ -223,16 +223,17 @@ class objFuncBase():
         
         
     def load(self, fname):
-        i = fname.rfind('.')
-        if  fname[-4:]!='.pkl':
-            fname = fname +'.pkl'
-            print(f'only .pkl file extension is accepted. loading from: {fname}')
-        warn("loading picklable data from file. load non-picklable data manually")    
-        with open(fname, 'rb') as file:
-            state_dict = pickle.load(file)
-            dic = get_picklable_items_from_dict(state_dict)
-            for key,val in dic.items():
-                setattr(self, key, val)
+        if  fname[-4:]=='.pkl':
+            with open(fname, 'rb') as file:
+                state_dict = pickle.load(file)
+        elif fname[-5:]=='.json':
+            with open(fname, 'r') as file:
+                state_dict = json.load(file)
+        else:
+            raise RuntimeError("file extension must be .pkl or .json")
+        dic = get_picklable_items_from_dict(state_dict)
+        for key,val in dic.items():
+            setattr(self, key, val)
         self.machineIO = _global_machineIO
         
     def _RuntimeError(self,s):
@@ -605,7 +606,7 @@ class objFuncGoals(objFuncBase):
             
             
     def _fill_obj_none(self):
-        RDs,_ = self.machineIO.fetch_data(self.objective_RDs,5,abs_z=3)
+        RDs,_ = self.machineIO.fetch_data(self.objective_RDs,5)#,abs_z=3)
         RDs = {key:val for key,val in zip(self.objective_RDs,RDs)}
 #         print("RDs",RDs)
         
@@ -703,12 +704,12 @@ class objFuncGoals(objFuncBase):
         return obj_tot, objs
     
     
-    def _get_object(self,time_span=None,abs_z=None):
+    def _get_object(self,time_span=None):
         
         ave_data, _ = self.machineIO.fetch_data(
                             list(self.decision_RDs) + list(self.objective_RDs),
                             time_span=time_span,
-                            abs_z=abs_z)
+                            )
         
         #regularize
         obj_tot,objs = self._calculate_objectives(ave_data[len(self.decision_RDs):]) #\
@@ -774,10 +775,9 @@ class objFuncGoals(objFuncBase):
             self.history['objectives']['total'][i] = obj_tot
     
             
-    def __call__(self,x,time_span=None,abs_z=None, callbacks=None):
+    def __call__(self,x,time_span=None, callbacks=None):
         self._set_decision(x)
-        objs = self._get_object(time_span=time_span,
-                                abs_z=abs_z)
+        objs = self._get_object(time_span=time_span)
         if callbacks is not None:
             for f in callbacks:
                 f()
@@ -973,7 +973,7 @@ class objFuncMultiConditionalGoals(objFuncBase):
             
            
         
-    def __call__(self,decision_vals,time_span=None,abs_z=None, callbacks=None):
+    def __call__(self,decision_vals,time_span=None,callbacks=None):
         
         decision_vals = np.array(decision_vals)
         if decision_vals.ndim == 1:
@@ -990,7 +990,7 @@ class objFuncMultiConditionalGoals(objFuncBase):
             for i in proximal_index:
                 self.condition_controller._set_decision(np.array(list(self.conditional_SETs.values()))[:,i])
                 for b in range(batch_size):
-                    obj[b,i] = self.objFuncGoals[i](decision_vals[b,:],time_span=time_span,abs_z=abs_z)
+                    obj[b,i] = self.objFuncGoals[i](decision_vals[b,:],time_span=time_span)
         else:
             for b in range(batch_size):
                 try:
@@ -999,7 +999,7 @@ class objFuncMultiConditionalGoals(objFuncBase):
                     proximal_index = range(self.n_condition)
                 for i in proximal_index:
                     self.condition_controller._set_decision(np.array(list(self.conditional_SETs.values()))[:,i])
-                    obj[b,i] = self.objFuncGoals[i](decision_vals[b,:],time_span=time_span,abs_z=abs_z)
+                    obj[b,i] = self.objFuncGoals[i](decision_vals[b,:],time_span=time_span)
                     
         
         for b in range(batch_size):
@@ -1170,13 +1170,13 @@ class objFuncMultiConditionalVar(objFuncMultiConditionalGoals):
             self.print_class_info()
         
         
-    def __call__(self,decision_vals,time_span=None,abs_z=None,callbacks=None):
+    def __call__(self,decision_vals,time_span=None,callbacks=None):
         
         decision_vals = np.array(decision_vals)
         if decision_vals.ndim == 1:
             decision_vals = decision_vals.reshape(1,-1)
         batch_size, dim = decision_vals.shape
-        obj_batches = super().__call__(decision_vals,time_span=time_span,abs_z=abs_z)
+        obj_batches = super().__call__(decision_vals,time_span=time_span)
         obj_vars = np.zeros((batch_size,len(self.objective_var_weight),self.n_condition))
         for icon in range(self.n_condition):
             objective_RDs = self.history['condition'+str(icon)]['objective_RDs']

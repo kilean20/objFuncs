@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import datetime
 
+from .gui import popup_handler
 from .util import warn, cyclic_mean_var, suppress_outputs
 from .BPMQ import _BPM_TIS161_coeffs
 from abc import ABC, abstractmethod
@@ -13,8 +14,11 @@ try:
 except ImportError:
     display = print
     
+      
+popup_ramping_not_OK = popup_handler("Action required", "Ramping not OK. Manually adjust PV CSETs to jitter the power suppply before continue.")
+_n_popup_ramping_not_OK = 0
 
-_ensure_set_timeout = 15
+_ensure_set_timeout = 30
 _fetch_data_time_span = 2.05
 _check_chopper_blocking = True
 
@@ -38,7 +42,7 @@ try:
             _check_chopper_blocking = False    # don't check FRIB chopper if machine is REA
     
     def _epics_fetch_data(pvlist,time_span = _fetch_data_time_span, 
-#                           abs_z = None, 
+                          abs_z = None, 
                           with_data=False,
                           verbose=False):
         data = {pv:[] for pv in pvlist}
@@ -50,10 +54,10 @@ try:
         for pv in pvlist:
             mean = np.mean(data[pv])
             std  = np.std (data[pv])
-#             if abs_z is not None and std > 0:
-#                 mask = np.logical_and(mean -abs_z*std < data[pv], data[pv] < mean +abs_z*std )
-#                 mean = np.mean(np.array(data[pv])[mask])
-#                 std  = np.std (np.array(data[pv])[mask])
+            if abs_z is not None and std > 0:
+                mask = np.logical_and(mean -abs_z*std < data[pv], data[pv] < mean +abs_z*std )
+                mean = np.mean(np.array(data[pv])[mask])
+                std  = np.std (np.array(data[pv])[mask])
             data[pv].append(len(data[pv]))
             data[pv].append(mean)
             data[pv].append(std )
@@ -92,7 +96,7 @@ except:
     
 
 def _dummy_fetch_data(pvlist,time_span = _fetch_data_time_span, 
-#                       abs_z = None, 
+                      abs_z = None, 
                       with_data=False,
                       verbose=False):
 
@@ -101,10 +105,10 @@ def _dummy_fetch_data(pvlist,time_span = _fetch_data_time_span,
     for pv in pvlist:
         mean = np.mean(data[pv])
         std  = np.std (data[pv])
-#         if abs_z is not None and std > 0:
-#             mask = np.logical_and(mean -abs_z*std < data[pv], data[pv] < mean +abs_z*std )
-#             mean = np.mean(np.array(data[pv])[mask])
-#             std  = np.std (np.array(data[pv])[mask])
+        if abs_z is not None and std > 0:
+            mask = np.logical_and(mean -abs_z*std < data[pv], data[pv] < mean +abs_z*std )
+            mean = np.mean(np.array(data[pv])[mask])
+            std  = np.std (np.array(data[pv])[mask])
         data[pv].append(len(data[pv]))
         data[pv].append(mean)
         data[pv].append(std )
@@ -122,12 +126,14 @@ class Abstract_machineIO(ABC):
                  _ensure_set_timeout = _ensure_set_timeout, 
                  _fetch_data_time_span = _fetch_data_time_span,
                  _check_chopper_blocking = _check_chopper_blocking,
+                 _n_popup_ramping_not_OK = _n_popup_ramping_not_OK,
                 ):
         self._ensure_set_timeout = _ensure_set_timeout
         self._ensure_set_timewait_after_ramp = 0.25
         self._fetch_data_time_span = _fetch_data_time_span
         self._return_obj_var = False
         self._check_chopper_blocking = _check_chopper_blocking
+        self._n_popup_ramping_not_OK = _n_popup_ramping_not_OK
         self._verbose = False
         self._test = False
         self.history = {}
@@ -166,9 +172,9 @@ class Abstract_machineIO(ABC):
     @abstractmethod
     def _ensure_set(self,
                    setpoint_pv,readback_pv,goal,
-                   tol,
-                   timeout,
-                   ):
+                   tol=0.01,
+                   timeout=None,
+                   verbose=None):
         pass
 
     def ensure_set(self,
@@ -202,13 +208,14 @@ class Abstract_machineIO(ABC):
     @abstractmethod
     def _fetch_data(self,pvlist,
                     time_span = None, 
-#                     abs_z = None, 
+                    abs_z = None, 
                     with_data=False,
                     verbose=None):
         pass
 
     def fetch_data(self,pvlist,
                    time_span = None, 
+                   abs_z = None, 
                    with_data=False,
                    verbose=None,
                    check_chopper_blocking = None,
@@ -228,6 +235,7 @@ class Abstract_machineIO(ABC):
         
         ave, raw = self._fetch_data(pvlist_wrap,
                                     time_span = time_span, 
+                                    abs_z = abs_z, 
                                     with_data = True)
         
         std = raw['std'].to_numpy()
@@ -239,15 +247,18 @@ class Abstract_machineIO(ABC):
                 else:
                     Lo = -180
                     Hi = 180
-                nsample = int(raw['#'][i])
-                val = raw.iloc[i,:nsample].dropna().values.astype(np.float64)
-                mean,var = cyclic_mean_var(val,Lo,Hi) 
-                    
+                n = raw.iloc[i,-3]
+                mean, var = cyclic_mean_var(raw.iloc[i,:n].dropna().values,Lo,Hi)
+                #print("pv,cyclic_mean",pv,mean)
+                #display(raw.iloc[i,:])
                 ave[i] = mean
                 std[i] = var**0.5
         raw['mean'] = ave
         raw['std'] = std
-       
+                
+        #iloc_bpm_phases = [i for i,pv in enumerate(pvlist_wrap) if ":BPM" in pv and "PHASE" in pv]
+        #raw.iloc[iloc_bpm_phases,:-3] = 
+        
         
         if len(pvlist_wrap) > len(pvlist):
             index_to_remove = []
@@ -322,10 +333,9 @@ class construct_machineIO(Abstract_machineIO):
       
     def _ensure_set(self,
                    setpoint_pv,readback_pv,goal,
-                   tol,
-                   timeout,
-                   **kws,
-                   ):
+                   tol=0.01,
+                   timeout=None,
+                   verbose=None):
         
         t0 = time.monotonic()
         if self._test:
@@ -348,7 +358,11 @@ class construct_machineIO(Abstract_machineIO):
                     _epics_ensure_set(setpoint_pv,readback_pv,goal,tol,timeout,verbose=False) 
                     
         if time.monotonic() - t0 > timeout: 
-            warn("'ramping_not_OK' issued 2 times already. Will just continue")
+            if self._n_popup_ramping_not_OK<2:
+                popup_ramping_not_OK()
+                self._n_popup_ramping_not_OK +=1
+            else:
+                warn("'ramping_not_OK' issued 2 times already. Ignoring 'ramping_not_OK' issue from now on...")
                 
                 
 #     def _ensure_set(self,
@@ -384,7 +398,7 @@ class construct_machineIO(Abstract_machineIO):
             
     def _fetch_data(self,pvlist,
                    time_span = None, 
-#                    abs_z = None, 
+                   abs_z = None, 
                    with_data=False,
                    verbose=None,
                    check_chopper_blocking = None,
@@ -401,12 +415,12 @@ class construct_machineIO(Abstract_machineIO):
                 print(  'pvlist', pvlist)
                 
             if _phantasy_imported:
-                ave,raw = _phantasy_fetch_data(pvlist,time_span,with_data=True,verbose=False)
+                ave,raw = _phantasy_fetch_data(pvlist,time_span,abs_z,with_data=True,verbose=False)
             elif _epics_imported:
-                ave,raw =    _epics_fetch_data(pvlist,time_span,with_data=True,verbose=False)
+                ave,raw =    _epics_fetch_data(pvlist,time_span,abs_z,with_data=True,verbose=False)
             elif self._test:
                 warn("PHANTASY or EPICS is not imported. fetch_data will return zeros")
-                ave,raw =    _dummy_fetch_data(pvlist,time_span,with_data=True,verbose=False)
+                ave,raw =    _dummy_fetch_data(pvlist,time_span,abs_z,with_data=True,verbose=False)
             else:
                 raise ValueError("PHANTASY or EPICS is not imported and the machineIO is not in test mode.")
                 
@@ -435,9 +449,8 @@ class construct_machineIO(Abstract_machineIO):
                 else:
                     Lo = -180
                     Hi =  180
-                nsample = int(raw['#'][i])
-                val = raw.iloc[i,:nsample].dropna().values.astype(np.float64)
-                mean,var = cyclic_mean_var(val,Lo,Hi)
+                nsample = raw.iloc[i,-3]    
+                mean,var = cyclic_mean_var(raw.iloc[i,:nsample].dropna().values,Lo,Hi)
                 ave[i] = mean
                 std[i] = var**0.5
                 
@@ -456,7 +469,7 @@ class construct_manual_fetch_data:
         
     def __call__(self,pvlist,
                  time_span=None, 
-#                  abs_z=None, 
+                 abs_z=None, 
                  with_data=False,
                  verbose=False):
         time_span = time_span or self._fetch_data_time_span
@@ -494,10 +507,10 @@ class construct_manual_fetch_data:
         n_data = 2  # dummy numer of data samples
         if len(pvlist_blank) > 0:
             if _phantasy_imported:
-                ave,raw = _phantasy_fetch_data(pvlist_blank,time_span,with_data=True,verbose=False)
+                ave,raw = _phantasy_fetch_data(pvlist_blank,time_span,abs_z,with_data=True,verbose=False)
                 n_data = raw.shape[1]-3
             elif _epics_imported:
-                ave,raw =    _epics_fetch_data(pvlist_blank,time_span,with_data=True,verbose=False)
+                ave,raw =    _epics_fetch_data(pvlist_blank,time_span,abs_z,with_data=True,verbose=False)
                 n_data = raw.shape[1]-3
             else:
                 print("Automatic data read failed. please input manually:")

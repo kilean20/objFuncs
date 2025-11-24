@@ -344,9 +344,3 @@ class maximize_FC1102(objFuncGoals):
             self._RuntimeError("ATT2_D0974 is in.")  
         if self.machineIO.caget("GTS_FTS:MSTR_N0001:PCUR_DFAC_RD") > 10.1:
             self._RuntimeError("Duty factor is more than 10%. Reduce it below 10% to avoid RFQ damage")
-            
-
-
-            
-
-    

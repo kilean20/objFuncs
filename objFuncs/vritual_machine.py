@@ -172,6 +172,7 @@ class VM:
         self._test = True
         self.decision_CSET_vals = x0
         self.decision_CSETs = decision_CSETs
+        self.decision_RDs   = [pv.replace('_CSET','_RD') for pv in decision_CSETs]
         self.objective_RDs = objective_RDs
         self.fetch_data_time_span = fetch_data_time_span
         self._verbose = verbose
@@ -217,8 +218,10 @@ class VM:
         self.real_time_delay = real_time_delay
         
         # Initialize simulation history
-        self.history = pd.DataFrame(np.hstack((self.decision_CSET_vals,self.objective_RD_vals)).reshape(1,-1), 
-                                    columns = np.hstack((self.decision_CSETs,self.objective_RDs)))
+        self.history = pd.DataFrame(np.hstack((self.decision_CSET_vals,
+                                               self.decision_CSET_vals,
+                                               self.objective_RD_vals)).reshape(1,-1), 
+                                    columns = np.hstack((self.decision_CSETs,self.decision_RDs,self.objective_RDs)))
 
     def __call__(self):
         """
@@ -229,7 +232,8 @@ class VM:
         #self.history = self.history.append({**dict(zip(self.decision_CSETs, self.decision_CSET_vals)),
         #                                    **dict(zip(self.objective_RDs, self.objective_RD_vals))}, ignore_index=True)
         df = pd.DataFrame({**dict(zip(self.decision_CSETs, self.decision_CSET_vals)),
-                           **dict(zip(self.objective_RDs, self.objective_RD_vals))},index=[len(self.history)])
+                           **dict(zip(self.decision_RDs  , self.decision_CSET_vals)),
+                           **dict(zip(self.objective_RDs , self.objective_RD_vals))},index=[len(self.history)])
         self.history = pd.concat([self.history, df], ignore_index=True)
         
     def caput(self,pvname,value,verbose=None):
@@ -317,7 +321,13 @@ class VM:
                     raw_data[pv].append(0.5)
                         
         ave_data = np.array([zscore_mean(raw_data[pv], abs_z) for pv in pvlist])
-        raw_data = pd.DataFrame(raw_data)
+        nmax = 0
+        for k in raw_data.keys():
+            if len(raw_data[k])>nmax:
+                nmax = len(raw_data[k])
+            raw_data[k] += [len(raw_data[k]), np.nanmean(raw_data[k]), np.nanstd(raw_data[k])]
+            
+        raw_data = pd.DataFrame(raw_data, index=np.arange(nmax).tolist() + ['#','mean','std']).T
         
         if verbose:
             display(pd.DataFrame(np.array(ave_data).reshape(1,-1), columns=pvlist))
