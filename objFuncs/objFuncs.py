@@ -237,10 +237,11 @@ class objFuncBase():
         self.machineIO = _global_machineIO
         
     def _RuntimeError(self,s):
-        if self.machineIO._test:
-            warn(s)
-        else:
-            raise RuntimeError(s)
+        warn(s)
+        #if self.machineIO._test:
+        #    warn(s)
+        #else:
+        #    raise RuntimeError(s)
 
 
     def add_decision_CSETs(self,
